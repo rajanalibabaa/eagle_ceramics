@@ -89,15 +89,16 @@ function Footer() {
         borderTop: '1px solid',
         borderColor: 'divider',
         padding: '10px',
-        marginTop: '5%'
+        marginTop: '5%',
+        maxWidth:'100%'
       }}
       component="footer"
     >
-      <Container sx={{
+      <Container  maxWidth={false} sx={{
         backgroundColor: '#016B61',
         color: 'white',
         padding: '18px',
-        marginLeft: '50px'
+       
       }}>
 
         {/* Quick Links - Top Center */}
