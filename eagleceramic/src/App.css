@@ -2,8 +2,24 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-
 }
-body{
-  font-Family: "'Pacifico', cursive";
+
+
+body {
+margin: 0;
+  padding: 0;
+  background-color: var(--light-color);
+  color: var(--text-color);
+  scroll-behavior: smooth;
+}
+/* 🌈 Global Color Palette */
+:root {
+  --primary-color: #1976d2;       /* Electric Blue */
+  --secondary-color: #00c853;     /* Energy Green */
+  --accent-color: #ffb300;        /* Amber highlight */
+  --dark-color: #0b0b0b;          /* Deep charcoal */
+  --light-color: #ffffff;         /* Background */
+  --text-color: #333333;          /* Standard text */
+  --white: #ffffff;
+
 }

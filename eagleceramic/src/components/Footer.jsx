@@ -85,24 +85,22 @@ function Footer() {
     <Box
       sx={{
         bgcolor: 'background.paper',
-        p: 1,
         borderTop: '1px solid',
         borderColor: 'divider',
         padding: '10px',
-        marginTop: '5%',
-        maxWidth:'100%'
+        marginTop: '5%'
       }}
       component="footer"
     >
-      <Container  maxWidth={false} sx={{
+      <Container sx={{
         backgroundColor: '#016B61',
         color: 'white',
         padding: '18px',
-       
+        marginLeft: '50px'
       }}>
 
         {/* Quick Links - Top Center */}
-        <Box sx={{ textAlign: 'center', mb: 1 }}>
+        <Box sx={{ textAlign: 'center', mb: 1 , maxwidth:"1200px"}}>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, mb: 1, fontFamily: "'Pacifico', cursive", }}>
             Quick Links
           </Typography>
@@ -111,19 +109,20 @@ function Footer() {
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 4,
-            flexWrap: 'wrap'
+            gap: 6,
+            flexWrap: 'wrap',
+            mb:5,
           }}>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline' }, fontFamily: "'Pacifico', cursive", }}>
+            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline'}}}>
               Home
             </Link>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline' }, fontFamily: "'Pacifico', cursive", }}>
+            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline'} }}>
               About
             </Link>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline' }, fontFamily: "'Pacifico', cursive", }}>
+            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline' }}}>
               Services
             </Link>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline' }, fontFamily: "'Pacifico', cursive", }}>
+            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline'}}}>
               Contact
             </Link>
           </Box>
