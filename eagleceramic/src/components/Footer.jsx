@@ -88,20 +88,21 @@ function Footer() {
         p: 1,
         borderTop: '1px solid',
         borderColor: 'divider',
-        padding: '10px',
-        marginTop: '5%'
+        marginTop: '5%',
+        width:"100%",
+      
       }}
       component="footer"
     >
-      <Container sx={{
+      <Container maxWidth={false} sx={{
         backgroundColor: '#016B61',
         color: 'white',
         padding: '18px',
-        marginLeft: '50px'
+          
       }}>
 
         {/* Quick Links - Top Center */}
-        <Box sx={{ textAlign: 'center', mb: 1 }}>
+        <Box sx={{ textAlign: 'center', mb: 1 , maxwidth:"1200px"}}>
           <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, mb: 1, fontFamily: "'Pacifico', cursive", }}>
             Quick Links
           </Typography>
