@@ -1,18 +1,19 @@
 import React, { memo, useState } from "react";
-import {
-  Button,
-  Typography,
-  Box,
-  Toolbar,
-  AppBar,
-  IconButton,
-  Drawer,
-  List,
-  ListItemButton,
-} from "@mui/material";
+import  Button from "@mui/material/Button";
+import  Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import AppBar from "@mui/material/AppBar";
+import IconButton from "@mui/material/IconButton";
+import Drawer from "@mui/material/Drawer";
+import List from "@mui/material/List";
+import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
+import About from "../pages/AboutUs";
+import Contact from "../pages/ContactUs";
+import Services from "../pages/Services";
 
 const fadeDown = {
   initial: { opacity: 0, y: -15 },
