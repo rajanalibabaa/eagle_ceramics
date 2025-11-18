@@ -125,7 +125,7 @@ const HeroSection = () => {
               fontSize: { xs: "28px", sm: "34px", md: "42px", lg: "48px" },
             }}
           >
-            Welcome to Our <strong>Eagle Ceramics</strong>
+            Welcome to Our <strong>EAGLE CERAMICS</strong>
           </Typography>
         </motion.div>
 

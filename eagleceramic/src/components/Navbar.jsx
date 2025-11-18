@@ -56,7 +56,7 @@ const Navbar = () => {
               color: "white",
             }}
           >
-            Eagle Ceramics
+           EAGLE CERAMICS
           </Typography>
 
           <Box
