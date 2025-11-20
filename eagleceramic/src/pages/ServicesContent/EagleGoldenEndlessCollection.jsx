@@ -1,7 +1,6 @@
 import React, { useState, useCallback, lazy, Suspense, memo } from "react";
 import { Box, Container, Typography, Modal, IconButton, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-
 const ServicesCollectionCard = lazy(() =>
   import("../ServicesContent/ServicesCollectionCard ")
 );
@@ -12,10 +11,51 @@ import aliceMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION AliceGrey.jp
 import aliceHover from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION AliceGrey2.jpg";
 import bentonMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION BentonMain.jpg";
 import bentonHover from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION BentonSub.jpg";
+import dalbyMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION DalbyMain.jpg";
+import dalbysub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION Dalbysub.jpg";
+import egyptoaquaMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION EGYPTOAQUAMain.jpg";
+import egyptoauqaSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION EgyptoAquasub.jpg";
+import emperiorgreenMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION EmperiogreenMain.jpg";
+import emperiorgreenSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION Emperiorgreensub.jpg";
+import evablueMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION EvaBlueMain.jpg";
+import evablueSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION EvaBluesub.jpg";
+import flockMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION FlockMain.jpg";
+import flockSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION Flocksub.jpg";
+import fosterGreenMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION ForsterGreenMain.jpg";
+import fosterGreenSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION FosterGreenSub.jpg";
+import glamBlueMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION GlamBlueMain.jpg";
+import glamBlueSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION GlamBluesub.jpg";
+import goldWaveMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION GoldWaveMain.jpg";
+import goldWaveSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION GoldWavesub.jpg";
+import harbourgreyMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION HarbourGreyMain.jpg";
+import harbourgreySub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION HarbourGreysub.jpg";
+import jetcofinoMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION JetCofinoMain.jpg";
+import jetcofinoSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION JetCofinoSub.jpg";
+import KerobaBlueMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION KerobaBlueMain.jpg";
+import KerobaBlueSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION KerobaBluesub.jpg";
+import LoxtonMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION LoxtonMain.jpg";
+import LoxtonSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION LoxtonSub.jpg";
+import NewtonGreyMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION NewtonGreyMain.jpg";
+import NewtonGreySub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION NewtonGreySub.jpg";
+import nohatGreenMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION NohatGreenMain.jpg";
+import nohatGreenSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION NohatGreensub.jpg";
+import qotaBlackMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION QotaBlackMain.jpg";
+import qotaBlackSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION QotaBlacksub.jpg";
+import recardoSkyMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION RecardoSkyMain.jpg";
+import recardoSkySub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION RecardoSkysub.jpg";
+import roftGoldGreyMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION RoftGoldGreyMain.jpg";
+import roftGoldGreySub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION RoftGoldGreysub.jpg";
+import SconeYellowMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION SconeYellowMain.jpg";
+import SconeYellowSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION SconeYellowSub.jpg";
+import ShineSkyMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION ShineSkyMain.jpg";
+import ShineSkySub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION ShineSkySub.jpg";
+import WintoBlueMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION WintoBlueMain.jpg";
+import WintoBlueSub from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION WintoBluesub.jpg";
 
 import pdf from "../../assets/pdf/EAGLE GOLDEN ENDLESS COLLECTION 600X1200MM.pdf";
 
 const EagleGoldenEndlessCollection = memo(() => {
+
   const [openPdf, setOpenPdf] = useState(false);
   const [currentPdf, setCurrentPdf] = useState("");
 
@@ -29,10 +69,35 @@ const EagleGoldenEndlessCollection = memo(() => {
     setCurrentPdf("");
   }, []);
 
+  const goldenCollection = [
+    { main: goldenMain, hover: goldenHover, title: "ADRESON BLUE" },
+    { main: aliceMain, hover: aliceHover, title: "ALICE GREY" },
+    { main: bentonMain, hover: bentonHover, title: "BENTON GREEN" },
+    { main: dalbyMain, hover: dalbysub, title: "DALBY BLUE" },
+    { main: egyptoaquaMain, hover: egyptoauqaSub, title: "EGYPTO AQUA" },
+    { main: emperiorgreenMain, hover: emperiorgreenSub, title: "EMPERIO GREEN" },
+    { main: evablueMain, hover: evablueSub, title: "EVA BLUE" },
+    { main: flockMain, hover: flockSub, title: "FLOCK" },
+    { main: fosterGreenMain, hover: fosterGreenSub, title: "FORSTER GREEN" },
+    { main: glamBlueMain, hover: glamBlueSub, title: "GLAM BLUE" },
+    { main: goldWaveMain, hover: goldWaveSub, title: "GOLD WAVE" },
+    { main: harbourgreyMain, hover: harbourgreySub, title: "HARBOUR GREY" },
+    { main: jetcofinoMain, hover: jetcofinoSub, title: "JETCO FINO" },
+    { main: KerobaBlueMain, hover: KerobaBlueSub, title: "KEROBA BLUE" },
+    { main: LoxtonMain, hover: LoxtonSub, title: "LOXTON" },
+    { main: NewtonGreyMain, hover: NewtonGreySub, title: "NEWTON GREY" },
+    { main: nohatGreenMain, hover: nohatGreenSub, title: "NOHAT GREEN" },
+    { main: qotaBlackMain, hover: qotaBlackSub, title: "QOTA BLACK" },
+    { main: recardoSkyMain, hover: recardoSkySub, title: "RECARDO SKY" },
+    { main: roftGoldGreyMain, hover: roftGoldGreySub, title: "ROFF GOLD GREY" },
+    { main: SconeYellowMain, hover: SconeYellowSub, title: "SCONE YELLOW" },
+    { main: ShineSkyMain, hover: ShineSkySub, title: "SHINE SKY" },
+    { main: WintoBlueMain, hover: WintoBlueSub, title: "WINTO BLUE" },
+  ];
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      
-    <Box >
+
       <Typography
         variant="h4"
         align="center"
@@ -41,61 +106,23 @@ const EagleGoldenEndlessCollection = memo(() => {
         Golden Endless Collection - Version 1
       </Typography>
 
-      <Suspense fallback={<CircularProgress sx={{ display: "block", mx: "auto" }} />}>
-        <ServicesCollectionCard
-          mainImage={goldenMain}
-          hoverImage={goldenHover}
-          title="ADRESON BLUE"
-          subtitle="Explore More"
-          pdfFile={pdf}
-          onExploreClick={handleOpenPdf}
-        />
-      </Suspense>
-      </Box>
+      {goldenCollection.map((item, index) => (
+        <Box key={index} sx={{ mt: index === 0 ? 0 : 12 }}>
+          <Suspense
+            fallback={<CircularProgress sx={{ display: "block", mx: "auto" }} />}
+          >
+            <ServicesCollectionCard
+              mainImage={item.main}
+              hoverImage={item.hover}
+              title={item.title}
+              subtitle="Explore More"
+              pdfFile={pdf}
+              onExploreClick={handleOpenPdf}
+            />
+          </Suspense>
+        </Box>
+      ))}
 
-      <Box sx={{ mt: 12 }}>
-        <Typography
-          variant="h4"
-          align="center"
-          sx={{ color: "#F87B1B", mb: 4 }}
-        >
-          Golden Endless Collection - Version 2
-        </Typography>
-
-        <Suspense fallback={<CircularProgress sx={{ display: "block", mx: "auto" }} />}>
-          <ServicesCollectionCard
-            mainImage={aliceMain}
-            hoverImage={aliceHover}
-            title="ALICE GREY"
-            subtitle="Explore More"
-            pdfFile={pdf}
-            onExploreClick={handleOpenPdf}
-          />
-        </Suspense>
-      </Box>
-
-      <Box sx={{ mt: 12 }}>
-        <Typography
-          variant="h4"
-          align="center"
-          sx={{ color: "#F87B1B", mb: 4 }}
-        >
-          Golden Endless Collection - Version 3
-        </Typography>
-
-        <Suspense fallback={<CircularProgress sx={{ display: "block", mx: "auto" }} />}>
-          <ServicesCollectionCard
-            mainImage={bentonMain}
-            hoverImage={bentonHover}
-            title="BENTON GREEN"
-            subtitle="Explore More"
-            pdfFile={pdf}
-            onExploreClick={handleOpenPdf}
-          />
-        </Suspense>
-      </Box>
-
-      {/* PDF Modal */}
       <Modal
         open={openPdf}
         onClose={handleClosePdf}
@@ -142,6 +169,7 @@ const EagleGoldenEndlessCollection = memo(() => {
           )}
         </Box>
       </Modal>
+
     </Container>
   );
 });
