@@ -27,7 +27,7 @@ const handleStatuarioClick = () => {
   return (
     <Box
       sx={{
-        width: "260px",
+        width: "310px",
         p: 2,
         borderRight: "1px solid #e0e0e0",
         fontFamily: "serif",
