@@ -24,11 +24,15 @@ const handleStatuarioClick = () => {
   navigate("/services/statuario-collection");
 };
 
+const handleGlossyClick = () => {
+  navigate("/services/glossy-collection");
+}
+
 
   return (
     <Box
       sx={{
-        width: "260px",
+        width: "310px",
         p: 2,
         borderRight: "1px solid #e0e0e0",
         fontFamily: "serif",
@@ -81,11 +85,15 @@ const handleStatuarioClick = () => {
             label="Golden Endless Collection(600 X 1200 MM)"
           />
           <FormControlLabel
-            control={<Checkbox size="small" />}
+            control={<Checkbox size="small" onChange={handleStatuarioClick} />}
             label="Statuario Collection(600 X 1200 MM)"
           />
           <FormControlLabel
-            control={<Checkbox size="small" onChange={handleStatuarioClick} />}
+            control={<Checkbox size="small" onChange={handleGlossyClick} />}
+            label="Glossy Collection(600 X 1200 MM)"
+          />
+          <FormControlLabel
+            control={<Checkbox size="small" />}
             label="Somany Collection"
           />
         </Box>
