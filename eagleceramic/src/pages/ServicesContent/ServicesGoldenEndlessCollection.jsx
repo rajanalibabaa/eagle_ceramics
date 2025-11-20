@@ -1,12 +1,14 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
-import img1 from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION 600X1200MM.jpg"
+import img1 from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION 600X1200MM.jpg";
+import img2 from "../../assets/EAGLE GOLDEN AdersonBlue.jpg";
+
 const ServicesGoldenEndlessCollection = () => {
   return (
     <Box
       sx={{
         width: "100%",
-        maxWidth: "900px",
+        maxWidth: "1200px",
         mx: "auto",
         position: "relative",
         cursor: "pointer",
@@ -17,87 +19,101 @@ const ServicesGoldenEndlessCollection = () => {
         sx={{
           position: "relative",
           overflow: "hidden",
-          "&:hover .hoverText": {
+          height: "500px",
+
+          // INITIAL STATES for your images
+          "& .mainImage": {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 1,
+            transition: "all 0.5s ease",
+          },
+          "& .hoverImage": {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            opacity: 0,
+            transition: "all 0.5s ease",
+          },
+
+          // HOVER STATES
+          "&:hover .mainImage": {
+            opacity: 0,
+            transform: "scale(1.08)",
+          },
+          "&:hover .hoverImage": {
+            opacity: 1,
+            transform: "scale(1.08)",
+          },
+          "&:hover .exploreText": {
             opacity: 1,
             transform: "translateY(0px)",
           },
         }}
       >
-        {/* IMAGE */}
-        <img
+        {/* MAIN IMAGE */}
+        <Box
+          component="img"
           src={img1}
-          alt="Collection"
-          style={{ width: "100%", display: "block" }}
+          alt="Golden Endless Collection"
+          className="mainImage"
         />
 
-        {/* HOVER TEXT */}
+        {/* HOVER IMAGE */}
         <Box
-          className="hoverText"
+          component="img"
+          src={img2}
+          alt="Golden Endless Collection Hover"
+          className="hoverImage"
+        />
+
+        {/* TITLE OVERLAY */}
+        <Box
           sx={{
             position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, 10px)",
-            opacity: 0,
-            transition: "0.4s ease",
-            background: "rgba(255,255,255,0.9)",
-            px: 2,
-            py: 0.5,
-            borderRadius: "4px",
-            boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+            bottom: 0,
+            width: "100%",
+            bgcolor: "rgba(255,255,255,0.55)",
+            py: 3,
+            textAlign: "center",
+            backdropFilter: "blur(3px)",
+            zIndex: 2,
           }}
         >
-          <Typography sx={{ fontSize: "16px", fontWeight: 500 }}>
-            ADRESON BLUE
-          </Typography>
-        </Box>
-      </Box>
-
-      {/* BOTTOM TEXT SECTION */}
-      <Box
-        sx={{
-          textAlign: "center",
-          mt: -8,
-          pb: 6,
-          background: "rgba(255,255,255,0.6)",
-          pt: 4,
-        }}
-      >
-        {/* TITLE WITH LINES */}
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: 2,
-          }}
-        >
-          <Box sx={{ width: "50px", height: "2px", background: "#555" }} />
           <Typography
             sx={{
               fontSize: "28px",
               letterSpacing: "2px",
-              fontWeight: 400,
-              color: "#2a2a2a",
+              color: "#000",
+              fontFamily: "serif",
+              fontWeight: 600,
             }}
           >
-            ADRESON BLUE
+            SIGNATURE COLLECTION
           </Typography>
-          <Box sx={{ width: "50px", height: "2px", background: "#555" }} />
-        </Box>
 
-        {/* Explore link */}
-        <Typography
-          sx={{
-            color: "red",
-            fontSize: "18px",
-            mt: 1.5,
-            cursor: "pointer",
-            "&:hover": { textDecoration: "underline" },
-          }}
-        >
-          Explore Collection
-        </Typography>
+          <Typography
+            className="exploreText"
+            sx={{
+              mt: 1,
+              fontSize: "18px",
+              color: "#b51a1a",
+              opacity: 0,
+              transform: "translateY(15px)",
+              transition: "all 0.4s ease",
+              fontWeight: 500,
+            }}
+          >
+            Explore Collections
+          </Typography>
+        </Box>
       </Box>
     </Box>
   );
