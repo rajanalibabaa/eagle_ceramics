@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import {
   Box,
   Typography,
@@ -12,7 +13,16 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const ServiceSideBar = () => {
+    const navigate = useNavigate();
   const [openCollection, setOpenCollection] = useState(true);
+
+ const handleGoldenClick = () => {
+  navigate("/services/golden-endless-collection");
+};
+const handleStatuarioClick = () => {
+  navigate("/services/statuario-collection");
+};
+
 
   return (
     <Box
@@ -66,15 +76,15 @@ const ServiceSideBar = () => {
       <Collapse in={openCollection}>
         <Box sx={{ mt: 1 }}>
           <FormControlLabel
-            control={<Checkbox size="small" />}
-            label="Golden Endless Collection"
+            control={<Checkbox size="small" onChange={handleGoldenClick} />}
+            label="Golden Endless Collection(600 X 1200 MM)"
           />
           <FormControlLabel
             control={<Checkbox size="small" />}
-            label="Signature Collection"
+            label="Statuario Collection(600 X 1200 MM)"
           />
           <FormControlLabel
-            control={<Checkbox size="small" />}
+            control={<Checkbox size="small" onChange={handleStatuarioClick} />}
             label="Somany Collection"
           />
         </Box>
