@@ -1,4 +1,5 @@
 import React, { memo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import  Button from "@mui/material/Button";
 import  Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
@@ -23,6 +24,7 @@ const fadeDown = {
 };
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
   return (
@@ -55,7 +57,10 @@ const Navbar = () => {
               fontSize: { xs: "22px", sm: "26px", md: "28px" },
               fontWeight: "bold",
               color: "white",
+              cursor: "pointer",
+
             }}
+            onClick={() => navigate("/")}
           >
            EAGLE CERAMICS
           </Typography>
@@ -72,6 +77,7 @@ const Navbar = () => {
               sx={{ fontWeight: 600 }}
               component={motion.button}
               whileHover={{ scale: 1.04 }}
+              onClick={() => navigate("/")}
             >
               HOME
             </Button>
@@ -81,6 +87,7 @@ const Navbar = () => {
               sx={{ fontWeight: 600 }}
               component={motion.button}
               whileHover={{ scale: 1.04 }}
+              onClick={()=> navigate("/about")}
             >
               ABOUT US
             </Button>
@@ -90,24 +97,27 @@ const Navbar = () => {
               sx={{ fontWeight: 600 }}
               component={motion.button}
               whileHover={{ scale: 1.04 }}
+              onClick={() => navigate("/services")}
             >
               SERVICES
             </Button>
-
+{/* 
             <Button
               color="inherit"
               sx={{ fontWeight: 600 }}
               component={motion.button}
               whileHover={{ scale: 1.04 }}
+              onClick={() => navigate("/blog")}
             >
               BLOG
-            </Button>
+            </Button> */}
 
             <Button
               color="inherit"
               sx={{ fontWeight: 600 }}
               component={motion.button}
               whileHover={{ scale: 1.04 }}
+              onClick={() => navigate("/contact")}
             >
               CONTACT US
             </Button>
@@ -143,25 +153,26 @@ const Navbar = () => {
           </Box>
 
           <List>
-            <ListItemButton sx={{ py: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>HOME</Typography>
-            </ListItemButton>
+            <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/"); setOpen(false); }}>
+  <Typography sx={{ fontWeight: 600 }}>HOME</Typography>
+</ListItemButton>
 
-            <ListItemButton sx={{ py: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>ABOUT US</Typography>
-            </ListItemButton>
+<ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/about"); setOpen(false); }}>
+  <Typography sx={{ fontWeight: 600 }}>ABOUT US</Typography>
+</ListItemButton>
 
-            <ListItemButton sx={{ py: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>SERVICES</Typography>
-            </ListItemButton>
+<ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/services"); setOpen(false); }}>
+  <Typography sx={{ fontWeight: 600 }}>SERVICES</Typography>
+</ListItemButton>
 
-            <ListItemButton sx={{ py: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>BLOG</Typography>
-            </ListItemButton>
+{/* <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/blog"); setOpen(false); }}>
+  <Typography sx={{ fontWeight: 600 }}>BLOG</Typography>
+</ListItemButton> */}
 
-            <ListItemButton sx={{ py: 2 }}>
-              <Typography sx={{ fontWeight: 600 }}>CONTACT US</Typography>
-            </ListItemButton>
+<ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/contact"); setOpen(false); }}>
+  <Typography sx={{ fontWeight: 600 }}>CONTACT US</Typography>
+</ListItemButton>
+
           </List>
         </Box>
       </Drawer>

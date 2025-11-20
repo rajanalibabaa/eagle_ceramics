@@ -1,8 +1,10 @@
 import React from 'react'
-
+import ServiceSideBar from "./ServicesContent/ServiceSideBar";
 const Services = () => {
   return (
-    <div>Services</div>
+  <>
+  <ServiceSideBar/>
+  </>
   )
 }
 

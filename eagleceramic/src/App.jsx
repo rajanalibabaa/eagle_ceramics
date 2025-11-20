@@ -2,11 +2,15 @@ import React, { Suspense } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-const Navbar = React.lazy(()=> import ("./components/Navbar.jsx"))
-const HomePage = React.lazy(()=> import ("./pages/HomePage.jsx"))
-const Footer = React.lazy(() => import("./components/Footer.jsx"));
-const ContactUs = React.lazy(() => import ("./pages/ContactUs.jsx"))
+const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"))
 
+const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"))
+const Navbar = React.lazy(() => import("./components/Navbar.jsx"))
+const HomePage = React.lazy(() => import("./pages/HomePage.jsx"))
+const AboutUs = React.lazy(() => import("./pages/AboutUs.jsx"))
+const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"))
+const Services = React.lazy(() => import("./pages/Services.jsx"))
+const Footer = React.lazy(() => import("./components/Footer.jsx"))
 
 
 
@@ -19,21 +23,26 @@ const theme = createTheme({
 function App() {
 
   return (
-      <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}>
       <Router>
-        <Suspense>
+        <Suspense fallback={<div>Loading...</div>}>
+          <MainPopUp />
           <Navbar />
           <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/ContactUs" element={<ContactUs/>}/>
-            </Routes>
-                 <Footer/>           
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/services" element={<Services />} />
+
+            <Route path="statuario-collection" element={<StatuarioCollection />} />
+          </Routes>
+          <Footer />
         </Suspense>
       </Router>
-      </ThemeProvider>
- 
+    </ThemeProvider>
+
   )
- 
+
 }
 
 export default App
