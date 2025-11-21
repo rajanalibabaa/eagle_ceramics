@@ -12,7 +12,7 @@ const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const Services = React.lazy(() => import("./pages/Services.jsx"));
 const EagleGoldenEndlessCollection = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollection.jsx"));
 const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"));
-
+const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/GlossyCollection.jsx"));
 import Footer from './components/Footer.jsx';
 
 const theme = createTheme({
@@ -35,6 +35,7 @@ function App() {
             <Route path="/services" element={<Services />}>
               <Route path="golden-endless-collection" element={<EagleGoldenEndlessCollection />} />
               <Route path="statuario-collection" element={<StatuarioCollection />} />
+              <Route path="glossy-collection" element={<GlossyCollection />} />
             </Route>
           </Routes>
           <Footer/>

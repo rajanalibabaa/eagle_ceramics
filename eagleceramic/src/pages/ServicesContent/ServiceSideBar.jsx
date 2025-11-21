@@ -18,12 +18,17 @@ const ServiceSideBar = () => {
     const navigate = useNavigate();
   const [openCollection, setOpenCollection] = useState(true);
 
+
  const handleGoldenClick = () => {
   navigate("/services/golden-endless-collection");
 };
 const handleStatuarioClick = () => {
   navigate("/services/statuario-collection");
 };
+
+const handleGlossyClick = () => {
+  navigate("/services/glossy-collection");
+}
 
 
   return (
@@ -114,16 +119,19 @@ const handleStatuarioClick = () => {
 
     {/* OTHER COLLECTIONS */}
     <FormControlLabel
-      control={<Checkbox size="small" />}
-      label="Statuario Collection(600 X 1200 MM)"
-    />
-
-    <FormControlLabel
-      control={<Checkbox size="small" onChange={handleStatuarioClick} />}
-      label="Somany Collection"
-    />
-  </Box>
-</Collapse>
+        control={<Checkbox size="small" onChange={handleStatuarioClick} />}
+            label="Statuario Collection(600 X 1200 MM)"
+          />
+          <FormControlLabel
+            control={<Checkbox size="small" onChange={handleGlossyClick} />}
+            label="Glossy Collection(600 X 1200 MM)"
+          />
+          <FormControlLabel
+            control={<Checkbox size="small" />}
+            label="Somany Collection"
+          />
+        </Box>
+      </Collapse>
 
     </Box>
   );

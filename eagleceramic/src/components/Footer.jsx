@@ -1,16 +1,19 @@
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  Link,
-  IconButton,
-  TextField,
-  Button,
-  Divider,
-  Stack,
-} from '@mui/material';
-import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import IconButton from '@mui/material/IconButton';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Divider from '@mui/material/Divider';
+
+import Facebook from '@mui/icons-material/Facebook';
+import Twitter from '@mui/icons-material/Twitter';
+import Instagram from '@mui/icons-material/Instagram';
+import LinkedIn from '@mui/icons-material/LinkedIn';
+
 import React, { useState } from 'react';
 import cholaLogo from '../assets/cholaautomation_PoweredLogo.jpeg';
 
@@ -88,16 +91,15 @@ function Footer() {
         borderTop: '1px solid',
         borderColor: 'divider',
         marginTop: '5%',
-        width:"100%",
-      
+        maxWidth:'100%'
       }}
       component="footer"
     >
-      <Container maxWidth={false} sx={{
+      <Container 
+      maxWidth={false} sx={{
         backgroundColor: '#016B61',
         color: 'white',
         padding: '18px',
-          
       }}>
 
         {/* Quick Links - Top Center */}
