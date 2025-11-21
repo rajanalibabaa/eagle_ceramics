@@ -13,6 +13,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 const ServiceSideBar = () => {
+  const [openGoldenVersions, setOpenGoldenVersions] = useState(false);
+
     const navigate = useNavigate();
   const [openCollection, setOpenCollection] = useState(true);
 
@@ -73,22 +75,56 @@ const handleStatuarioClick = () => {
 
       <Divider sx={{ my: 1 }} />
 
-      <Collapse in={openCollection}>
-        <Box sx={{ mt: 1 }}>
+ <Collapse in={openCollection}>
+  <Box sx={{ mt: 1 }}>
+
+    {/* GOLDEN ENDLESS MAIN OPTION WITH TOGGLE */}
+    <Box
+      sx={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        cursor: "pointer",
+        ml: 0.5,
+      }}
+      onClick={() => setOpenGoldenVersions(!openGoldenVersions)}
+    >
+      <FormControlLabel
+        control={<Checkbox size="small" onChange={handleGoldenClick} />}
+        label="Golden Endless Collection (600 X 1200 MM)"
+      />
+
+      <IconButton size="small">
+        {openGoldenVersions ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+      </IconButton>
+    </Box>
+
+    {/* SUB-VERSIONS */}
+    <Collapse in={openGoldenVersions}>
+      <Box sx={{ ml: 5, mt: 1 }}>
+        {Array.from({ length: 3 }, (_, i) => (
           <FormControlLabel
-            control={<Checkbox size="small" onChange={handleGoldenClick} />}
-            label="Golden Endless Collection(600 X 1200 MM)"
-          />
-          <FormControlLabel
+            key={i}
             control={<Checkbox size="small" />}
-            label="Statuario Collection(600 X 1200 MM)"
+            label={`Version ${i + 1}`}
           />
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleStatuarioClick} />}
-            label="Somany Collection"
-          />
-        </Box>
-      </Collapse>
+        ))}
+      </Box>
+    </Collapse>
+
+    {/* OTHER COLLECTIONS */}
+    <FormControlLabel
+      control={<Checkbox size="small" />}
+      label="Statuario Collection(600 X 1200 MM)"
+    />
+
+    <FormControlLabel
+      control={<Checkbox size="small" onChange={handleStatuarioClick} />}
+      label="Somany Collection"
+    />
+  </Box>
+</Collapse>
+
     </Box>
   );
 };
