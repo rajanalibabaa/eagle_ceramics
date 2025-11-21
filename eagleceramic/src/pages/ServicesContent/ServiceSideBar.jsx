@@ -1,140 +1,135 @@
-import React, { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import React, { useState, useEffect } from 'react';
 import {
-  Box,
-  Typography,
-  Checkbox,
-  FormControlLabel,
-  Collapse,
-  IconButton,
-  Divider
-} from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+  Box, Typography, Checkbox,
+  FormControlLabel, Collapse,
+  IconButton, Divider
+} from '@mui/material';
+import {
+  ExpandMore as ExpandMoreIcon,
+  ExpandLess as ExpandLessIcon
+} from '@mui/icons-material';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const ServiceSideBar = () => {
+export default function ServiceSideBar() {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [, , collection, maybeVersion] = pathname.split('/');
+
+  const [openCollections, setOpenCollections] = useState(true);
   const [openGoldenVersions, setOpenGoldenVersions] = useState(false);
 
-    const navigate = useNavigate();
-  const [openCollection, setOpenCollection] = useState(true);
+  // auto‐open “Golden Versions” whenever you're on that collection
+  useEffect(() => {
+    setOpenCollections(true);
+    setOpenGoldenVersions(collection === 'golden-endless-collection');
+  }, [collection]);
 
-
- const handleGoldenClick = () => {
-  navigate("/services/golden-endless-collection");
-};
-const handleStatuarioClick = () => {
-  navigate("/services/statuario-collection");
-};
-
-const handleGlossyClick = () => {
-  navigate("/services/glossy-collection");
-}
-
+  const go = (to) => () => navigate(to);
 
   return (
     <Box
       sx={{
-        width: "310px",
-        p: 2,
-        borderRight: "1px solid #e0e0e0",
-        fontFamily: "serif",
+        width: 320, p: 2,
+        borderRight: '1px solid #e0e0e0',
+        position: 'sticky', top: 100,
+        height: 'calc(100vh - 100px)',
+        overflowY: 'auto',
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+      {/* header */}
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+        <Typography sx={{ fontSize: 18, fontWeight: 500 }}>Shop By</Typography>
         <Typography
-          sx={{ fontSize: "18px", fontWeight: 500, color: "#2a2a2a" }}
-        >
-          Shop By
-        </Typography>
-
-        <Typography
-          sx={{
-            fontSize: "14px",
-            color: "red",
-            cursor: "pointer",
-          }}
+          sx={{ fontSize: 14, color: 'red', cursor: 'pointer' }}
+          onClick={() => navigate(pathname, { replace: true }) }
         >
           Clear All
         </Typography>
       </Box>
-
-      <Box sx={{ width: "100%", height: "2px", background: "#000", mb: 2 }} />
+      <Divider sx={{ mb: 2 }} />
 
       <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          cursor: "pointer",
-          alignItems: "center",
-        }}
-        onClick={() => setOpenCollection(!openCollection)}
+        sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+        onClick={() => setOpenCollections(c => !c)}
       >
-        <Typography sx={{ fontSize: "22px", color: "#464646" }}>
-          Collection
-        </Typography>
-
+        <Typography sx={{ fontSize: 22 }}>Collection</Typography>
         <IconButton size="small">
-          {openCollection ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          {openCollections ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
         </IconButton>
       </Box>
-
       <Divider sx={{ my: 1 }} />
 
- <Collapse in={openCollection}>
-  <Box sx={{ mt: 1 }}>
-
-    {/* GOLDEN ENDLESS MAIN OPTION WITH TOGGLE */}
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        cursor: "pointer",
-        ml: 0.5,
-      }}
-      onClick={() => setOpenGoldenVersions(!openGoldenVersions)}
-    >
-      <FormControlLabel
-        control={<Checkbox size="small" onChange={handleGoldenClick} />}
-        label="Golden Endless Collection (600 X 1200 MM)"
-      />
-
-      <IconButton size="small">
-        {openGoldenVersions ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-      </IconButton>
-    </Box>
-
-    {/* SUB-VERSIONS */}
-    <Collapse in={openGoldenVersions}>
-      <Box sx={{ ml: 5, mt: 1 }}>
-        {Array.from({ length: 3 }, (_, i) => (
+      <Collapse in={openCollections}>
+        {/* Golden Endless */}
+        <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5 }}>
           <FormControlLabel
-            key={i}
-            control={<Checkbox size="small" />}
-            label={`Version ${i + 1}`}
+            control={
+              <Checkbox
+                size="small"
+                checked={collection === 'golden-endless-collection' && !maybeVersion}
+                onChange={go('/services/golden-endless-collection')}
+              />
+            }
+            label="Golden Endless Collection"
           />
-        ))}
-      </Box>
-    </Collapse>
-
-    {/* OTHER COLLECTIONS */}
-    <FormControlLabel
-        control={<Checkbox size="small" onChange={handleStatuarioClick} />}
-            label="Statuario Collection(600 X 1200 MM)"
-          />
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleGlossyClick} />}
-            label="Glossy Collection(600 X 1200 MM)"
-          />
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            label="Somany Collection"
-          />
+          <IconButton
+            size="small"
+            onClick={e => { e.stopPropagation(); setOpenGoldenVersions(o => !o); }}
+          >
+            {openGoldenVersions ? <ExpandLessIcon/> : <ExpandMoreIcon/>}
+          </IconButton>
         </Box>
-      </Collapse>
 
+        {/* Golden Versions */}
+        <Collapse in={openGoldenVersions}>
+          <Box sx={{ ml: 5, display: 'flex', flexDirection: 'column', gap: 1 }}>
+            {[
+              ['All Versions',       '/services/golden-endless-collection',      !maybeVersion],
+              ['Version 0',          '/services/golden-endless-collection/v0',  maybeVersion==='v0'],
+              ['Version 1',          '/services/golden-endless-collection/v1',  maybeVersion==='v1'],
+              ['Version 2',          '/services/golden-endless-collection/v2',  maybeVersion==='v2'],
+            ].map(([label, url, isChecked]) => (
+              <FormControlLabel
+                key={label}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={isChecked}
+                    onChange={go(url)}
+                  />
+                }
+                label={label}
+              />
+            ))}
+          </Box>
+        </Collapse>
+
+        {/* Statuario */}
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === 'statuario-collection'}
+              onChange={go('/services/statuario-collection')}
+            />
+          }
+          label="Statuario Collection"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+        {/* Glossy */}
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === 'glossy-collection'}
+              onChange={go('/services/glossy-collection')}
+            />
+          }
+          label="Glossy Collection"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+      </Collapse>
     </Box>
   );
-};
-
-export default ServiceSideBar;
+}
