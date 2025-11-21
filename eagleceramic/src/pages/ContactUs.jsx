@@ -54,7 +54,7 @@ export default function ContactUs() {
             backgroundColor: 'transparent',
             }}>
             <Typography variant="h5" fontWeight={'bold'} sx={{fontSize:50}} gutterBottom>
-              Get in Touch
+              Get in Touch    
             </Typography>
             <Typography variant="body1" sx={{ mt: 2 ,fontSize:20}}>
               Whether you’re renovating, building, or exploring design ideas, our tile and

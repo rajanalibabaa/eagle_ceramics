@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 
+
 // Lazy imports
 const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
@@ -13,7 +14,12 @@ const Services = React.lazy(() => import("./pages/Services.jsx"));
 const EagleGoldenEndlessCollection = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollection.jsx"));
 const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"));
 const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/GlossyCollection.jsx"));
-import Footer from './components/Footer.jsx';
+const MattCarvingEndlessCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingEndlessCollection.jsx"));
+const SnpCollection = React.lazy(() => import("./pages/ServicesContent/SnpCollection.jsx"));
+const ThreeDimensionCollection = React.lazy(() => import("./pages/ServicesContent/ThreeDimensionCollection.jsx"));
+const DoubleChargeCollection = React.lazy(() => import("./pages/ServicesContent/DoubleChargeCollection.jsx"));
+const MattCarvingCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingCollection.jsx"));
+const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
 const theme = createTheme({
   typography: {
@@ -36,6 +42,11 @@ function App() {
               <Route path="golden-endless-collection" element={<EagleGoldenEndlessCollection />} />
               <Route path="statuario-collection" element={<StatuarioCollection />} />
               <Route path="glossy-collection" element={<GlossyCollection />} />
+              <Route path="matt-carving-endless-collection" element={<MattCarvingEndlessCollection />} />
+              <Route path="snp-collection" element={<SnpCollection />} />
+              <Route path="three-dimension-collection" element={<ThreeDimensionCollection />} />
+              <Route path="double-charge-collection" element={<DoubleChargeCollection/>} />
+              <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
             </Route>
           </Routes>
           <Footer/>

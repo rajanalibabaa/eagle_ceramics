@@ -9,16 +9,7 @@ const ServicesCollectionCard = ({
   titleColor = "#000",
   subtitleColor = "#b51a1a",
   overlayBg = "rgba(255,255,255,0.55)",
-  pdfFile, // New prop for PDF
-  onExploreClick, // New prop for click handler
 }) => {
-  
-  const handleClick = () => {
-    if (onExploreClick && pdfFile) {
-      onExploreClick(pdfFile);
-    }
-  };
-
   return (
     <Box
       sx={{
@@ -28,7 +19,6 @@ const ServicesCollectionCard = ({
         position: "relative",
         cursor: "pointer",
       }}
-      onClick={handleClick}
     >
       <Box
         sx={{
@@ -41,7 +31,7 @@ const ServicesCollectionCard = ({
             left: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
+            objectFit: "contain",
             opacity: 1,
             transition: "all 0.5s ease",
           },
@@ -51,7 +41,7 @@ const ServicesCollectionCard = ({
             left: 0,
             width: "100%",
             height: "100%",
-            objectFit: "cover",
+            objectFit: "contain",
             opacity: 0,
             transition: "all 0.5s ease",
           },

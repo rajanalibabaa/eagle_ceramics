@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Typography,
@@ -15,21 +15,40 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 const ServiceSideBar = () => {
   const [openGoldenVersions, setOpenGoldenVersions] = useState(false);
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [openCollection, setOpenCollection] = useState(true);
 
 
- const handleGoldenClick = () => {
-  navigate("/services/golden-endless-collection");
-};
-const handleStatuarioClick = () => {
-  navigate("/services/statuario-collection");
-};
+  const handleGoldenClick = () => {
+    navigate("/services/golden-endless-collection");
+  };
+  const handleStatuarioClick = () => {
+    navigate("/services/statuario-collection");
+  };
 
-const handleGlossyClick = () => {
-  navigate("/services/glossy-collection");
-}
+  const handleGlossyClick = () => {
+    navigate("/services/glossy-collection");
+  }
 
+  const handleMattCarvingEndlessClick = () => {
+    navigate("/services/matt-carving-endless-collection");
+  }
+
+  const handleSnpClick = () => {
+    navigate("/services/snp-collection");
+  }
+
+  const handleThreeDimensionClick = () => {
+    navigate("/services/three-dimension-collection");
+  }
+
+  const handleDoubleChargeClick = () => {
+    navigate("/services/double-charge-collection");
+  }
+
+  const handleMattCarvingClick = () => {
+    navigate("/services/matt-carving-collection");
+  }
 
   return (
     <Box
@@ -80,52 +99,76 @@ const handleGlossyClick = () => {
 
       <Divider sx={{ my: 1 }} />
 
- <Collapse in={openCollection}>
-  <Box sx={{ mt: 1 }}>
+      <Collapse in={openCollection}>
+        <Box sx={{ mt: 1 }}>
 
-    {/* GOLDEN ENDLESS MAIN OPTION WITH TOGGLE */}
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        cursor: "pointer",
-        ml: 0.5,
-      }}
-      onClick={() => setOpenGoldenVersions(!openGoldenVersions)}
-    >
-      <FormControlLabel
-        control={<Checkbox size="small" onChange={handleGoldenClick} />}
-        label="Golden Endless Collection (600 X 1200 MM)"
-      />
+          {/* GOLDEN ENDLESS MAIN OPTION WITH TOGGLE */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              cursor: "pointer",
+              ml: 0.5,
+            }}
+            onClick={() => setOpenGoldenVersions(!openGoldenVersions)}
+          >
+            <FormControlLabel
+              control={<Checkbox size="small" onChange={handleGoldenClick} />}
+              label="Golden Endless Collection (600 X 1200 MM)"
+            />
 
-      <IconButton size="small">
-        {openGoldenVersions ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-      </IconButton>
-    </Box>
+            <IconButton size="small">
+              {openGoldenVersions ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+            </IconButton>
+          </Box>
 
-    {/* SUB-VERSIONS */}
-    <Collapse in={openGoldenVersions}>
-      <Box sx={{ ml: 5, mt: 1 }}>
-        {Array.from({ length: 3 }, (_, i) => (
+          {/* SUB-VERSIONS */}
+          <Collapse in={openGoldenVersions}>
+            <Box sx={{ ml: 5, mt: 1 }}>
+              {Array.from({ length: 3 }, (_, i) => (
+                <FormControlLabel
+                  key={i}
+                  control={<Checkbox size="small" />}
+                  label={`Version ${i + 1}`}
+                />
+              ))}
+            </Box>
+          </Collapse>
+
+          {/* OTHER COLLECTIONS */}
           <FormControlLabel
-            key={i}
-            control={<Checkbox size="small" />}
-            label={`Version ${i + 1}`}
-          />
-        ))}
-      </Box>
-    </Collapse>
-
-    {/* OTHER COLLECTIONS */}
-    <FormControlLabel
-        control={<Checkbox size="small" onChange={handleStatuarioClick} />}
+            control={<Checkbox size="small" onChange={handleStatuarioClick} />}
             label="Statuario Collection(600 X 1200 MM)"
           />
           <FormControlLabel
             control={<Checkbox size="small" onChange={handleGlossyClick} />}
             label="Glossy Collection(600 X 1200 MM)"
           />
+          <FormControlLabel
+            control={<Checkbox size="small" onChange={handleMattCarvingEndlessClick} />}
+            label="Matt Carving Endless Collection(600 X 1200 MM)"
+          />
+           <FormControlLabel
+            control={<Checkbox size="small" onChange={handleSnpClick} />}
+            label="Snp Collection(600 X 1200 MM)"
+          />
+
+          <FormControlLabel
+            control={<Checkbox size="small" onChange={handleThreeDimensionClick} />}
+            label="3D Collection(600 X 1200 MM)"
+          />
+
+          <FormControlLabel
+            control={<Checkbox size="small" onChange={handleDoubleChargeClick} />}
+            label="Double Charge Collection(600 X 1200 MM)"
+          />
+
+          <FormControlLabel
+            control={<Checkbox size="small" onChange={handleMattCarvingClick} />}
+            label="Matt Carving Collection(600 X 1200 MM)"
+          />
+
           <FormControlLabel
             control={<Checkbox size="small" />}
             label="Somany Collection"
