@@ -18,7 +18,7 @@ import BronzoMixHover from "../../assets/BronzoMixHover.jpg";
 import Cava from "../../assets/Cava.jpg";
 import CavaHover from "../../assets/CavaHover.jpg";
 import Fliton from "../../assets/Fliton.jpg";
-import FlitonHover from "../../assets/FiltonHover.jpg";
+import FlitonHover from "../../assets/FlitonHover.jpg";
 import LaparetNashira from "../../assets/LaparetNashira.jpg";
 import LaparetNashiraHover from "../../assets/LaparetNashiraHover.jpg";
 import Maxero from "../../assets/Maxero.jpg";
@@ -36,8 +36,9 @@ import LipoonWhiteHover from "../../assets/LipoonWhiteHover.jpg";
 import Morgan from "../../assets/Morgan.jpg";
 import MorganHover from "../../assets/MorganHover.jpg";
 
-import Statuario from "../../assets/pdf/Statuario.pdf";
+import Statuario from "../../assets/pdf/statuario.pdf";
 import ServicesCollectionCard from './ServicesCollectionCard ';
+
 
 
 const StatuarioCollection = () => {
