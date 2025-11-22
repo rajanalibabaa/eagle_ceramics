@@ -192,7 +192,7 @@ export default function ServiceSideBar() {
             <Checkbox
               size="small"
               checked={collection === '/matt-carving-collection'}
-              onChange={go('/services/double-charge-collection')}
+              onChange={go('/services/matt-carving-collection')}
             />
           }
           label="Matt Carving Collection(600X1200MM)"

@@ -9,6 +9,8 @@ const ServicesCollectionCard = ({
   titleColor = "#000",
   subtitleColor = "#b51a1a",
   overlayBg = "rgba(255,255,255,0.55)",
+   pdfFile,
+  onExploreClick,
 }) => {
   return (
     <Box
@@ -19,6 +21,7 @@ const ServicesCollectionCard = ({
         position: "relative",
         cursor: "pointer",
       }}
+       onClick={() => onExploreClick && onExploreClick(pdfFile)}
     >
       <Box
         sx={{
@@ -97,20 +100,26 @@ const ServicesCollectionCard = ({
             {title}
           </Typography>
 
-          <Typography
-            className="exploreText"
-            sx={{
-              mt: 1,
-              fontSize: "18px",
-              color: subtitleColor,
-              opacity: 0,
-              transform: "translateY(15px)",
-              transition: "all 0.4s ease",
-              fontWeight: 500,
-            }}
-          >
-            {subtitle}
-          </Typography>
+         <Typography
+  className="exploreText"
+  onClick={(e) => {
+    e.stopPropagation();
+    onExploreClick && onExploreClick(pdfFile);
+  }}
+  sx={{
+    mt: 1,
+    fontSize: "18px",
+    color: subtitleColor,
+    opacity: 0,
+    transform: "translateY(15px)",
+    transition: "all 0.4s ease",
+    fontWeight: 500,
+    cursor: "pointer",
+  }}
+>
+  {subtitle}
+</Typography>
+
         </Box>
       </Box>
     </Box>

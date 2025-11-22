@@ -1,10 +1,10 @@
 import React, { useState, useCallback, lazy, Suspense, memo } from "react";
 import { Box, Container, Typography, Modal, IconButton, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+
 const ServicesCollectionCard = lazy(() =>
   import("../ServicesContent/ServicesCollectionCard ")
 );
-
 
 import goldenMain from "../../assets/EAGLE GOLDEN ENDLESS COLLECTION 600X1200MM.jpg";
 import goldenHover from "../../assets/EAGLE GOLDEN AdersonBlue.jpg";
