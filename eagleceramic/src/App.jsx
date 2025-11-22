@@ -20,6 +20,10 @@ const SnpCollection = React.lazy(() => import("./pages/ServicesContent/SnpCollec
 const ThreeDimensionCollection = React.lazy(() => import("./pages/ServicesContent/ThreeDimensionCollection.jsx"));
 const DoubleChargeCollection = React.lazy(() => import("./pages/ServicesContent/DoubleChargeCollection.jsx"));
 const MattCarvingCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingCollection.jsx"));
+const HighDepth = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepth.jsx"));
+const HighDepthV1 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV1.jsx"));
+const HighDepthV2 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV2.jsx"));
+const HighDepthV3 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV3.jsx"));
 const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
 const theme = createTheme({
@@ -55,6 +59,14 @@ function App() {
               <Route path="three-dimension-collection" element={<ThreeDimensionCollection />} />
               <Route path="double-charge-collection" element={<DoubleChargeCollection/>} />
               <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
+
+              <Route index element={<HighDepth/>} />
+                  <Route path="high-depth" element={<HighDepth />} />
+                   <Route path="high-depth/v0" element={<HighDepthV1 />} />
+                   <Route path="high-depth/v1" element={<HighDepthV2 />} />
+                   <Route path="high-depth/v2" element={<HighDepthV3 />} />
+
+
 
             </Route>
           </Routes>
