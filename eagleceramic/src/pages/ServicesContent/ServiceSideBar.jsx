@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import  IconButton from '@mui/material/IconButton';
+import  Divider from '@mui/material/Divider';
+import Collapse from '@mui/material/Collapse';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 import {
   ExpandMore as ExpandMoreIcon,
   ExpandLess as ExpandLessIcon
@@ -13,44 +19,23 @@ export default function ServiceSideBar() {
   const [openCollections, setOpenCollections] = useState(true);
   const [openGoldenVersions, setOpenGoldenVersions] = useState(false);
 
-  const [openCollection, setOpenCollection] = useState(true);
+  const clearAll = () => {
+    navigate('/services'); 
+  };
 
-  // Auto-open "Golden Versions" when on that collection
   useEffect(() => {
     setOpenCollections(true);
     setOpenGoldenVersions(collection === 'golden-endless-collection');
   }, [collection]);
 
-  const handleGoldenClick = () => {
-    navigate("/services/golden-endless-collection");
-  };
-  const handleStatuarioClick = () => {
-    navigate("/services/statuario-collection");
-  };
+  const go = (to) => () => navigate(to);
 
-  const handleGlossyClick = () => {
-    navigate("/services/glossy-collection");
-  }
-
-  const handleMattCarvingEndlessClick = () => {
-    navigate("/services/matt-carving-endless-collection");
-  }
-
-  const handleSnpClick = () => {
-    navigate("/services/snp-collection");
-  }
-
-  const handleThreeDimensionClick = () => {
-    navigate("/services/three-dimension-collection");
-  }
-
-  const handleDoubleChargeClick = () => {
-    navigate("/services/double-charge-collection");
-  }
-
-  const handleMattCarvingClick = () => {
-    navigate("/services/matt-carving-collection");
-  }
+  const goldenVersions = [
+    { label: 'All Versions', url: '/services/golden-endless-collection', isChecked: !maybeVersion },
+    { label: 'Version 1', url: '/services/golden-endless-collection/v0', isChecked: maybeVersion === 'v0' },
+    { label: 'Version 2', url: '/services/golden-endless-collection/v1', isChecked: maybeVersion === 'v1' },
+    { label: 'Version 3', url: '/services/golden-endless-collection/v2', isChecked: maybeVersion === 'v2' },
+  ];
 
   return (
     <Box
@@ -87,79 +72,18 @@ export default function ServiceSideBar() {
       </Box>
       <Divider sx={{ my: 1 }} />
 
-      <Collapse in={openCollection}>
-        <Box sx={{ mt: 1 }}>
-
-          {/* GOLDEN ENDLESS MAIN OPTION WITH TOGGLE */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              cursor: "pointer",
-              ml: 0.5,
-            }}
-            onClick={() => setOpenGoldenVersions(!openGoldenVersions)}
-          >
-            <FormControlLabel
-              control={<Checkbox size="small" onChange={handleGoldenClick} />}
-              label="Golden Endless Collection (600 X 1200 MM)"
-            />
-
-            <IconButton size="small">
-              {openGoldenVersions ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            </IconButton>
-          </Box>
-
-          {/* SUB-VERSIONS */}
-          <Collapse in={openGoldenVersions}>
-            <Box sx={{ ml: 5, mt: 1 }}>
-              {Array.from({ length: 3 }, (_, i) => (
-                <FormControlLabel
-                  key={i}
-                  control={<Checkbox size="small" />}
-                  label={`Version ${i + 1}`}
-                />
-              ))}
-            </Box>
-          </Collapse>
-
-          {/* OTHER COLLECTIONS */}
+      <Collapse in={openCollections}>
+        {/* Golden Endless Collection */}
+        <Box sx={{ display: 'flex', alignItems: 'center', ml: 0.5 }}>
           <FormControlLabel
-            control={<Checkbox size="small" onChange={handleStatuarioClick} />}
-            label="Statuario Collection(600 X 1200 MM)"
-          />
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleGlossyClick} />}
-            label="Glossy Collection(600 X 1200 MM)"
-          />
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleMattCarvingEndlessClick} />}
-            label="Matt Carving Endless Collection(600 X 1200 MM)"
-          />
-           <FormControlLabel
-            control={<Checkbox size="small" onChange={handleSnpClick} />}
-            label="Snp Collection(600 X 1200 MM)"
-          />
-
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleThreeDimensionClick} />}
-            label="3D Collection(600 X 1200 MM)"
-          />
-
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleDoubleChargeClick} />}
-            label="Double Charge Collection(600 X 1200 MM)"
-          />
-
-          <FormControlLabel
-            control={<Checkbox size="small" onChange={handleMattCarvingClick} />}
-            label="Matt Carving Collection(600 X 1200 MM)"
-          />
-
-          <FormControlLabel
-            control={<Checkbox size="small" />}
-            label="Somany Collection"
+            control={
+              <Checkbox
+                size="small"
+                checked={collection === 'golden-endless-collection' && !maybeVersion}
+                onChange={go('/services/golden-endless-collection')}
+              />
+            }
+            label="Golden Endless Collection(600X1200MM)"
           />
           <IconButton
             size="small"
@@ -214,6 +138,64 @@ export default function ServiceSideBar() {
             />
           }
           label="Glossy Collection(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/matt-carving-endless-collection'}
+              onChange={go('/services/matt-carving-endless-collection')}
+            />
+          }
+          label="Matt Carving Endless Collection(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/snp-collection'}
+              onChange={go('/services/snp-collection')}
+            />
+          }
+          label="SNP COLLECTION(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/three-dimension-collection'}
+              onChange={go('/services/three-dimension-collection')}
+            />
+          }
+          label="3D COLLECTION(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/double-charge-collection'}
+              onChange={go('/services/double-charge-collection')}
+            />
+          }
+          label="Double Charge Collection(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/matt-carving-collection'}
+              onChange={go('/services/matt-carving-collection')}
+            />
+          }
+          label="Matt Carving Collection(600X1200MM)"
           sx={{ display: 'block', mt: 1, ml: 0.5 }}
         />
       </Collapse>
