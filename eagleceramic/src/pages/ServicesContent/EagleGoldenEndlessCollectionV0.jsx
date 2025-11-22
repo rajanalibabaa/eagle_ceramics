@@ -97,15 +97,19 @@ const EagleGoldenEndlessCollectionV0 = () => {
       
   return (
      <Container maxWidth="lg" sx={{ py: 4 }}>
-
-      <Typography
-        variant="h4"
-        align="center"
-        sx={{ color: "#F87B1B", mb: 4 }}
-      >
-        Golden Endless Collection - Version 1
-      </Typography>
-
+<Typography
+  variant="h4"
+  align="center"
+  sx={{ 
+    color: "#658C58", 
+    fontFamily: "'Montserrat', sans-serif",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: 1
+  }}
+>
+  Golden Endless Collection - Version 1
+</Typography>
    <Box
   sx={{
     display: "grid",

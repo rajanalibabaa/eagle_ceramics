@@ -141,8 +141,13 @@ const EagleGoldenEndlessCollectionV1 = () => {
       <Typography
         variant="h4"
         align="center"
-        sx={{ color: "#F87B1B", mb: 4 }}
-      >
+  sx={{ 
+    color: "#658C58", 
+    fontFamily: "'Montserrat', sans-serif",
+    fontWeight: 700,
+    textTransform: "uppercase",
+    letterSpacing: 1
+  }}      >
         Golden Endless Collection - Version 2
       </Typography>
 
