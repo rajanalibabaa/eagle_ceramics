@@ -198,6 +198,40 @@ export default function ServiceSideBar() {
           label="Matt Carving Collection(600X1200MM)"
           sx={{ display: 'block', mt: 1, ml: 0.5 }}
         />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/moroccan-collection'}
+              onChange={go('/services/moroccan-collection')}
+            />
+          }
+          label="Moroccan Collection(300X300MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/plain-collection'}
+              onChange={go('/services/plain-collection')}
+            />
+          }
+          label="Plain Collection(300X300MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/special-collection'}
+              onChange={go('/services/special-collection')}
+            />
+          }
+          label="Special Collection(300X300MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
       </Collapse>
     </Box>
   );

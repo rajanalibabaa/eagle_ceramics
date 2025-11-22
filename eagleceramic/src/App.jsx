@@ -20,6 +20,9 @@ const SnpCollection = React.lazy(() => import("./pages/ServicesContent/SnpCollec
 const ThreeDimensionCollection = React.lazy(() => import("./pages/ServicesContent/ThreeDimensionCollection.jsx"));
 const DoubleChargeCollection = React.lazy(() => import("./pages/ServicesContent/DoubleChargeCollection.jsx"));
 const MattCarvingCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingCollection.jsx"));
+const MoroccanCollection = React.lazy(() => import("./pages/ServicesContent/MoroccanCollection.jsx"));
+const PlainCollection = React.lazy(() => import("./pages/ServicesContent/PlainCollection.jsx"));
+const SpecialCollection = React.lazy(() => import("./pages/ServicesContent/SpecialCollection.jsx"));
 const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
 const theme = createTheme({
@@ -55,6 +58,10 @@ function App() {
               <Route path="three-dimension-collection" element={<ThreeDimensionCollection />} />
               <Route path="double-charge-collection" element={<DoubleChargeCollection/>} />
               <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
+              <Route path="moroccan-collection" element={<MoroccanCollection />} />
+              <Route path="plain-collection" element={<PlainCollection />} />
+              <Route path="special-collection" element={<SpecialCollection />} />
+            
             </Route>
           </Routes>
           <Footer/>
