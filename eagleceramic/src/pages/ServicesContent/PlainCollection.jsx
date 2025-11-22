@@ -7,26 +7,26 @@ import IconButton from "@mui/material/IconButton";
 
 import CloseIcon from "@mui/icons-material/Close";
 
-import PlainCollection1 from "../../assets/PlainCollection1.jpg"
-import PlainCollection2 from "../../assets/PlainCollection2.jpg"
-import PlainCollection3 from "../../assets/PlainCollection3.jpg"
-import PlainCollection4 from "../../assets/PlainCollection4.jpg"
-import PlainCollection5 from "../../assets/PlainCollection5.jpg"
-import PlainCollection6 from "../../assets/PlainCollection6.jpg"
-import PlainCollection7 from "../../assets/PlainCollection7.jpg"
-import PlainCollection8 from "../../assets/PlainCollection8.jpg"
-import PlainCollection9 from "../../assets/PlainCollection9.jpg"
-import PlainCollection10 from "../../assets/PlainCollection10.jpg"
-import PlainCollection11 from "../../assets/PlainCollection11.jpg"
-import PlainCollection12 from "../../assets/PlainCollection12.jpg"
-import PlainCollection13 from "../../assets/PlainCollection13.jpg"
-import PlainCollection14 from "../../assets/PlainCollection14.jpg"
-import PlainCollection15 from "../../assets/PlainCollection15.jpg"  
-import PlainCollection16 from "../../assets/PlainCollection16.jpg"
-import PlainCollection17 from "../../assets/PlainCollection17.jpg"
-import PlainCollection18 from "../../assets/PlainCollection18.jpg"
-import PlainCollection19 from "../../assets/PlainCollection19.jpg"
-import PlainCollection20 from "../../assets/PlainCollection20.jpg"
+import PlainCollection1 from "../../assets/PlainCollection/PlainCollection1.jpg"
+import PlainCollection2 from "../../assets/PlainCollection/PlainCollection2.jpg"
+import PlainCollection3 from "../../assets/PlainCollection/PlainCollection3.jpg"
+import PlainCollection4 from "../../assets/PlainCollection/PlainCollection4.jpg"
+import PlainCollection5 from "../../assets/PlainCollection/PlainCollection5.jpg"
+import PlainCollection6 from "../../assets/PlainCollection/PlainCollection6.jpg"
+import PlainCollection7 from "../../assets/PlainCollection/PlainCollection7.jpg"
+import PlainCollection8 from "../../assets/PlainCollection/PlainCollection8.jpg"
+import PlainCollection9 from "../../assets/PlainCollection/PlainCollection9.jpg"
+import PlainCollection10 from "../../assets/PlainCollection/PlainCollection10.jpg"
+import PlainCollection11 from "../../assets/PlainCollection/PlainCollection11.jpg"
+import PlainCollection12 from "../../assets/PlainCollection/PlainCollection12.jpg"
+import PlainCollection13 from "../../assets/PlainCollection/PlainCollection13.jpg"
+import PlainCollection14 from "../../assets/PlainCollection/PlainCollection14.jpg"
+import PlainCollection15 from "../../assets/PlainCollection/PlainCollection15.jpg"  
+import PlainCollection16 from "../../assets/PlainCollection/PlainCollection16.jpg"
+import PlainCollection17 from "../../assets/PlainCollection/PlainCollection17.jpg"
+import PlainCollection18 from "../../assets/PlainCollection/PlainCollection18.jpg"
+import PlainCollection19 from "../../assets/PlainCollection/PlainCollection19.jpg"
+import PlainCollection20 from "../../assets/PlainCollection/PlainCollection20.jpg"
 
 
 
@@ -81,7 +81,7 @@ const PlainCollection = () => {
                 align="center"
                 sx={{ color: "#F87B1B", mb: 4 }}
             >
-                Moroccan Collection
+                Plain Collection
             </Typography>
 
             <Box

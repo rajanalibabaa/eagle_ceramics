@@ -7,23 +7,23 @@ import IconButton from "@mui/material/IconButton";
 
 import CloseIcon from "@mui/icons-material/Close";
 
-import SpecialCollection1 from "../../assets/SpecialCollection1.jpg"
-import SpecialCollection2 from "../../assets/SpecialCollection2.jpg"
-import SpecialCollection3 from "../../assets/SpecialCollection3.jpg"
-import SpecialCollection4 from "../../assets/SpecialCollection4.jpg"
-import SpecialCollection5 from "../../assets/SpecialCollection5.jpg"
-import SpecialCollection6 from "../../assets/SpecialCollection6.jpg"
-import SpecialCollection7 from "../../assets/SpecialCollection7.jpg"
-import SpecialCollection8 from "../../assets/SpecialCollection8.jpg"
-import SpecialCollection9 from "../../assets/SpecialCollection9.jpg"
-import SpecialCollection10 from "../../assets/SpecialCollection10.jpg"
-import SpecialCollection11 from "../../assets/SpecialCollection11.jpg"
-import SpecialCollection12 from "../../assets/SpecialCollection12.jpg"
+import SpecialCollection1 from "../../assets/SpecialCollection/SpecialCollection1.jpg"
+import SpecialCollection2 from "../../assets/SpecialCollection/SpecialCollection2.jpg"
+import SpecialCollection3 from "../../assets/SpecialCollection/SpecialCollection3.jpg"
+import SpecialCollection4 from "../../assets/SpecialCollection/SpecialCollection4.jpg"
+import SpecialCollection5 from "../../assets/SpecialCollection/SpecialCollection5.jpg"
+import SpecialCollection6 from "../../assets/SpecialCollection/SpecialCollection6.jpg"
+import SpecialCollection7 from "../../assets/SpecialCollection/SpecialCollection7.jpg"
+import SpecialCollection8 from "../../assets/SpecialCollection/SpecialCollection8.jpg"
+import SpecialCollection9 from "../../assets/SpecialCollection/SpecialCollection9.jpg"
+import SpecialCollection10 from "../../assets/SpecialCollection/SpecialCollection10.jpg"
+import SpecialCollection11 from "../../assets/SpecialCollection/SpecialCollection11.jpg"
+import SpecialCollection12 from "../../assets/SpecialCollection/SpecialCollection12.jpg"
 
 
 
 
-import Plain from "../../assets/pdf/Plain.pdf";
+import Special from "../../assets/pdf/Special.pdf";
 import ServicesCollectionCard from './ServicesCollectionCard ';
 
 const SpecialCollection = () => {
@@ -86,7 +86,7 @@ const SpecialCollection = () => {
                         hoverImage={item.hover}
                         title={item.title}
                         subtitle="Explore Collections"
-                        pdfFile={Plain}
+                        pdfFile={Special}
                         onExploreClick={handleOpenPdf}
                     />
                 ))}
