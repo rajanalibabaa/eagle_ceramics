@@ -39,6 +39,7 @@ import MorganHover from "../../assets/MorganHover.jpg";
 import Statuario from "../../assets/pdf/Statuario.pdf";
 import ServicesCollectionCard from './ServicesCollectionCard ';
 
+
 const StatuarioCollection = () => {
 
     const [openPdf, setOpenPdf] = useState(false);
