@@ -23,7 +23,6 @@ export default function ServiceSideBar() {
     navigate('/services'); 
   };
 
-  // Auto-open "Golden Versions" when on that collection
   useEffect(() => {
     setOpenCollections(true);
     setOpenGoldenVersions(collection === 'golden-endless-collection');
@@ -139,6 +138,64 @@ export default function ServiceSideBar() {
             />
           }
           label="Glossy Collection(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/matt-carving-endless-collection'}
+              onChange={go('/services/matt-carving-endless-collection')}
+            />
+          }
+          label="Matt Carving Endless Collection(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+        <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/snp-collection'}
+              onChange={go('/services/snp-collection')}
+            />
+          }
+          label="SNP COLLECTION(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/three-dimension-collection'}
+              onChange={go('/services/three-dimension-collection')}
+            />
+          }
+          label="3D COLLECTION(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/double-charge-collection'}
+              onChange={go('/services/double-charge-collection')}
+            />
+          }
+          label="Double Charge Collection(600X1200MM)"
+          sx={{ display: 'block', mt: 1, ml: 0.5 }}
+        />
+         <FormControlLabel
+          control={
+            <Checkbox
+              size="small"
+              checked={collection === '/matt-carving-collection'}
+              onChange={go('/services/double-charge-collection')}
+            />
+          }
+          label="Matt Carving Collection(600X1200MM)"
           sx={{ display: 'block', mt: 1, ml: 0.5 }}
         />
       </Collapse>

@@ -1,8 +1,11 @@
 import React, { useState, useCallback } from 'react';
-import { Box, Container, Typography, Modal, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import IconButton from "@mui/material/IconButton";
 
-import StatuarioCollectionCard from './StatuarioCollectionCard';
+import CloseIcon from "@mui/icons-material/Close";
 
 import AdisonWhite from "../../assets/AdisonWhite.jpg";
 import AdisonWhiteHover from "../../assets/AdisonWhiteHover.jpg";
@@ -34,6 +37,7 @@ import Morgan from "../../assets/Morgan.jpg";
 import MorganHover from "../../assets/MorganHover.jpg";
 
 import Statuario from "../../assets/pdf/Statuario.pdf";
+import ServicesCollectionCard from './ServicesCollectionCard ';
 
 const StatuarioCollection = () => {
 
@@ -50,12 +54,29 @@ const StatuarioCollection = () => {
         setCurrentPdf("");
     }, []);
 
+
+    const cardData = [
+        { main: AdisonWhite, hover: AdisonWhiteHover, title: "ADISON WHITE" },
+        { main: AristoRed, hover: AristoRedHover, title: "ARISTO RED" },
+        { main: BeldiaGold, hover: BeldiaGoldHover, title: "BELDIA GOLD" },
+        { main: BronzoMix, hover: BronzoMixHover, title: "BRONZO MIX" },
+        { main: Cava, hover: CavaHover, title: "CAVA" },
+        { main: Fliton, hover: FlitonHover, title: "FLITON" },
+        { main: LaparetNashira, hover: LaparetNashiraHover, title: "LAPARET NASHIRA" },
+        { main: Maxero, hover: MaxeroHover, title: "MAXERO" },
+        { main: NaturalStatuario, hover: NaturalStatuarioHover, title: "NATURAL STATUARIO" },
+        { main: Rectangle, hover: RectangleHover, title: "RECTANGLE" },
+        { main: StatuarioPhntom, hover: StatuarioPhntomHover, title: "STATUARIO PHANTOM" },
+        { main: VenatoOro, hover: VenatoOroHover, title: "VENATO ORO" },
+        { main: LipoonWhite, hover: LipoonWhiteHover, title: "LIPOON WHITE" },
+        { main: Morgan, hover: MorganHover, title: "MORGAN" },
+    ];
+
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
             <Typography
                 variant="h4"
                 component="h1"
-                gutterBottom
                 align="center"
                 sx={{ color: "#F87B1B", mb: 4 }}
             >
@@ -71,144 +92,23 @@ const StatuarioCollection = () => {
                     mx: "auto",
                 }}
             >
-                {/* Now each card has PDF support */}
-                <StatuarioCollectionCard
-                    mainImage={AdisonWhite}
-                    hoverImage={AdisonWhiteHover}
-                    title="ADISON WHITE"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={AristoRed}
-                    hoverImage={AristoRedHover}
-                    title="ARISTO RED"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={BeldiaGold}
-                    hoverImage={BeldiaGoldHover}
-                    title="BELDIA GOLD"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={BronzoMix}
-                    hoverImage={BronzoMixHover}
-                    title="BRONZO MIX"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={Cava}
-                    hoverImage={CavaHover}
-                    title="CAVA"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={Fliton}
-                    hoverImage={FlitonHover}
-                    title="FLITON"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={LaparetNashira}
-                    hoverImage={LaparetNashiraHover}
-                    title="LAPARET NASHIRA"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={Maxero}
-                    hoverImage={MaxeroHover}
-                    title="MAXERO"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={NaturalStatuario}
-                    hoverImage={NaturalStatuarioHover}
-                    title="NATURAL STATUARIO"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={Rectangle}
-                    hoverImage={RectangleHover}
-                    title="RECTANGLE"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={StatuarioPhntom}
-                    hoverImage={StatuarioPhntomHover}
-                    title="STATUARIO PHANTOM"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={VenatoOro}
-                    hoverImage={VenatoOroHover}
-                    title="VENATO ORO"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={LipoonWhite}
-                    hoverImage={LipoonWhiteHover}
-                    title="LIPOON WHITE"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <StatuarioCollectionCard
-                    mainImage={Morgan}
-                    hoverImage={MorganHover}
-                    title="MORGAN"
-                    subtitle="Explore Collections"
-                    pdfFile={Statuario}
-                    onExploreClick={handleOpenPdf}
-                />
+                {cardData.map((item, index) => (
+                    <ServicesCollectionCard
+                        key={index}
+                        mainImage={item.main}
+                        hoverImage={item.hover}
+                        title={item.title}
+                        subtitle="Explore Collections"
+                        pdfFile={Statuario}
+                        onExploreClick={handleOpenPdf}
+                    />
+                ))}
             </Box>
 
-            {/* PDF MODAL */}
             <Modal
                 open={openPdf}
                 onClose={handleClosePdf}
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    p: 2,
-                }}
+                sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
             >
                 <Box
                     sx={{
@@ -244,7 +144,6 @@ const StatuarioCollection = () => {
                     )}
                 </Box>
             </Modal>
-
         </Container>
     );
 };

@@ -1,18 +1,11 @@
-// import React from 'react'
-
-// const GlossyCollection = () => {
-//   return (
-//     <div>GlossyCollection</div>
-//   )
-// }
-
-// export default GlossyCollection
-
 import React, { useState, useCallback } from 'react';
-import { Box, Container, Typography, Modal, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import IconButton from "@mui/material/IconButton";
 
-import GlossyCollectionCard from './GlossyCollectionCard';
+import CloseIcon from "@mui/icons-material/Close";
 
 import AkotaBrown from "../../assets/AkotaBrown.jpg";
 import AkotaBrownHover from "../../assets/AkotaBrownHover.jpg";
@@ -47,10 +40,9 @@ import TeraaBrownHover from "../../assets/TeraaBrownHover.jpg";
 import LoganHoney from "../../assets/LoganHoney.jpg";
 import LoganHoneyHover from "../../assets/LoganHoneyHover.jpg";
 
-
-
-
 import Glossy from "../../assets/pdf/Glossy.pdf";
+import ServicesCollectionCard from './ServicesCollectionCard ';
+
 
 const GlossyCollection = () => {
 
@@ -66,6 +58,26 @@ const GlossyCollection = () => {
         setOpenPdf(false);
         setCurrentPdf("");
     }, []);
+
+    // ⭐ Array of objects to simplify the cards
+    const cardData = [
+        { main: AkotaBrown, hover: AkotaBrownHover, title: "AKOTA BROWN" },
+        { main: AkotaGris, hover: AkotaGrisHover, title: "AKOTA GRIS" },
+        { main: BrecciaGold, hover: BrecciaGoldHover, title: "BRECCIA GOLD" },
+        { main: DolloGrey, hover: DolloGreyHover, title: "DOLLO GREY" },
+        { main: EnduraCafe, hover: EnduraCafeHover, title: "ENDURA CAFE" },
+        { main: Givok, hover: GivokHover, title: "GIVOK" },
+        { main: ItalioGrey, hover: ItalioGreyHover, title: "ITALIO GREY" },
+        { main: KraftonBianco, hover: KraftonBiancoHover, title: "KRAFTON BIANCO" },
+        { main: KraftonGrey, hover: KraftonGreyHover, title: "KRAFTON GREY" },
+        { main: NulicoMid, hover: NulicoMidHover, title: "NULICO MID" },
+        { main: Pentago, hover: PentagoHover, title: "PENTAGO" },
+        { main: TeslaGrey, hover: TeslaGreyHover, title: "TESLA GREY" },
+        { main: UrecoWhite, hover: UrecoWhiteHover, title: "URECO WHITE" },
+        { main: AlureGold, hover: AlureGoldHover, title: "ALURE GOLD" },
+        { main: TeraaBrown, hover: TeraaBrownHover, title: "TERAA BROWN" },
+        { main: LoganHoney, hover: LoganHoneyHover, title: "LOGAN HONEY" },
+    ];
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -88,152 +100,18 @@ const GlossyCollection = () => {
                     mx: "auto",
                 }}
             >
-                {/* Now each card has PDF support */}
-                <GlossyCollectionCard
-                    mainImage={AkotaBrown}
-                    hoverImage={AkotaBrownHover}
-                    title="AKOTA BROWN"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                 <GlossyCollectionCard
-                    mainImage={AkotaGris}
-                    hoverImage={AkotaGrisHover}
-                    title="AKOTA GRIS"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                 <GlossyCollectionCard
-                    mainImage={BrecciaGold}
-                    hoverImage={BrecciaGoldHover}
-                    title="BRECCIA GOLD"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                
-                 <GlossyCollectionCard
-                    mainImage={DolloGrey}
-                    hoverImage={DolloGreyHover}
-                    title="DOLLO GREY"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={EnduraCafe}
-                    hoverImage={EnduraCafeHover}
-                    title="ENDURA CAFE"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={Givok}
-                    hoverImage={GivokHover}
-                    title="GIVOK"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={ItalioGrey}
-                    hoverImage={ItalioGreyHover}
-                    title="ITALIO GREY"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={KraftonBianco}
-                    hoverImage={KraftonBiancoHover}
-                    title="KRAFTON BIANCO"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={KraftonGrey}
-                    hoverImage={KraftonGreyHover}
-                    title="KRAFTON GREY"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={NulicoMid}
-                    hoverImage={NulicoMidHover}
-                    title="NULICO MID"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={Pentago}
-                    hoverImage={PentagoHover}
-                    title="PENTAGO"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={TeslaGrey}
-                    hoverImage={TeslaGreyHover}
-                    title="TESLA GREY"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                 <GlossyCollectionCard
-                    mainImage={UrecoWhite}
-                    hoverImage={UrecoWhiteHover}
-                    title="URECO WHITE"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                 <GlossyCollectionCard
-                    mainImage={AlureGold}
-                    hoverImage={AlureGoldHover}
-                    title="ALURE GOLD"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                   <GlossyCollectionCard
-                    mainImage={TeraaBrown}
-                    hoverImage={TeraaBrownHover}
-                    title="TERAA BROWN"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-
-                <GlossyCollectionCard
-                    mainImage={LoganHoney}
-                    hoverImage={LoganHoneyHover}
-                    title="LOGAN HONEY"
-                    subtitle="Explore Collections"
-                    pdfFile={Glossy}
-                    onExploreClick={handleOpenPdf}
-                />
-                
+                {/* ⭐ Render all cards using map */}
+                {cardData.map((item, index) => (
+                    <ServicesCollectionCard
+                        key={index}
+                        mainImage={item.main}
+                        hoverImage={item.hover}
+                        title={item.title}
+                        subtitle="Explore Collections"
+                        pdfFile={Glossy}
+                        onExploreClick={handleOpenPdf}
+                    />
+                ))}
             </Box>
 
             {/* PDF MODAL */}
