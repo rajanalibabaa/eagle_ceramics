@@ -1,9 +1,7 @@
 import React, { useState, useCallback, lazy, Suspense, memo } from "react";
 import { Box, Container, Typography, Modal, IconButton, CircularProgress } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-const ServicesCollectionCard = lazy(() =>
-  import("../ServicesContent/ServicesCollectionCard ")
-);
+
 
 import EagleGoldenEndlessCollectionV0 from "./EagleGoldenEndlessCollectionV0";
 import EagleGoldenEndlessCollectionV1 from "./EagleGoldenEndlessCollectionV1";

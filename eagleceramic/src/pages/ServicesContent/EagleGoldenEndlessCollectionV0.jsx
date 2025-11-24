@@ -69,6 +69,7 @@ const EagleGoldenEndlessCollectionV0 = () => {
       setOpenPdf(false);
       setCurrentPdf("");
     }, []);
+    
     const goldenCollection = [
         { main: goldenMain, hover: goldenHover, title: "ADRESON BLUE" },
         { main: aliceMain, hover: aliceHover, title: "ALICE GREY" },
