@@ -13,6 +13,9 @@ const EagleGoldenEndlessCollection = React.lazy(() => import("./pages/ServicesCo
 const EagleGoldenEndlessCollectionV0 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV0"));
 const EagleGoldenEndlessCollectionV1 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV1"));
 const EagleGoldenEndlessCollectionV2 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV2"));
+const PunchSeriesCollection = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollection.jsx"));
+const PunchSeriesCollectionV1 = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollectionV1.jsx"));
+const PunchSeriesCollectionV2 = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollectionV2.jsx"));
 const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"));
 const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/GlossyCollection.jsx"));
 const MattCarvingEndlessCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingEndlessCollection.jsx"));
@@ -24,6 +27,10 @@ const HighDepth = React.lazy(() => import("./pages/ServicesContent/HighDepthElev
 const HighDepthV1 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV1.jsx"));
 const HighDepthV2 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV2.jsx"));
 const HighDepthV3 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV3.jsx"));
+const MoroccanCollection = React.lazy(() => import("./pages/ServicesContent/MoroccanCollection.jsx"));
+const PlainCollection = React.lazy(() => import("./pages/ServicesContent/PlainCollection.jsx"));
+const SpecialCollection = React.lazy(() => import("./pages/ServicesContent/SpecialCollection.jsx"));
+const StepRiserCollection = React.lazy(() => import("./pages/ServicesContent/StepRiserCollection.jsx"));
 const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
 const theme = createTheme({
@@ -37,13 +44,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <Suspense fallback={<div>Loading...</div>}>
-          <MainPopUp/>
+          <MainPopUp />
           <Navbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutUs />} />
-            <Route path="/contact" element={<ContactUs/>}/>
-           <Route path="/services" element={<ServicesLayout />}>
+            <Route path="/contact" element={<ContactUs />} />
+            <Route path="/services" element={<ServicesLayout />}>
               <Route index element={<EagleGoldenEndlessCollection />} />
 
               {/* golden endless collection and its versions */}
@@ -52,12 +59,17 @@ function App() {
               <Route path="golden-endless-collection/v1" element={<EagleGoldenEndlessCollectionV1 />} />
               <Route path="golden-endless-collection/v2" element={<EagleGoldenEndlessCollectionV2 />} />
 
+              {/* Punch Series Collection and its versions */}
+              <Route path="punch-series-collection" element={<PunchSeriesCollection />} />
+              <Route path="punch-series-collection/v1" element={<PunchSeriesCollectionV1 />} />
+              <Route path="punch-series-collection/v2" element={<PunchSeriesCollectionV2 />} />
+              
               <Route path="statuario-collection" element={<StatuarioCollection />} />
               <Route path="glossy-collection" element={<GlossyCollection />} />
               <Route path="matt-carving-endless-collection" element={<MattCarvingEndlessCollection />} />
               <Route path="snp-collection" element={<SnpCollection />} />
               <Route path="three-dimension-collection" element={<ThreeDimensionCollection />} />
-              <Route path="double-charge-collection" element={<DoubleChargeCollection/>} />
+              <Route path="double-charge-collection" element={<DoubleChargeCollection />} />
               <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
 
               <Route index element={<HighDepth/>} />
@@ -67,10 +79,14 @@ function App() {
                    <Route path="high-depth/v2" element={<HighDepthV3 />} />
 
 
+              <Route path="moroccan-collection" element={<MoroccanCollection />} />
+              <Route path="plain-collection" element={<PlainCollection />} />
+              <Route path="special-collection" element={<SpecialCollection />} />
+              <Route path="step-riser-collection" element={<StepRiserCollection />} />
 
             </Route>
           </Routes>
-          <Footer/>
+          <Footer />
         </Suspense>
       </Router>
     </ThemeProvider>

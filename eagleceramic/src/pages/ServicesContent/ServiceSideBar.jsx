@@ -142,10 +142,10 @@ const SidebarWrapper = styled(Box)(({ theme }) => ({
 export default function ServiceSideBar() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [, , collection, maybeVersion] = pathname.split('/'); 
+  const [, , collection, maybeVersion] = pathname.split('/');
 
   const [openCollections, setOpenCollections] = useState(true);
-  const [openSub, setOpenSub] = useState({}); 
+  const [openSub, setOpenSub] = useState({});
 
   const go = url => () => navigate(url);
   const clearAll = () => navigate('/services');
@@ -161,11 +161,20 @@ export default function ServiceSideBar() {
         { label: 'Version 3', url: '/services/golden-endless-collection/v2', path: 'v2' }
       ]
     },
+    {
+      label: 'Punch Series Collection (300X300MM)',
+      key: 'punch-series-collection',
+      versions: [
+        { label: 'All Versions', url: '/services/punch-series-collection', path:''},
+        { label: 'Version 1', url: '/services/punch-series-collection/v1', path:'v1'},
+        { label: 'Version 2', url: '/services/punch-series-collection/v2', path:'v2'}
+      ]
+    },
     { label: 'Statuario Collection (600X1200MM)', url: '/services/statuario-collection', key: 'statuario-collection' },
     { label: 'Glossy Collection (600X1200MM)', url: '/services/glossy-collection', key: 'glossy-collection' },
     { label: 'Matt Carving Endless Collection (600X1200MM)', url: '/services/matt-carving-endless-collection', key: 'matt-carving-endless-collection' },
-    { label: 'SNP COLLECTION (600X1200MM)', url: '/services/snp-collection', key: 'snp-collection' },
-    { label: '3D COLLECTION (600X1200MM)', url: '/services/three-dimension-collection', key: 'three-dimension-collection' },
+    { label: 'SNP Collection (600X1200MM)', url: '/services/snp-collection', key: 'snp-collection' },
+    { label: '3D Collection (600X1200MM)', url: '/services/three-dimension-collection', key: 'three-dimension-collection' },
     { label: 'Double Charge Collection (600X1200MM)', url: '/services/double-charge-collection', key: 'double-charge-collection' },
     { label: 'Matt Carving Collection (600X1200MM)', url: '/services/matt-carving-collection', key: 'matt-carving-collection' },
     {
@@ -178,6 +187,10 @@ export default function ServiceSideBar() {
         { label: 'Version 3', url: '/services/high-depth/v2', path: 'v2' }
       ]
     },
+    { label: 'Morocco Collection (300X300MM)', url: '/services/moroccan-collection', key: 'moroccan-collection' },
+    { label: 'Plain Collection (300X300MM)', url: '/services/plain-collection', key: 'plain-collection' },
+    { label: 'Special Collection (300X300MM)', url: '/services/special-collection', key: 'special-collection' },
+    { label: 'Step Riser Collection (300X300MM)', url: '/services/step-riser-collection', key: 'step-riser-collection' }
   ];
 
   useEffect(() => {
