@@ -9,6 +9,7 @@ const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
 const AboutUs = React.lazy(() => import("./pages/AboutUs.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
+const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
 const EagleGoldenEndlessCollection = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollection.jsx"));
 const EagleGoldenEndlessCollectionV0 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV0"));
 const EagleGoldenEndlessCollectionV1 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV1"));
@@ -51,7 +52,7 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/services" element={<ServicesLayout />}>
-              <Route index element={<EagleGoldenEndlessCollection />} />
+              <Route index element={<Walltiles />} />
 
               {/* golden endless collection and its versions */}
               <Route path="golden-endless-collection" element={<EagleGoldenEndlessCollection />} />
