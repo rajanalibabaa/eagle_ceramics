@@ -3,8 +3,8 @@ import { Box, Typography } from "@mui/material";
 
 const ServicesCollectionCard = ({
   mainImage,
-  // title = "SIGNATURE COLLECTION",
-  hoverParagraph = "This is the paragraph that appears when hovering. Background image remains visible.",
+  title = "Collection Title",
+  hoverParagraph = "This is the paragraph that appears when hovering.",
   subtitle = "Explore More",
   titleColor = "black",
   subtitleColor = "#b51a1a",
@@ -16,7 +16,7 @@ const ServicesCollectionCard = ({
     <Box
       sx={{
         width: "100%",
-        maxWidth: "80%",
+        maxWidth: "70%",
         mx: "auto",
         mb: 3,
         position: "relative",
@@ -34,6 +34,8 @@ const ServicesCollectionCard = ({
             md: "420px",
             lg: "500px",
           },
+          borderRadius: "8px",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
 
           "& .hoverContent": {
             opacity: 0,
@@ -58,35 +60,16 @@ const ServicesCollectionCard = ({
         <Box
           component="img"
           src={mainImage}
-        
           sx={{
             objectFit: "cover",
             width: "100%",
             height: "100%",
+            transition: "transform 0.45s ease",
+            "&:hover": {
+              transform: "scale(1.05)",
+            },
           }}
         />
-
-        {/* TOP TITLE */}
-        {/* <Box
-          sx={{
-            position: "absolute",
-            top: 0,
-            width: "100%",
-            textAlign: "center",
-            py: { xs: 1, sm: 1.5, md: 2 },
-            zIndex: 3,
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: { xs: "18px", sm: "24px", md: "28px" },
-              fontWeight: 700,
-              color: titleColor,
-            }}
-          >
-            {title}
-          </Typography>
-        </Box> */}
 
         {/* HOVER DARK OVERLAY */}
         <Box
@@ -97,73 +80,137 @@ const ServicesCollectionCard = ({
             left: 0,
             width: "100%",
             height: "100%",
-            background: "rgba(0,0,0,0.50)",
-            backdropFilter: "blur(3px)",
+            background:
+              "linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%)",
+            backdropFilter: "blur(2px)",
             zIndex: 2,
           }}
         />
 
-        {/* HOVER PARAGRAPH */}
+        {/* HOVER CONTENT */}
         <Box
           className="hoverContent"
           sx={{
             position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            textAlign: "center",
-            maxWidth: "80%",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
             zIndex: 3,
+            padding: { xs: 2, sm: 3, md: 4 },
           }}
         >
-          <Typography
+          {/* TITLE AT TOP */}
+<Box
+  sx={{
+    position: "absolute",
+    top: 20,
+    left: 0,
+    width: "100%",
+    textAlign: "center",
+    zIndex: 5,
+  }}
+>
+  <Typography
+    sx={{
+      fontSize: { xs: "18px", sm: "24px", md: "28px" },
+      fontWeight: 700,
+      color: "#fff",
+      textShadow: "0 2px 6px rgba(0,0,0,0.6)",
+    }}
+  >
+    {title}
+  </Typography>
+</Box>
+
+          {/* PARAGRAPH */}
+          <Box
             sx={{
-              color: "#fff",
-              fontSize: { xs: "16px", sm: "18px", md: "20px" },
-              lineHeight: 1.4,
-              fontWeight: 400,
+              textAlign: "justify",
+              maxWidth: "90%",
+              mb: 3,
+              background: "rgba(255,255,255,0.1)",
+              backdropFilter: "blur(10px)",
+              borderRadius: "12px",
+              padding: { xs: 2, sm: 3 },
+              border: "1px solid rgba(255,255,255,0.2)",
             }}
           >
-            {hoverParagraph}
-          </Typography>
-        </Box>
+            
+            <Typography
+              sx={{
+                color: "#fff",
+                fontSize: {
+                  xs: "14px",
+                  sm: "16px",
+                  md: "18px",
+                },
+                lineHeight: {
+                  xs: 1.5,
+                  sm: 1.6,
+                  md: 1.7,
+                },
+                fontWeight: 400,
+                textAlign: "center",
+                textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+                letterSpacing: "0.3px",
+              }}
+            >
+              {hoverParagraph}
+            </Typography>
+          </Box>
 
-        {/* BOTTOM BUTTON */}
-        <Box
-          className="hoverContent"
-          sx={{
-            position: "absolute",
-            bottom: 20,
-            width: "100%",
-            textAlign: "center",
-            zIndex: 4,
-          }}
-        >
+          {/* EXPLORE BUTTON — NOW PROPERLY CENTERED */}
           <Box
             component="button"
             onClick={(e) => {
               e.stopPropagation();
               onExploreClick && onExploreClick(pdfFile);
             }}
-            style={{
-              padding: "10px 24px",
-              background: "#ff0062",
+            sx={{
+              position: "absolute",
+              left: "50%",
+              bottom: 30,
+              transform: "translateX(-50%)",
+              padding: {
+                xs: "8px 20px",
+                sm: "10px 24px",
+                md: "12px 28px",
+              },
+              background:
+                "linear-gradient(135deg, #ff0062 0%, #d60055 100%)",
               color: "#fff",
               border: "none",
               borderRadius: "30px",
-              fontSize: "16px",
-              fontWeight: "600",
+              fontSize: {
+                xs: "14px",
+                sm: "15px",
+                md: "16px",
+              },
+              fontWeight: 600,
               cursor: "pointer",
               backdropFilter: "blur(5px)",
-              transition: "0.3s ease",
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 15px rgba(255, 0, 98, 0.3)",
+              letterSpacing: "0.5px",
+              "&:hover": {
+                background:
+                  "linear-gradient(135deg, #d60055 0%, #b30048 100%)",
+                transform: "translate(-50%, -2px)",
+                boxShadow: "0 6px 20px rgba(255, 0, 98, 0.4)",
+              },
+              "&:active": {
+                transform: "translate(-50%, 0)",
+              },
             }}
-            onMouseOver={(e) => (e.currentTarget.style.background = "#d60055")}
-            onMouseOut={(e) => (e.currentTarget.style.background = "#ff0062")}
           >
             {subtitle}
           </Box>
         </Box>
-
       </Box>
     </Box>
   );

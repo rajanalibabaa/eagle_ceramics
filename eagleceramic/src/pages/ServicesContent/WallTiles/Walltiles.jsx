@@ -10,27 +10,42 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
-  import("../ServicesCollectionCard ") // FIXED path (removed extra space)
+  import("../ServicesCollectionCard ") 
 );
 
-import pdf from "../../../assets/pdf/EAGLE GLOSSY ENDLESS-V2-COLLECTION_600X1200MM_compressed.pdf";
+import pdf1 from "../../../assets/pdf/FISH & POSTER.pdf";
+import pdf2 from "../../../assets/pdf/GLITTER SERIES.pdf";
+import pdf3 from "../../../assets/pdf/GLOSSY-1.pdf";
 import fishposter from "../../../assets/WallTiles/Fishposter.jpg";
+import glitterseries from "../../../assets/WallTiles/Glitterseries.jpg";
+import glossy1 from "../../../assets/WallTiles/Glossy1.jpg";
 
-// -----------------------------
-// CORRECT DATA FOR THE NEW CARD
-// -----------------------------
+
+
 const goldenCollection = [
   {
+     title: "FISH POSTER",
     mainImage: fishposter,
-    // title: "FISH POSTER",
-    hoverParagraph: "This beautiful fish poster brings elegance to your walls.",
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf1,
   },
+  {
+    title: "GLITTER SERIES",
+    mainImage: glitterseries,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf2,
+  },
+  {
+    title: "GLOSSY-1",
+    mainImage: glossy1,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf3,
+  }
+
 ];
 
 const Walltiles = () => {
-  // -------------------------
-  // STATE FOR PDF MODAL
-  // -------------------------
+
   const [openPdf, setOpenPdf] = useState(false);
   const [currentPdf, setCurrentPdf] = useState("");
 
@@ -55,13 +70,14 @@ const Walltiles = () => {
           fontWeight: 700,
           textTransform: "uppercase",
           letterSpacing: 1,
+          mb:2
         }}
       >
-        FISH POSTER
+        WALL TILES
       </Typography>
 
       {/* COLLECTION LOOP */}
-      <Box>
+      <Box sx={{marginTop:10}}>
         {goldenCollection.map((item, index) => (
           <Suspense
             key={index}
@@ -69,12 +85,12 @@ const Walltiles = () => {
           >
             <ServicesCollectionCard
               mainImage={item.mainImage}
-            //   title={item.title}
+              title={item.title}
               hoverParagraph={item.hoverParagraph}
               subtitle={item.subtitle}
               titleColor={item.titleColor}
               subtitleColor="Explore More"
-        pdfFile={pdf}
+        pdfFile={item.pdf}
               onExploreClick={handleOpenPdf}
             />
           </Suspense>
