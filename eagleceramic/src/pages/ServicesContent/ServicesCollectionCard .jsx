@@ -5,8 +5,8 @@ const ServicesCollectionCard = ({
   mainImage,
   title = "SIGNATURE COLLECTION",
   hoverParagraph = "This is the paragraph that appears when hovering. Background image remains visible.",
-  subtitle = "Explore Collections",
-  titleColor = "#000",
+  subtitle = "Explore More",
+  titleColor = "black",
   subtitleColor = "#b51a1a",
   overlayBg = "rgba(255,255,255,0.55)",
   pdfFile,
@@ -35,21 +35,18 @@ const ServicesCollectionCard = ({
             lg: "500px",
           },
 
+          "& .hoverContent": {
+            opacity: 0,
+            transition: "opacity 0.45s ease",
+          },
+
+          "&:hover .hoverContent": {
+            opacity: 1,
+          },
+
           "& .hoverOverlay": {
             opacity: 0,
-            background: "rgba(0, 0, 0, 0.45)", // Transparent black
-            backdropFilter: "blur(2px)",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            transition: "0.4s ease",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "20px",
-            textAlign: "center",
+            transition: "opacity 0.45s ease",
           },
 
           "&:hover .hoverOverlay": {
@@ -57,7 +54,7 @@ const ServicesCollectionCard = ({
           },
         }}
       >
-        {/* Main Image stays visible */}
+        {/* Background Image */}
         <Box
           component="img"
           src={mainImage}
@@ -69,59 +66,104 @@ const ServicesCollectionCard = ({
           }}
         />
 
-        {/* Hover Transparent Overlay With Text */}
-        <Box className="hoverOverlay">
+        {/* TOP TITLE */}
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            width: "100%",
+            textAlign: "center",
+            py: { xs: 1, sm: 1.5, md: 2 },
+            zIndex: 3,
+          }}
+        >
+          <Typography
+            sx={{
+              fontSize: { xs: "18px", sm: "24px", md: "28px" },
+              fontWeight: 700,
+              color: titleColor,
+            }}
+          >
+            {title}
+          </Typography>
+        </Box>
+
+        {/* HOVER DARK OVERLAY */}
+        <Box
+          className="hoverOverlay"
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.50)",
+            backdropFilter: "blur(3px)",
+            zIndex: 2,
+          }}
+        />
+
+        {/* HOVER PARAGRAPH */}
+        <Box
+          className="hoverContent"
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            maxWidth: "80%",
+            zIndex: 3,
+          }}
+        >
           <Typography
             sx={{
               color: "#fff",
               fontSize: { xs: "16px", sm: "18px", md: "20px" },
+              lineHeight: 1.4,
               fontWeight: 400,
-              lineHeight: 1.5,
             }}
           >
             {hoverParagraph}
           </Typography>
         </Box>
 
-        {/* Bottom Title Section */}
+        {/* BOTTOM BUTTON */}
         <Box
+          className="hoverContent"
           sx={{
             position: "absolute",
-            bottom: 0,
+            bottom: 20,
             width: "100%",
-            bgcolor: overlayBg,
-            py: { xs: 1.5, sm: 2.5, md: 3 },
             textAlign: "center",
-            backdropFilter: "blur(4px)",
-            zIndex: 2,
+            zIndex: 4,
           }}
         >
-          <Typography
-            sx={{
-              fontSize: { xs: "18px", sm: "22px", md: "26px", lg: "28px" },
-              letterSpacing: "2px",
-              color: titleColor,
-              fontFamily: "serif",
-              fontWeight: 600,
+          <Box
+            component="button"
+            onClick={(e) => {
+              e.stopPropagation(); // prevent full-card click
+              onExploreClick && onExploreClick(pdfFile);
             }}
-          >
-            {title}
-          </Typography>
-
-          <Typography
-            sx={{
-              mt: 1,
-              fontSize: { xs: "14px", sm: "16px", md: "18px" },
-              color: subtitleColor,
-              fontWeight: 500,
+            style={{
+              padding: "10px 24px",
+              background: "#ff0062",
+              color: "#fff",
+              border: "none",
+              borderRadius: "30px",
+              fontSize: "16px",
+              fontWeight: "600",
               cursor: "pointer",
-              transition: "0.3s",
-              "&:hover": { textDecoration: "underline" },
+              backdropFilter: "blur(5px)",
+              transition: "0.3s ease",
             }}
+            onMouseOver={(e) => (e.currentTarget.style.background = "#d60055")}
+            onMouseOut={(e) => (e.currentTarget.style.background = "#ff0062")}
           >
             {subtitle}
-          </Typography>
+          </Box>
         </Box>
+
       </Box>
     </Box>
   );
