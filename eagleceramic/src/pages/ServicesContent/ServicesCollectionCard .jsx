@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 
 const ServicesCollectionCard = ({
   mainImage,
-  title = "SIGNATURE COLLECTION",
+  // title = "SIGNATURE COLLECTION",
   hoverParagraph = "This is the paragraph that appears when hovering. Background image remains visible.",
   subtitle = "Explore More",
   titleColor = "black",
@@ -58,7 +58,7 @@ const ServicesCollectionCard = ({
         <Box
           component="img"
           src={mainImage}
-          alt={title}
+        
           sx={{
             objectFit: "cover",
             width: "100%",
@@ -67,7 +67,7 @@ const ServicesCollectionCard = ({
         />
 
         {/* TOP TITLE */}
-        <Box
+        {/* <Box
           sx={{
             position: "absolute",
             top: 0,
@@ -86,7 +86,7 @@ const ServicesCollectionCard = ({
           >
             {title}
           </Typography>
-        </Box>
+        </Box> */}
 
         {/* HOVER DARK OVERLAY */}
         <Box
@@ -142,7 +142,7 @@ const ServicesCollectionCard = ({
           <Box
             component="button"
             onClick={(e) => {
-              e.stopPropagation(); // prevent full-card click
+              e.stopPropagation();
               onExploreClick && onExploreClick(pdfFile);
             }}
             style={{

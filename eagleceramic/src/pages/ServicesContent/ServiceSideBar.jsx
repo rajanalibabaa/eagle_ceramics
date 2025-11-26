@@ -163,7 +163,7 @@ const [openSubVersions, setOpenSubVersions] = useState({});
       label: 'Elevation Tiles',
       key: 'punch-series-collection',
       versions: [
-        { label: '300 X 450', url: '/services/punch-series-collection', path:''},
+        { label: '300 X 450', url: '/services/elevation-tiles-300x450', path:''},
         { label: '300 X 600', url: '/services/punch-series-collection/v1', path:'v1'},
       ]
     },
