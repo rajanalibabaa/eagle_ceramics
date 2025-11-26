@@ -145,6 +145,7 @@ export default function ServiceSideBar() {
   const [, , collection, maybeVersion] = pathname.split('/');
 
   const [openCollections, setOpenCollections] = useState(true);
+const [openSubVersions, setOpenSubVersions] = useState({});
   const [openSub, setOpenSub] = useState({});
 
   const go = url => () => navigate(url);
@@ -152,45 +153,53 @@ export default function ServiceSideBar() {
 
   const collections = [
     {
-      label: 'Golden Endless Collection (600X1200MM)',
+      label: 'Wall Tiles',
       key: 'golden-endless-collection',
       versions: [
-        { label: 'All Versions', url: '/services/golden-endless-collection', path: '' },
-        { label: 'Version 1', url: '/services/golden-endless-collection/v0', path: 'v0' },
-        { label: 'Version 2', url: '/services/golden-endless-collection/v1', path: 'v1' },
-        { label: 'Version 3', url: '/services/golden-endless-collection/v2', path: 'v2' }
+        { label: '300 X 450', url: '/services/golden-endless-collection', path: '' },
       ]
     },
     {
-      label: 'Punch Series Collection (300X300MM)',
+      label: 'Elevation Tiles',
       key: 'punch-series-collection',
       versions: [
-        { label: 'All Versions', url: '/services/punch-series-collection', path:''},
-        { label: 'Version 1', url: '/services/punch-series-collection/v1', path:'v1'},
-        { label: 'Version 2', url: '/services/punch-series-collection/v2', path:'v2'}
+        { label: '300 X 450', url: '/services/punch-series-collection', path:''},
+        { label: '300 X 600', url: '/services/punch-series-collection/v1', path:'v1'},
       ]
     },
-    { label: 'Statuario Collection (600X1200MM)', url: '/services/statuario-collection', key: 'statuario-collection' },
-    { label: 'Glossy Collection (600X1200MM)', url: '/services/glossy-collection', key: 'glossy-collection' },
-    { label: 'Matt Carving Endless Collection (600X1200MM)', url: '/services/matt-carving-endless-collection', key: 'matt-carving-endless-collection' },
-    { label: 'SNP Collection (600X1200MM)', url: '/services/snp-collection', key: 'snp-collection' },
-    { label: '3D Collection (600X1200MM)', url: '/services/three-dimension-collection', key: 'three-dimension-collection' },
-    { label: 'Double Charge Collection (600X1200MM)', url: '/services/double-charge-collection', key: 'double-charge-collection' },
-    { label: 'Matt Carving Collection (600X1200MM)', url: '/services/matt-carving-collection', key: 'matt-carving-collection' },
-    {
-      label: 'High Depth Elevation (600X300MM)',
-      key: 'high-depth',
+    { label: 'Floor Tiles', key: 'punch-series-collection',
       versions: [
-        { label: 'All Versions', url: '/services/high-depth', path: '' },
-        { label: 'Version 1', url: '/services/high-depth/v0', path: 'v0' },
-        { label: 'Version 2', url: '/services/high-depth/v1', path: 'v1' },
-        { label: 'Version 3', url: '/services/high-depth/v2', path: 'v2' }
+        { label: '600 X 1200', path: '/services/punch-series-collection' ,
+            subversions: [
+              { label: 'Glossy Collection', url: '/services/golden-endless-collection', path: '' },
+              { label: 'Matt Collection', url: '/services/statuario-collection/v1', path: 'v1' },
+            ]
+        },
+        { label: '600 X 600 DC', url: '/services/statuario-collection/v1', path: 'v1' },
+      ]
+     },
+
+    { label: 'Parking Tiles', key: 'glossy-collection' ,
+      versions: [
+        { label: '300 X 300', path: '' },
+        { label: '400 X 400', url: '/services/statuario-collection/v1', path: 'v1' },
       ]
     },
-    { label: 'Morocco Collection (300X300MM)', url: '/services/moroccan-collection', key: 'moroccan-collection' },
-    { label: 'Plain Collection (300X300MM)', url: '/services/plain-collection', key: 'plain-collection' },
-    { label: 'Special Collection (300X300MM)', url: '/services/special-collection', key: 'special-collection' },
-    { label: 'Step Riser Collection (300X300MM)', url: '/services/step-riser-collection', key: 'step-riser-collection' }
+
+    { label: 'CoolRoof Tiles', key: 'matt-carving-endless-collection'
+      , versions: [
+        { label: '300 X 300', path: '' 
+          , subversions: [
+            { label: '9MM', url: '/services/golden-endless-collection', path: '' },
+            { label: '10MM', url: '/services/matt-carving-endless-collection/v1', path: 'v1' },
+          ]
+        },
+        { label: '600 X 600', url: '/services/matt-carving-endless-collection/v1', path: 'v1' },
+      ]
+     },
+
+    { label: 'Kitchen Sink', url: '/services/snp-collection', key: 'snp-collection' },
+   
   ];
 
   useEffect(() => {
@@ -209,6 +218,7 @@ export default function ServiceSideBar() {
           alignItems: 'center', 
           p: 2, 
           mb: 2,
+          gap: 1,
           boxShadow: '0 2px 12px rgba(0,0,0,0.06)' 
         }}>
           <Typography
@@ -223,7 +233,7 @@ export default function ServiceSideBar() {
               textShadow: '0 2px 4px rgba(255,255,255,0.5)'
             }}
           >
-            Shop By Collection
+            Shop By Products
           </Typography>
 
           <ClearAllButton onClick={clearAll}>Clear All</ClearAllButton>
@@ -251,7 +261,7 @@ export default function ServiceSideBar() {
               color: 'black'
             }}
           >
-            Collection
+            Products
           </Typography>
           {openCollections ? (
             <ExpandLessIcon sx={{ fontSize: { xs: 18, sm: 20, md: 22 }, color: 'black' }} />
@@ -316,17 +326,74 @@ export default function ServiceSideBar() {
                   />
                   <Collapse in={isSubOpen}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, pl: 1 }}>
-                      {item.versions.map(v => {
-                        const thisChecked = isSelected && (v.path === maybeVersion || (!maybeVersion && v.path === ''));
-                        return (
-                          <VersionItem
-                            key={v.label}
-                            control={<Checkbox size="small" checked={thisChecked} onChange={go(v.url)} />}
-                            label={v.label}
-                            selected={thisChecked}
-                          />
-                        );
-                      })}
+      {item.versions.map(v => {
+  const thisChecked =
+    isSelected &&
+    (v.path === maybeVersion || (!maybeVersion && v.path === ''));
+
+  const hasSubVersions = Array.isArray(v.subversions);
+  const openThisSub = openSubVersions[v.label];
+
+  return (
+    <Box key={v.label}>
+      <VersionItem
+        selected={thisChecked}
+        control={
+          <Checkbox
+            size="small"
+            checked={thisChecked}
+            onChange={go(v.url)}
+            onClick={(e) => e.stopPropagation()}
+          />
+        }
+        label={
+          <Box
+            onClick={() => {
+              if (hasSubVersions) {
+                setOpenSubVersions(prev => ({
+                  ...prev,
+                  [v.label]: !prev[v.label],
+                }));
+              }
+            }}
+            style={{ display: "flex", alignItems: "center", width: "100%" }}
+          >
+            <Typography sx={{ flexGrow: 1 }}>{v.label}</Typography>
+
+            {hasSubVersions &&
+              (openThisSub ? (
+                <ExpandLessIcon sx={{ ml: 1, fontSize: 18 }} />
+              ) : (
+                <ExpandMoreIcon sx={{ ml: 1, fontSize: 18 }} />
+              ))}
+          </Box>
+        }
+      />
+
+      {/* ▼▼ SubVersions Collapse ▼▼ */}
+      {hasSubVersions && (
+        <Collapse in={openThisSub}>
+          <Box sx={{ pl: 4, pt: 0.5 }}>
+            {v.subversions.map(sv => (
+              <VersionItem
+                key={sv.label}
+                control={
+                  <Checkbox
+                    size="small"
+                    checked={pathname === sv.url}
+                    onChange={go(sv.url)}
+                  />
+                }
+                label={sv.label}
+              />
+            ))}
+          </Box>
+        </Collapse>
+      )}
+    </Box>
+  );
+})}
+
                     </Box>
                   </Collapse>
                 </Box>
