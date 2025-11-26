@@ -112,11 +112,7 @@ const EagleGoldenEndlessCollectionV0 = () => {
   Golden Endless Collection - Version 1
 </Typography>
    <Box
-  sx={{
-    display: "grid",
-    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-    gap: 1,
-  }}
+  
 >
   {goldenCollection.map((item, index) => (
     <Suspense

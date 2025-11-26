@@ -16,7 +16,7 @@ const ServicesCollectionCard = ({
     <Box
       sx={{
         width: "100%",
-        maxWidth: "100%",
+        maxWidth: "80%",
         mx: "auto",
         mb: 3,
         position: "relative",
