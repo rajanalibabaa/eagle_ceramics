@@ -3,8 +3,8 @@ import { Box, Typography } from "@mui/material";
 
 const ServicesCollectionCard = ({
   mainImage,
-  hoverImage,
   title = "SIGNATURE COLLECTION",
+  hoverParagraph = "This is the paragraph that appears when hovering. Background image remains visible.",
   subtitle = "Explore Collections",
   titleColor = "#000",
   subtitleColor = "#b51a1a",
@@ -16,9 +16,9 @@ const ServicesCollectionCard = ({
     <Box
       sx={{
         width: "100%",
-        maxWidth: { xs: "100%", sm: "600px", md: "900px", lg: "1200px" },
+        maxWidth: "80%",
         mx: "auto",
-        mb:3,
+        mb: 3,
         position: "relative",
         cursor: "pointer",
       }}
@@ -29,49 +29,61 @@ const ServicesCollectionCard = ({
           position: "relative",
           overflow: "hidden",
           height: {
-            xs: "260px",   
-            sm: "320px",   
-            md: "420px",   
-            lg: "500px",   
+            xs: "260px",
+            sm: "320px",
+            md: "420px",
+            lg: "500px",
           },
-          "& .mainImage, & .hoverImage": {
+
+          "& .hoverOverlay": {
+            opacity: 0,
+            background: "rgba(0, 0, 0, 0.45)", // Transparent black
+            backdropFilter: "blur(2px)",
             position: "absolute",
             top: 0,
             left: 0,
             width: "100%",
             height: "100%",
-            objectFit: "contain", 
-            transition: "all 0.5s ease",
+            transition: "0.4s ease",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px",
+            textAlign: "center",
           },
-          "& .hoverImage": {
-            opacity: 0,
-          },
-          "&:hover .mainImage": {
-            opacity: 0,
-            transform: "scale(1.06)",
-          },
-          "&:hover .hoverImage": {
+
+          "&:hover .hoverOverlay": {
             opacity: 1,
-            transform: "scale(1.06)",
-          },
-          "&:hover .exploreText": {
-            opacity: 1,
-            transform: "translateY(0px)",
           },
         }}
       >
-        {/* Main Image */}
-        <Box component="img" src={mainImage} alt={title} className="mainImage" />
-
-        {/* Hover Image */}
+        {/* Main Image stays visible */}
         <Box
           component="img"
-          src={hoverImage}
-          alt={`${title} hover`}
-          className="hoverImage"
+          src={mainImage}
+          alt={title}
+          sx={{
+            objectFit: "cover",
+            width: "100%",
+            height: "100%",
+          }}
         />
 
-        {/* Bottom Overlay */}
+        {/* Hover Transparent Overlay With Text */}
+        <Box className="hoverOverlay">
+          <Typography
+            sx={{
+              color: "#fff",
+              fontSize: { xs: "16px", sm: "18px", md: "20px" },
+              fontWeight: 400,
+              lineHeight: 1.5,
+            }}
+          >
+            {hoverParagraph}
+          </Typography>
+        </Box>
+
+        {/* Bottom Title Section */}
         <Box
           sx={{
             position: "absolute",
@@ -97,20 +109,14 @@ const ServicesCollectionCard = ({
           </Typography>
 
           <Typography
-            className="exploreText"
-            onClick={(e) => {
-              e.stopPropagation();
-              onExploreClick && onExploreClick(pdfFile);
-            }}
             sx={{
               mt: 1,
               fontSize: { xs: "14px", sm: "16px", md: "18px" },
               color: subtitleColor,
-              opacity: 0,
-              transform: "translateY(15px)",
-              transition: "all 0.4s ease",
               fontWeight: 500,
               cursor: "pointer",
+              transition: "0.3s",
+              "&:hover": { textDecoration: "underline" },
             }}
           >
             {subtitle}
