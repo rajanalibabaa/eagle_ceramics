@@ -3,6 +3,11 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ElevationTiles300x450 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x450.jsx";
+import ElevationTiles300x600 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x600.jsx";
+import CoolRoofTiles9MM from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles9MM.jsx'
+import CoolRoofTiles10MM from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles10MM.jsx'
+import CoolRoofTiles600x600 from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles600x600.jsx'
+import KitchenSink from './pages/ServicesContent/KitchenSink/KitchenSink.jsx'
 
 const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
@@ -55,6 +60,11 @@ function App() {
             <Route path="/services" element={<ServicesLayout />}>
               <Route index element={<Walltiles />} />
               <Route path="elevation-tiles-300x450" element={<ElevationTiles300x450/>} />
+              <Route path="elevation-tiles-300x600" element={<ElevationTiles300x600/>} />
+              <Route path="cool-roof-tiles-9mm" element={<CoolRoofTiles9MM/>} />
+              <Route path="cool-roof-tiles-10mm" element={<CoolRoofTiles10MM/>} />
+              <Route path="cool-roof-tiles-600x600" element={<CoolRoofTiles600x600/>} />
+              <Route path="kitchen-sink" element={<KitchenSink/>} />
 
               {/* golden endless collection and its versions */}
               <Route path="golden-endless-collection" element={<EagleGoldenEndlessCollection />} />
