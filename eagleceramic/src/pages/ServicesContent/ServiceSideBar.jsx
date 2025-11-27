@@ -154,9 +154,9 @@ const [openSubVersions, setOpenSubVersions] = useState({});
   const collections = [
     {
       label: 'Wall Tiles',
-      key: 'golden-endless-collection',
+      key: 'walltiles',
       versions: [
-        { label: '300 X 450', url: '/services/golden-endless-collection', path: '' },
+        { label: '300 X 450', url: '/services/walltiles', path: '' },
       ]
     },
     {
@@ -167,22 +167,36 @@ const [openSubVersions, setOpenSubVersions] = useState({});
         { label: '300 X 600', url: '/services/punch-series-collection/v1', path:'v1'},
       ]
     },
-    { label: 'Floor Tiles', key: 'punch-series-collection',
-      versions: [
-        { label: '600 X 1200', path: '/services/punch-series-collection' ,
-            subversions: [
-              { label: 'Glossy Collection', url: '/services/golden-endless-collection', path: '' },
-              { label: 'Matt Collection', url: '/services/statuario-collection/v1', path: 'v1' },
-            ]
+  {
+  label: "Floor Tiles",
+  key: "floortiles",
+  url: "/services/floortiles",
+  versions: [
+    {
+      label: "600 X 1200",
+      url: "/services/floortiles/600x1200",
+      subversions: [
+        {
+          label: "Glossy Collection",
+          url: "/services/floortiles/600x1200/glossy"
         },
-        { label: '600 X 600 DC', url: '/services/statuario-collection/v1', path: 'v1' },
+        {
+          label: "Matt Collection",
+          url: "/services/floortiles/600x1200/matt"
+        }
       ]
-     },
+    },
+    {
+      label: "600 X 600 DC",
+      url: "/services/floortiles/600x600dc"
+    }
+  ]
+},
 
-    { label: 'Parking Tiles', key: 'glossy-collection' ,
+    { label: 'Parking Tiles', key: 'parkingtiles' , url: "/services/parkingtiles",
       versions: [
-        { label: '300 X 300', path: '' },
-        { label: '400 X 400', url: '/services/statuario-collection/v1', path: 'v1' },
+        { label: '300 X 300', url: '/services/parkingtiles/collection1' },
+        { label: '400 X 400', url: '/services/parkingtiles/collection2'},
       ]
     },
 
@@ -287,6 +301,7 @@ const [openSubVersions, setOpenSubVersions] = useState({});
                         size="small"
                         checked={isSelected}
                         onChange={go(item.url)}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     }
                     label={item.label}
@@ -327,9 +342,8 @@ const [openSubVersions, setOpenSubVersions] = useState({});
                   <Collapse in={isSubOpen}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, pl: 1 }}>
       {item.versions.map(v => {
-  const thisChecked =
-    isSelected &&
-    (v.path === maybeVersion || (!maybeVersion && v.path === ''));
+const thisChecked = pathname.startsWith(v.url);
+
 
   const hasSubVersions = Array.isArray(v.subversions);
   const openThisSub = openSubVersions[v.label];
