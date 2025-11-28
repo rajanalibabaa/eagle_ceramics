@@ -81,11 +81,6 @@ function App() {
 <Route path="parkingtiles" element={<ParkingTiles />} />
 <Route path="parkingtiles/collection1" element={<ParkingTilesCollection1 />} />
 <Route path="parkingtiles/collection2" element={<ParkingTilesCollection2 />} />
-
-
-             
-
-             
               
               <Route path="statuario-collection" element={<StatuarioCollection />} />
               <Route path="glossy-collection" element={<GlossyCollection />} />
