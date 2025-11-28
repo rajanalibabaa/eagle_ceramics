@@ -2,6 +2,12 @@ import React, { Suspense } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import ElevationTiles300x450 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x450.jsx";
+import ElevationTiles300x600 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x600.jsx";
+import CoolRoofTiles9MM from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles9MM.jsx'
+import CoolRoofTiles10MM from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles10MM.jsx'
+import CoolRoofTiles600x600 from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles600x600.jsx'
+import KitchenSink from './pages/ServicesContent/KitchenSink/KitchenSink.jsx'
 
 const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
@@ -9,6 +15,30 @@ const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
 const AboutUs = React.lazy(() => import("./pages/AboutUs.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
+const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
+const DoubleCharge = React.lazy(() =>
+  import("./pages/ServicesContent/FloorTiles/600X600DC/DoubleCharge.jsx")
+);
+
+const GlossyCollection = React.lazy(() =>
+  import("./pages/ServicesContent/FloorTiles/600X1200/GlossyCollection.jsx")
+);
+
+const MattCollection = React.lazy(() =>
+  import("./pages/ServicesContent/FloorTiles/600X1200/MattCollection.jsx")
+);
+const ParkingTiles = React.lazy(() =>
+  import("./pages/ServicesContent/ParkingTiles/Collection1.jsx")
+);
+
+const ParkingTilesCollection1 = React.lazy(() =>
+  import("./pages/ServicesContent/ParkingTiles/Collection1.jsx")
+);
+
+const ParkingTilesCollection2 = React.lazy(() =>
+  import("./pages/ServicesContent/ParkingTiles/Collection2.jsx")
+);
+
 const EagleGoldenEndlessCollection = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollection.jsx"));
 const EagleGoldenEndlessCollectionV0 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV0"));
 const EagleGoldenEndlessCollectionV1 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV1"));
@@ -17,7 +47,6 @@ const PunchSeriesCollection = React.lazy(() => import("./pages/ServicesContent/P
 const PunchSeriesCollectionV1 = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollectionV1.jsx"));
 const PunchSeriesCollectionV2 = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollectionV2.jsx"));
 const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"));
-const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/GlossyCollection.jsx"));
 const MattCarvingEndlessCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingEndlessCollection.jsx"));
 const SnpCollection = React.lazy(() => import("./pages/ServicesContent/SnpCollection.jsx"));
 const ThreeDimensionCollection = React.lazy(() => import("./pages/ServicesContent/ThreeDimensionCollection.jsx"));
@@ -51,7 +80,30 @@ function App() {
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/services" element={<ServicesLayout />}>
-              <Route index element={<EagleGoldenEndlessCollection />} />
+              <Route index element={<Walltiles />} />
+              <Route path="walltiles" element={<Walltiles />} />
+              <Route path="elevation-tiles-300x450" element={<ElevationTiles300x450 />} />
+              <Route path="elevation-tiles-300x600" element={<ElevationTiles300x600 />} />
+              <Route path="cool-roof-tiles-9mm" element={<CoolRoofTiles9MM />} />
+              <Route path="cool-roof-tiles-10mm" element={<CoolRoofTiles10MM />} />
+              <Route path="cool-roof-tiles-600x600" element={<CoolRoofTiles600x600 />} />
+              <Route path="kitchen-sink" element={<KitchenSink />} />
+
+              {/* Floor Tiles */}
+              <Route path="floortiles">
+                <Route path="600x1200">
+                  <Route index element={<GlossyCollection />} />
+                  <Route path="glossy" element={<GlossyCollection />} />
+                  <Route path="matt" element={<MattCollection />} />
+                </Route>
+
+                <Route path="600x600dc" element={<DoubleCharge />} />
+              </Route>
+              {/* Parking Tiles */}
+              <Route path="parkingtiles" element={<ParkingTiles />} />
+              <Route path="parkingtiles/collection1" element={<ParkingTilesCollection1 />} />
+              <Route path="parkingtiles/collection2" element={<ParkingTilesCollection2 />} />
+
 
               {/* golden endless collection and its versions */}
               <Route path="golden-endless-collection" element={<EagleGoldenEndlessCollection />} />
@@ -63,7 +115,7 @@ function App() {
               <Route path="punch-series-collection" element={<PunchSeriesCollection />} />
               <Route path="punch-series-collection/v1" element={<PunchSeriesCollectionV1 />} />
               <Route path="punch-series-collection/v2" element={<PunchSeriesCollectionV2 />} />
-              
+
               <Route path="statuario-collection" element={<StatuarioCollection />} />
               <Route path="glossy-collection" element={<GlossyCollection />} />
               <Route path="matt-carving-endless-collection" element={<MattCarvingEndlessCollection />} />
@@ -72,11 +124,11 @@ function App() {
               <Route path="double-charge-collection" element={<DoubleChargeCollection />} />
               <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
 
-              <Route index element={<HighDepth/>} />
-                  <Route path="high-depth" element={<HighDepth />} />
-                   <Route path="high-depth/v0" element={<HighDepthV1 />} />
-                   <Route path="high-depth/v1" element={<HighDepthV2 />} />
-                   <Route path="high-depth/v2" element={<HighDepthV3 />} />
+              <Route index element={<HighDepth />} />
+              <Route path="high-depth" element={<HighDepth />} />
+              <Route path="high-depth/v0" element={<HighDepthV1 />} />
+              <Route path="high-depth/v1" element={<HighDepthV2 />} />
+              <Route path="high-depth/v2" element={<HighDepthV3 />} />
 
 
               <Route path="moroccan-collection" element={<MoroccanCollection />} />

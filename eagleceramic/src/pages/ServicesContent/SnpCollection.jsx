@@ -31,7 +31,7 @@ import PisaAshHover from "../../assets/PisaAshHover.jpg";
 
 
 import SNP from "../../assets/pdf/SNP.pdf";
-import ServicesCollectionCard from './ServicesCollectionCard ';
+import ServicesCollectionCard from './ServicesCollectionCard';
 
 const SnpCollection = () => {
 

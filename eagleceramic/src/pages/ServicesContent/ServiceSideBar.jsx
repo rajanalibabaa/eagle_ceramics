@@ -154,51 +154,65 @@ const [openSubVersions, setOpenSubVersions] = useState({});
   const collections = [
     {
       label: 'Wall Tiles',
-      key: 'golden-endless-collection',
+      key: 'walltiles',
       versions: [
-        { label: '300 X 450', url: '/services/golden-endless-collection', path: '' },
+        { label: '300 X 450', url: '/services/walltiles', path: '' },
       ]
     },
     {
       label: 'Elevation Tiles',
-      key: 'punch-series-collection',
+      key: 'elevation-tiles-collection',
       versions: [
-        { label: '300 X 450', url: '/services/punch-series-collection', path:''},
-        { label: '300 X 600', url: '/services/punch-series-collection/v1', path:'v1'},
+        { label: '300 X 450', url: '/services/elevation-tiles-300x450', path:''},
+        { label: '300 X 600', url: '/services/elevation-tiles-300x600', path:'v1'},
       ]
     },
-    { label: 'Floor Tiles', key: 'punch-series-collection',
-      versions: [
-        { label: '600 X 1200', path: '/services/punch-series-collection' ,
-            subversions: [
-              { label: 'Glossy Collection', url: '/services/golden-endless-collection', path: '' },
-              { label: 'Matt Collection', url: '/services/statuario-collection/v1', path: 'v1' },
-            ]
+  {
+  label: "Floor Tiles",
+  key: "floortiles",
+  url: "/services/floortiles",
+  versions: [
+    {
+      label: "600 X 1200",
+      url: "/services/floortiles/600x1200",
+      subversions: [
+        {
+          label: "Glossy Collection",
+          url: "/services/floortiles/600x1200/glossy"
         },
-        { label: '600 X 600 DC', url: '/services/statuario-collection/v1', path: 'v1' },
+        {
+          label: "Matt Collection",
+          url: "/services/floortiles/600x1200/matt"
+        }
       ]
-     },
+    },
+    {
+      label: "600 X 600 DC",
+      url: "/services/floortiles/600x600dc"
+    }
+  ]
+},
 
-    { label: 'Parking Tiles', key: 'glossy-collection' ,
+    { label: 'Parking Tiles', key: 'parkingtiles' , url: "/services/parkingtiles",
       versions: [
-        { label: '300 X 300', path: '' },
-        { label: '400 X 400', url: '/services/statuario-collection/v1', path: 'v1' },
+        { label: '300 X 300', url: '/services/parkingtiles/collection1' },
+        { label: '400 X 400', url: '/services/parkingtiles/collection2'},
       ]
     },
 
-    { label: 'CoolRoof Tiles', key: 'matt-carving-endless-collection'
+    { label: 'CoolRoof Tiles', key: 'cool-roof-tiles-9mm'
       , versions: [
         { label: '300 X 300', path: '' 
           , subversions: [
-            { label: '9MM', url: '/services/golden-endless-collection', path: '' },
-            { label: '10MM', url: '/services/matt-carving-endless-collection/v1', path: 'v1' },
+            { label: '9MM', url: '/services/cool-roof-tiles-9mm', path: '' },
+            { label: '10MM', url: '/services/cool-roof-tiles-10mm', path: 'v1' },
           ]
         },
-        { label: '600 X 600', url: '/services/matt-carving-endless-collection/v1', path: 'v1' },
+        { label: '600 X 600', url: '/services/cool-roof-tiles-600x600', path: 'v1' },
       ]
      },
 
-    { label: 'Kitchen Sink', url: '/services/snp-collection', key: 'snp-collection' },
+    { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink' },
    
   ];
 
@@ -287,6 +301,7 @@ const [openSubVersions, setOpenSubVersions] = useState({});
                         size="small"
                         checked={isSelected}
                         onChange={go(item.url)}
+                        onClick={(e) => e.stopPropagation()}
                       />
                     }
                     label={item.label}
@@ -327,9 +342,8 @@ const [openSubVersions, setOpenSubVersions] = useState({});
                   <Collapse in={isSubOpen}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, pl: 1 }}>
       {item.versions.map(v => {
-  const thisChecked =
-    isSelected &&
-    (v.path === maybeVersion || (!maybeVersion && v.path === ''));
+const thisChecked = pathname.startsWith(v.url);
+
 
   const hasSubVersions = Array.isArray(v.subversions);
   const openThisSub = openSubVersions[v.label];
