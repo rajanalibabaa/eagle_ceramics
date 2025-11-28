@@ -10,7 +10,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
-  import("../ServicesCollectionCard ") 
+  import("../ServicesCollectionCard ")
 );
 import pdf1 from "../../../assets/pdf/Seriespunch2.pdf";
 import pdf2 from "../../../assets/pdf/Seriespunch3.pdf";
@@ -28,7 +28,7 @@ import img6 from "../../../assets/ParkingTiles/Stepraiser.jpg";
 
 const goldenCollection = [
   {
-     title: "Series 12 X 12 Punch -2",
+    title: "Series 12 X 12 Punch -2",
     mainImage: img1,
     hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
     pdf: pdf1,
@@ -57,7 +57,7 @@ const goldenCollection = [
     hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
     pdf: pdf5,
   },
-    {
+  {
     title: "Step and Raiser",
     mainImage: img6,
     hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
@@ -67,20 +67,20 @@ const goldenCollection = [
 ];
 
 const Collection1 = () => {
-     const [openPdf, setOpenPdf] = useState(false);
-      const [currentPdf, setCurrentPdf] = useState("");
-    
-      const handleOpenPdf = (pdfFile) => {
-        setCurrentPdf(pdfFile);
-        setOpenPdf(true);
-      };
-    
-      const handleClosePdf = () => {
-        setOpenPdf(false);
-        setCurrentPdf("");
-      };
+  const [openPdf, setOpenPdf] = useState(false);
+  const [currentPdf, setCurrentPdf] = useState("");
+
+  const handleOpenPdf = (pdfFile) => {
+    setCurrentPdf(pdfFile);
+    setOpenPdf(true);
+  };
+
+  const handleClosePdf = () => {
+    setOpenPdf(false);
+    setCurrentPdf("");
+  };
   return (
- <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography
         variant="h4"
         align="center"
@@ -90,14 +90,14 @@ const Collection1 = () => {
           fontWeight: 700,
           textTransform: "uppercase",
           letterSpacing: 1,
-          mb:2
+          mb: 2
         }}
       >
         PARKING TILES
       </Typography>
 
       {/* COLLECTION LOOP */}
-      <Box sx={{marginTop:10}}>
+      <Box sx={{ marginTop: 10 }}>
         {goldenCollection.map((item, index) => (
           <Suspense
             key={index}
@@ -110,7 +110,7 @@ const Collection1 = () => {
               subtitle={item.subtitle}
               titleColor={item.titleColor}
               subtitleColor="Explore More"
-        pdfFile={item.pdf}
+              pdfFile={item.pdf}
               onExploreClick={handleOpenPdf}
             />
           </Suspense>
@@ -164,7 +164,7 @@ const Collection1 = () => {
           )}
         </Box>
       </Modal>
-    </Container>  )
+    </Container>)
 }
 
 export default Collection1

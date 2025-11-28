@@ -41,7 +41,6 @@ const KitchenSink = () => {
                 gutterBottom
                 sx={{
                     color: "#658C58",
-                    fontFamily: "'Montserrat', sans-serif",
                     fontWeight: 700,
                     textTransform: "uppercase",
                     letterSpacing: 2,
@@ -113,12 +112,11 @@ const KitchenSink = () => {
                         variant="h4"
                         component="h2"
                         sx={{
-                            fontFamily: "'Montserrat', sans-serif",
                             fontWeight: 700,
                             color: "#658C58",
                             mb: 3,
-                            fontSize: { xs: "2rem", md: "2.6rem" },
-                            lineHeight: 1.2,
+                            fontSize: { xs: "2rem", md: "2.4rem" },
+                            lineHeight: 1.1,
                         }}
                     >
                         Premium Quartz Kitchen Sinks
