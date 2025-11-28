@@ -161,10 +161,10 @@ const [openSubVersions, setOpenSubVersions] = useState({});
     },
     {
       label: 'Elevation Tiles',
-      key: 'punch-series-collection',
+      key: 'elevation-tiles-collection',
       versions: [
-        { label: '300 X 450', url: '/services/punch-series-collection', path:''},
-        { label: '300 X 600', url: '/services/punch-series-collection/v1', path:'v1'},
+        { label: '300 X 450', url: '/services/elevation-tiles-300x450', path:''},
+        { label: '300 X 600', url: '/services/elevation-tiles-300x600', path:'v1'},
       ]
     },
   {
@@ -200,19 +200,19 @@ const [openSubVersions, setOpenSubVersions] = useState({});
       ]
     },
 
-    { label: 'CoolRoof Tiles', key: 'matt-carving-endless-collection'
+    { label: 'CoolRoof Tiles', key: 'cool-roof-tiles-9mm'
       , versions: [
         { label: '300 X 300', path: '' 
           , subversions: [
-            { label: '9MM', url: '/services/golden-endless-collection', path: '' },
-            { label: '10MM', url: '/services/matt-carving-endless-collection/v1', path: 'v1' },
+            { label: '9MM', url: '/services/cool-roof-tiles-9mm', path: '' },
+            { label: '10MM', url: '/services/cool-roof-tiles-10mm', path: 'v1' },
           ]
         },
-        { label: '600 X 600', url: '/services/matt-carving-endless-collection/v1', path: 'v1' },
+        { label: '600 X 600', url: '/services/cool-roof-tiles-600x600', path: 'v1' },
       ]
      },
 
-    { label: 'Kitchen Sink', url: '/services/snp-collection', key: 'snp-collection' },
+    { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink' },
    
   ];
 

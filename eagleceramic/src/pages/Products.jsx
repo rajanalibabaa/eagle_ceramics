@@ -6,147 +6,158 @@ import {
   Typography,
   Fade,
   Slide,
-  useTheme,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
+
 import walltile from "../assets/WallTiles/Nature.jpg";
+import elevationTile from "../assets/ElevationTiles300x450/Eagle008image.png";
+import floorTile from "../assets/FloorTiles/Glossyendlessv1.jpg";
+import parkingTile from "../assets/ParkingTiles/PunchCollection3.jpg";
+import coolroof from "../assets/RoofTilesImages/RoofTiles600x600.PNG";
+import kitchenSink from "../assets/KitchenSinkCollection/KitchenSink.PNG";
 
 const content = [
   {
     title: "WALL TILES",
     description:
-      "Explore our premium range of wall tiles — the perfect blend of style and durability for every space.",
+      "Explore our premium range of wall tiles — the perfect blend of style, texture, and durability to elevate any room.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.",
     image: walltile,
   },
   {
     title: "ELEVATION TILES",
     description:
-      "Add depth and elegance to your exteriors with our contemporary elevation tiles.",
-    image: "/linear.webp",
+      "Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.",
+    image: elevationTile,
   },
   {
     title: "FLOOR TILES",
     description:
-      "Strong, stylish, and sustainable floor tiles built to last in any environment.",
-    image: "/floor.webp",
+      "Glossy or matte — our floor tiles deliver strength, beauty, and long-lasting performance.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.",
+    image: floorTile,
   },
   {
     title: "PARKING TILES",
     description:
-      "Durable, anti‑skid parking tiles designed to withstand heavy usage and weather.",
-    image: "/parking.webp",
+      "Sturdy, anti-skid parking tiles engineered to handle heavy loads effortlessly.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.",
+    image: parkingTile,
   },
   {
     title: "COOLROOF TILES",
     description:
-      "Keep your building cool naturally with our heat‑reflective coolroof tiles.",
-    image: "/coolroof.webp",
+      "Reduce heat naturally with high-reflective cool roof tiles for thermal comfort.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.",
+    image: coolroof,
   },
   {
     title: "KITCHEN SINK",
     description:
-      "Functional and modern kitchen sinks to complement your tile choices perfectly.",
-    image: "/sink.webp",
+      "Modern, durable kitchen sinks that complement your interiors and enhance functionality.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.Enhance your building's exterior with our stylish and weather-resistant elevation tiles.lorem ipsum dolor sit amet.",
+    image: kitchenSink,
   },
 ];
 
 const Layout = styled(Box)(({ theme }) => ({
   display: "flex",
+  gap: theme.spacing(4),
   alignItems: "flex-start",
-  position: "relative",
-  gap: theme.spacing(6),
   [theme.breakpoints.down("md")]: {
     flexDirection: "column",
+    gap: theme.spacing(2),
   },
 }));
 
 const LeftColumn = styled(Box)(({ theme }) => ({
   flex: 1,
-  position: "relative",
+  width: "100%",
+  paddingRight: theme.spacing(2),
   [theme.breakpoints.down("md")]: {
+    paddingRight: 0,
     order: 2,
   },
 }));
 
 const RightSticky = styled(Box)(({ theme }) => ({
   flex: 1,
+  width: "100%",
   position: "sticky",
   top: theme.spacing(10),
-  height: "80vh",
+  height: "100vh",   
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  [theme.breakpoints.down("md")]: {
-    position: "relative",
-    top: "initial",
-    height: "300px",
-    width: "100%",
-    order: 1,
-  },
 }));
 
+
+
 const Section = styled(Box)(({ theme }) => ({
-  minHeight: "100vh",
-  marginBottom: theme.spacing(8),
+  minHeight: "100vh",   
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
+  gap: theme.spacing(2),
+  padding: theme.spacing(4, 0),
 }));
 
-// ---------- Main Sticky Scroll Component ----------
+
+
 function StickyScrollReveal() {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
 
+  // SCROLL LOGIC (kept)
   useEffect(() => {
     const handleScroll = () => {
       if (containerRef.current) {
         const topOffset = containerRef.current.offsetTop;
         const scrollTop = window.scrollY - topOffset;
-        const sectionHeight = window.innerHeight;
+        const sectionHeight = window.innerHeight * 0.95;
+
         const index = Math.max(
           0,
           Math.min(Math.floor(scrollTop / sectionHeight), content.length - 1)
         );
+
         setActiveIndex(index);
       }
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <Container maxWidth="xl" sx={{ py: 2 }}>
+    <Container maxWidth="xl" sx={{ py: 3 }}>
       <Typography
         variant="h2"
         fontWeight="bold"
         color="primary"
-        gutterBottom  
         align="center"
+        sx={{ mb: 4 }}
       >
         Our Products
       </Typography>
+
       <Layout ref={containerRef}>
-        {/* Left side text */}
+        {/* LEFT SIDE TEXT */}
         <LeftColumn>
           {content.map((item, i) => (
-            <Section key={i}>
+            <Section
+              key={i}
+              onMouseEnter={() => setActiveIndex(i)}   // 🔥 HOVER TO CHANGE IMAGE
+              sx={{
+                cursor: "pointer",
+              }}
+            >
               <Slide direction="right" in={i === activeIndex} timeout={300}>
-                <Typography
-                  variant="h3"
-                  fontWeight="bold"
-                  color="primary"
-                  gutterBottom
-                >
+                <Typography variant="h3" fontWeight="bold" color="primary">
                   {item.title}
                 </Typography>
               </Slide>
+
               <Fade in={i === activeIndex} timeout={600}>
                 <Typography
                   variant="h6"
                   color="text.secondary"
-                  lineHeight={1.7}
-                  sx={{ maxWidth: 600 }}
+                  sx={{ width: "95%", lineHeight: 1.7 }}
                 >
                   {item.description}
                 </Typography>
@@ -155,25 +166,22 @@ function StickyScrollReveal() {
           ))}
         </LeftColumn>
 
-        {/* Right side sticky image */}
+        {/* RIGHT SIDE IMAGE */}
         <RightSticky>
-          <Fade in timeout={800}>
+          <Fade in timeout={700}>
             <Box
               sx={{
-                width: "100%",
+                width: "90%",
                 height: "70%",
-                borderRadius: 3,
+                borderRadius: 2,
                 overflow: "hidden",
+                boxShadow: "0 6px 20px rgba(0,0,0,0.12)",
               }}
             >
               <img
-                src={content?.[activeIndex]?.image}
-                alt={content?.[activeIndex]?.title}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
+                src={content[activeIndex].image}
+                alt={content[activeIndex].title}
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
             </Box>
           </Fade>
@@ -183,11 +191,6 @@ function StickyScrollReveal() {
   );
 }
 
-// ---------- Export Component ----------
 export default function Products() {
-  return (
-    <div>
-      <StickyScrollReveal />
-    </div>
-  );
+  return <StickyScrollReveal />;
 }

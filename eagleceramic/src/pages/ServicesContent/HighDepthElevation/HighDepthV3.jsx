@@ -1,95 +1,82 @@
-import React from 'react'
-const ServicesCollectionCard = lazy(() =>
-  import("../ServicesContent/ServicesCollectionCard ")
-);
-const HighDepthV3 = () => {
-  return (
-  <Container maxWidth="lg" sx={{ py: 4 }}>
-<Typography
-  variant="h4"
-  align="center"
-  sx={{ 
-    color: "#658C58", 
-    fontFamily: "'Montserrat', sans-serif",
-    fontWeight: 700,
-    textTransform: "uppercase",
-    letterSpacing: 1
-  }}
->
-  Golden Endless Collection - Version 1
-</Typography>
-   <Box
-  sx={{
-    display: "grid",
-    gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr" },
-    gap: 1,
-  }}
->
-  {goldenCollection.map((item, index) => (
-    <Suspense
-      key={index}
-      fallback={<CircularProgress sx={{ display: "block", mx: "auto" }} />}
-    >
-      <ServicesCollectionCard
-        mainImage={item.main}
-        hoverImage={item.hover}
-        title={item.title}
-        subtitle="Explore More"
-        pdfFile={pdf}
-        onExploreClick={handleOpenPdf}
-      />
-    </Suspense>
-  ))}
-</Box>
+import React, { useState, useCallback, lazy, Suspense } from "react";
+import { Box, Container, Typography, CircularProgress } from "@mui/material";
 
-      <Modal
-        open={openPdf}
-        onClose={handleClosePdf}
+
+import ThumbnailRow from "./ThumbnailRow";
+
+const ServicesCollectionCard = lazy(() =>
+  import("../ServicesCollectionCard ")
+);
+
+const HighDepthV3 = () => {
+
+  const [selectedImages, setSelectedImages] = useState(
+      setsData.map((set) => set.default)
+    );
+  
+    const handleImageChange = useCallback((setIndex, img) => {
+      if (!img?.src) return;
+  
+      setSelectedImages((prev) => {
+        const updated = [...prev];
+        updated[setIndex] = img.src;
+        return updated;
+      });
+    }, []);
+  return (
+  <Container maxWidth="lg" >
+      <Typography
+        variant="h4"
+        align="center"
         sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          p: 2,
+          color: "#658C58",
+          fontFamily: "'Montserrat', sans-serif",
+          fontWeight: 700,
+          textTransform: "uppercase",
+          letterSpacing: 1,
         }}
       >
-        <Box
-          sx={{
-            position: "relative",
-            width: "90%",
-            height: "95%",
-            bgcolor: "background.paper",
-            borderRadius: 2,
-            boxShadow: 24,
-            p: 1,
-          }}
-        >
-          <IconButton
-            onClick={handleClosePdf}
-            sx={{
-              position: "absolute",
-              right: -8,
-              top: -13,
-              bgcolor: "background.paper",
-              "&:hover": { bgcolor: "grey.200" },
-            }}
+        High Depth Elevation - Version 1
+      </Typography>
+
+      {/* LOOP THROUGH ALL SETS */}
+      {setsData.map((set, index) => (
+        <Box key={index} sx={{ mt: index === 0 ? 3 : 6 }}>
+          <Suspense
+            fallback={<CircularProgress sx={{ display: "block", mx: "auto" }} />}
           >
-            <CloseIcon />
-          </IconButton>
+            <Box
+              sx={{
+                width: "100%",
+                maxWidth: 1000,
+                mx: "auto",
+                height: { xs: 300, sm: 420, md: 400 },
+                overflow: "hidden",
+                borderRadius: 2,
+              }}
+            >
+              <ServicesCollectionCard
+                mainImage={selectedImages[index]}
+                hoverImage={selectedImages[index]}
+                title={set.title}
+                subtitle="Explore More"
+              />
+            </Box>
 
-          {openPdf && (
-            <iframe
-              src={currentPdf}
-              width="100%"
-              height="100%"
-              style={{ border: "none", borderRadius: 8 }}
-              title="PDF Viewer"
-              loading="lazy"
-            />
-          )}
+            <Typography align="center" sx={{ mt: 1, fontWeight: 600 }}>
+              {set.title}
+            </Typography>
+          </Suspense>
+
+          {/* THUMBNAILS */}
+          <ThumbnailRow
+            images={set.thumbnails}
+            selectedSrc={selectedImages[index]}
+            onImageClick={(img) => handleImageChange(index, img)}
+          />
         </Box>
-      </Modal>
-
-    </Container>  
+      ))}
+    </Container>
     )
 }
 
