@@ -145,7 +145,7 @@ const ServicesCollectionCard = ({
               sx={{
                 color: "#fff",
                 fontSize: {
-                  xs: "14px",
+                  xs: "10px",
                   sm: "16px",
                   md: "18px",
                 },
