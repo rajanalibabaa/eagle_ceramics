@@ -15,8 +15,7 @@ import { motion } from "framer-motion";
 import About from "../pages/AboutUs";
 import Contact from "../pages/ContactUs";
 import Services from "../pages/Services";
-
-
+import logo from '../assets/eagle_ceramics_logo.jpg'
 const fadeDown = {
   initial: { opacity: 0, y: -15 },
   animate: { opacity: 1, y: 0 },
@@ -30,7 +29,7 @@ const Navbar = () => {
   return (
     <AppBar
       sx={{
-        backgroundColor: "#016B61",
+        backgroundColor: "#016b60",
         boxShadow: "none",
         py: 1.5,
         position: "sticky",
@@ -50,20 +49,14 @@ const Navbar = () => {
           }}
         >
           {/* LOGO */}
-          <Typography
-            variant="h5"
+          <Box
             sx={{
-              fontFamily: "'Pacifico', cursive",
-              fontSize: { xs: "22px", sm: "26px", md: "28px" },
-              fontWeight: "bold",
-              color: "white",
-              cursor: "pointer",
-
+              cursor:'pointer'
             }}
             onClick={() => navigate("/")}
-          >
-           EAGLE CERAMICS
-          </Typography>
+           ><img src={logo} alt="logo" style={{maxWidth:'150px',maxHeight:'50px'}}/>
+          </Box>
+           
 
           <Box
             sx={{
