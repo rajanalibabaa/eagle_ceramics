@@ -29,7 +29,6 @@ import pdf6 from "../../../assets/pdf/PUNCH COLLECTION-3.pdf"
 import pdf7 from "../../../assets/pdf/PUNCH COLLECTION-4.pdf"
 import pdf8 from "../../../assets/pdf/PUNCH COLLECTION-5.pdf"
 
-
 const goldenCollection = [
   {
      title: "FISH POSTER",

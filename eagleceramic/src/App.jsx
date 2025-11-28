@@ -39,23 +39,13 @@ const ParkingTilesCollection2 = React.lazy(() =>
   import("./pages/ServicesContent/ParkingTiles/Collection2.jsx")
 );
 
-const EagleGoldenEndlessCollection = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollection.jsx"));
-const EagleGoldenEndlessCollectionV0 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV0"));
-const EagleGoldenEndlessCollectionV1 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV1"));
-const EagleGoldenEndlessCollectionV2 = React.lazy(() => import("./pages/ServicesContent/EagleGoldenEndlessCollectionV2"));
-const PunchSeriesCollection = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollection.jsx"));
-const PunchSeriesCollectionV1 = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollectionV1.jsx"));
-const PunchSeriesCollectionV2 = React.lazy(() => import("./pages/ServicesContent/PunchSeriesCollectionV2.jsx"));
+
 const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"));
 const MattCarvingEndlessCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingEndlessCollection.jsx"));
 const SnpCollection = React.lazy(() => import("./pages/ServicesContent/SnpCollection.jsx"));
 const ThreeDimensionCollection = React.lazy(() => import("./pages/ServicesContent/ThreeDimensionCollection.jsx"));
 const DoubleChargeCollection = React.lazy(() => import("./pages/ServicesContent/DoubleChargeCollection.jsx"));
 const MattCarvingCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingCollection.jsx"));
-const HighDepth = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepth.jsx"));
-const HighDepthV1 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV1.jsx"));
-const HighDepthV2 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV2.jsx"));
-const HighDepthV3 = React.lazy(() => import("./pages/ServicesContent/HighDepthElevation/HighDepthV3.jsx"));
 const MoroccanCollection = React.lazy(() => import("./pages/ServicesContent/MoroccanCollection.jsx"));
 const PlainCollection = React.lazy(() => import("./pages/ServicesContent/PlainCollection.jsx"));
 const SpecialCollection = React.lazy(() => import("./pages/ServicesContent/SpecialCollection.jsx"));
@@ -105,17 +95,10 @@ function App() {
               <Route path="parkingtiles/collection2" element={<ParkingTilesCollection2 />} />
 
 
-              {/* golden endless collection and its versions */}
-              <Route path="golden-endless-collection" element={<EagleGoldenEndlessCollection />} />
-              <Route path="golden-endless-collection/v0" element={<EagleGoldenEndlessCollectionV0 />} />
-              <Route path="golden-endless-collection/v1" element={<EagleGoldenEndlessCollectionV1 />} />
-              <Route path="golden-endless-collection/v2" element={<EagleGoldenEndlessCollectionV2 />} />
+             
 
-              {/* Punch Series Collection and its versions */}
-              <Route path="punch-series-collection" element={<PunchSeriesCollection />} />
-              <Route path="punch-series-collection/v1" element={<PunchSeriesCollectionV1 />} />
-              <Route path="punch-series-collection/v2" element={<PunchSeriesCollectionV2 />} />
-
+             
+              
               <Route path="statuario-collection" element={<StatuarioCollection />} />
               <Route path="glossy-collection" element={<GlossyCollection />} />
               <Route path="matt-carving-endless-collection" element={<MattCarvingEndlessCollection />} />
@@ -124,12 +107,7 @@ function App() {
               <Route path="double-charge-collection" element={<DoubleChargeCollection />} />
               <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
 
-              <Route index element={<HighDepth />} />
-              <Route path="high-depth" element={<HighDepth />} />
-              <Route path="high-depth/v0" element={<HighDepthV1 />} />
-              <Route path="high-depth/v1" element={<HighDepthV2 />} />
-              <Route path="high-depth/v2" element={<HighDepthV3 />} />
-
+            
 
               <Route path="moroccan-collection" element={<MoroccanCollection />} />
               <Route path="plain-collection" element={<PlainCollection />} />
