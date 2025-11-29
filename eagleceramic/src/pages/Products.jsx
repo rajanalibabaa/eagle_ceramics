@@ -86,8 +86,6 @@ const RightSticky = styled(Box)(({ theme }) => ({
   justifyContent: "center",
 }));
 
-
-
 const Section = styled(Box)(({ theme }) => ({
   minHeight: "100vh",   
   display: "flex",
@@ -96,8 +94,6 @@ const Section = styled(Box)(({ theme }) => ({
   gap: theme.spacing(2),
   padding: theme.spacing(4, 0),
 }));
-
-
 
 function StickyScrollReveal() {
   const [activeIndex, setActiveIndex] = useState(0);
