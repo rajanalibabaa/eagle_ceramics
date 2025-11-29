@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 import "./App.css";
+import ScrollToTop from "./ScrollToTop";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ElevationTiles300x450 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x450.jsx";
@@ -13,6 +14,8 @@ const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
 const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
 const AboutUs = React.lazy(() => import("./pages/AboutUs.jsx"));
+const TrustedChoise = React.lazy(() => import("./components/TrustedChoise.jsx"));
+const WhyOurProducts = React.lazy(() => import("./components/WhyOurProducts.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
 const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
@@ -38,8 +41,6 @@ const ParkingTilesCollection1 = React.lazy(() =>
 const ParkingTilesCollection2 = React.lazy(() =>
   import("./pages/ServicesContent/ParkingTiles/Collection2.jsx")
 );
-
-
 const StatuarioCollection = React.lazy(() => import("./pages/ServicesContent/StatuarioCollection.jsx"));
 const MattCarvingEndlessCollection = React.lazy(() => import("./pages/ServicesContent/MattCarvingEndlessCollection.jsx"));
 const SnpCollection = React.lazy(() => import("./pages/ServicesContent/SnpCollection.jsx"));
@@ -62,6 +63,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
+         <ScrollToTop />
         <Suspense fallback={<div>Loading...</div>}>
           <MainPopUp />
           <Navbar />
@@ -69,6 +71,8 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/contact" element={<ContactUs />} />
+            <Route path="/trusted-choice" element={<TrustedChoise />} />
+            <Route path='/why-our-products' element={<WhyOurProducts/>}/>
             <Route path="/services" element={<ServicesLayout />}>
               <Route index element={<Walltiles />} />
               <Route path="walltiles" element={<Walltiles />} />
