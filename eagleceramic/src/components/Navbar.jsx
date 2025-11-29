@@ -92,7 +92,7 @@ const Navbar = () => {
               whileHover={{ scale: 1.04 }}
               onClick={() => navigate("/services")}
             >
-              SERVICES
+              Products
             </Button>
 {/* 
             <Button
