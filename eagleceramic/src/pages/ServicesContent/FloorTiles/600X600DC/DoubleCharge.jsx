@@ -10,37 +10,37 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
-  
-  import("../../ServicesCollectionCard ") 
+
+  import("../../ServicesCollectionCard ")
 );
 
 import pdf1 from "../../../../assets/pdf/Doublecatalouge.pdf";
 import endless from "../../../../assets/FloorTiles/Doublecatalouge.jpg"
 
 const goldenCollection = [
-{
-   title: "DOUBLE CHARGE CATALOUGE",
-         mainImage: endless,
-         hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-         pdf: pdf1,
-},
+  {
+    title: "DOUBLE CHARGE CATALOUGE",
+    mainImage: endless,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf1,
+  },
 
 ];
 const DoubleCharge = () => {
   const [openPdf, setOpenPdf] = useState(false);
-        const [currentPdf, setCurrentPdf] = useState("");
-      
-        const handleOpenPdf = (pdfFile) => {
-          setCurrentPdf(pdfFile);
-          setOpenPdf(true);
-        };
-      
-        const handleClosePdf = () => {
-          setOpenPdf(false);
-          setCurrentPdf("");
-        };
+  const [currentPdf, setCurrentPdf] = useState("");
+
+  const handleOpenPdf = (pdfFile) => {
+    setCurrentPdf(pdfFile);
+    setOpenPdf(true);
+  };
+
+  const handleClosePdf = () => {
+    setOpenPdf(false);
+    setCurrentPdf("");
+  };
   return (
-   <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography
         variant="h4"
         align="center"
@@ -50,14 +50,31 @@ const DoubleCharge = () => {
           fontWeight: 700,
           textTransform: "uppercase",
           letterSpacing: 1,
-          mb:2
+          mb: 2
         }}
       >
-       600 X 600 DC
+        600 X 600 DC
+      </Typography>
+      <Typography
+        variant="h5"
+        sx={{
+          color: "#0c0d0dff",
+          fontWeight: 400,
+          justifyContent: "center",
+          display: "flex",
+          textAlign: "center",
+          mb: 4,
+          px: 4,
+          fontSize: { xs: "1rem", md: "1.25rem" },
+          textShadow: "0 2px 4px rgba(0,0,0,0.8)",
+          fontFamily: "'Roboto', sans-serif",
+        }}
+      >
+        Durable, stylish, and suitable for heavy-traffic areas
       </Typography>
 
       {/* COLLECTION LOOP */}
-      <Box sx={{marginTop:10}}>
+      <Box sx={{ marginTop: 10 }}>
         {goldenCollection.map((item, index) => (
           <Suspense
             key={index}
@@ -70,7 +87,7 @@ const DoubleCharge = () => {
               subtitle={item.subtitle}
               titleColor={item.titleColor}
               subtitleColor="Explore More"
-        pdfFile={item.pdf}
+              pdfFile={item.pdf}
               onExploreClick={handleOpenPdf}
             />
           </Suspense>
@@ -124,8 +141,8 @@ const DoubleCharge = () => {
           )}
         </Box>
       </Modal>
-    </Container>  
-    )
+    </Container>
+  )
 }
 
 

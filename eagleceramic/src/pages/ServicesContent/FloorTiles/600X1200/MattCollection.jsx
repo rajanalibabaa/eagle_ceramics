@@ -64,6 +64,23 @@ const MattCollection = () => {
       >
        MATT COLLECTIONS
       </Typography>
+       <Typography
+              variant="h5"
+              sx={{
+                color: "#0c0d0dff",
+                fontWeight: 400,
+                justifyContent: "center",
+                display: "flex",
+                textAlign: "center",
+                mb: 4,
+                px: 4,
+                fontSize: { xs: "1rem", md: "1.25rem" },
+                textShadow: "0 2px 4px rgba(0,0,0,0.8)",
+                fontFamily: "'Roboto', sans-serif",
+              }}
+            >
+              Durable, stylish, and suitable for heavy-traffic areas
+            </Typography>
 
       {/* COLLECTION LOOP */}
       <Box sx={{marginTop:10}}>

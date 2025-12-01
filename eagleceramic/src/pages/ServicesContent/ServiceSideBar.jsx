@@ -23,7 +23,7 @@ const StyledSidebar = styled(Box)(({ theme }) => ({
   height: 'auto',
   maxHeight: 'calc(100vh - 80px)', // Maximum height but can be less
   overflowY: 'auto', // Scroll only when content exceeds max-height
-  overflowX: 'hidden',   
+  overflowX: 'hidden',
   borderRight: { xs: 'none', md: '1px solid rgba(255,255,255,0.2)' },
   background: `
     linear-gradient(135deg,
@@ -37,7 +37,7 @@ const StyledSidebar = styled(Box)(({ theme }) => ({
   borderRadius: { xs: '0 0 16px 16px', md: 0 },
   fontFamily: "'Inter','Roboto','Arial',sans-serif",
   backdropFilter: 'blur(5px)',
-  
+
   // Custom scrollbar styling
   '&::-webkit-scrollbar': {
     width: '6px',
@@ -145,7 +145,7 @@ export default function ServiceSideBar() {
   const [, , collection, maybeVersion] = pathname.split('/');
 
   const [openCollections, setOpenCollections] = useState(true);
-const [openSubVersions, setOpenSubVersions] = useState({});
+  const [openSubVersions, setOpenSubVersions] = useState({});
   const [openSub, setOpenSub] = useState({});
 
   const go = url => () => navigate(url);
@@ -163,46 +163,49 @@ const [openSubVersions, setOpenSubVersions] = useState({});
       label: 'Elevation Tiles',
       key: 'elevation-tiles-collection',
       versions: [
-        { label: '300 X 450', url: '/services/elevation-tiles-300x450', path:''},
-        { label: '300 X 600', url: '/services/elevation-tiles-300x600', path:'v1'},
+        { label: '300 X 450', url: '/services/elevation-tiles-300x450', path: '' },
+        { label: '300 X 600', url: '/services/elevation-tiles-300x600', path: 'v1' },
       ]
     },
-  {
-  label: "Floor Tiles",
-  key: "floortiles",
-  url: "/services/floortiles",
-  versions: [
     {
-      label: "600 X 1200",
-      url: "/services/floortiles/600x1200",
-      subversions: [
+      label: "Floor Tiles",
+      key: "floortiles",
+      url: "/services/floortiles",
+      versions: [
         {
-          label: "Glossy Collection",
-          url: "/services/floortiles/600x1200/glossy"
+          label: "600 X 1200",
+          url: "/services/floortiles/600x1200",
+          subversions: [
+            {
+              label: "Glossy Collection",
+              url: "/services/floortiles/600x1200/glossy"
+            },
+            {
+              label: "Matt Collection",
+              url: "/services/floortiles/600x1200/matt"
+            }
+          ]
         },
         {
-          label: "Matt Collection",
-          url: "/services/floortiles/600x1200/matt"
+          label: "600 X 600 DC",
+          url: "/services/floortiles/600x600dc"
         }
       ]
     },
-    {
-      label: "600 X 600 DC",
-      url: "/services/floortiles/600x600dc"
-    }
-  ]
-},
 
-    { label: 'Parking Tiles', key: 'parkingtiles' , url: "/services/parkingtiles",
+    {
+      label: 'Parking Tiles', key: 'parkingtiles', url: "/services/parkingtiles",
       versions: [
         { label: '300 X 300', url: '/services/parkingtiles/collection1' },
-        { label: '400 X 400', url: '/services/parkingtiles/collection2'},
+        { label: '400 X 400', url: '/services/parkingtiles/collection2' },
       ]
     },
 
-    { label: 'CoolRoof Tiles', key: 'cool-roof-tiles-9mm'
+    {
+      label: 'CoolRoof Tiles', key: 'cool-roof-tiles-9mm'
       , versions: [
-        { label: '300 X 300', path: '' 
+        {
+          label: '300 X 300', path: ''
           , subversions: [
             { label: '9MM', url: '/services/cool-roof-tiles-9mm', path: '' },
             { label: '10MM', url: '/services/cool-roof-tiles-10mm', path: 'v1' },
@@ -210,30 +213,30 @@ const [openSubVersions, setOpenSubVersions] = useState({});
         },
         { label: '600 X 600', url: '/services/cool-roof-tiles-600x600', path: 'v1' },
       ]
-     },
+    },
 
     { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink' },
-   
+
   ];
 
   useEffect(() => {
     setOpenSub(prev => ({
       ...prev,
-      [collection]: prev[collection] ?? !!maybeVersion 
+      [collection]: prev[collection] ?? !!maybeVersion
     }));
   }, [collection, maybeVersion]);
 
   return (
     <SidebarWrapper>
       <StyledSidebar>
-        <Box sx={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          p: 2, 
+        <Box sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          p: 2,
           mb: 2,
           gap: 1,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)' 
+          boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
         }}>
           <Typography
             sx={{
@@ -253,16 +256,16 @@ const [openSubVersions, setOpenSubVersions] = useState({});
           <ClearAllButton onClick={clearAll}>Clear All</ClearAllButton>
         </Box>
 
-        <Divider sx={{ 
+        <Divider sx={{
           mb: 2,
-          borderColor: 'rgba(255,255,255,0.5)', 
-          borderWidth: 1, 
-          background: 'linear-gradient(90deg,transparent 0%,rgba(52,152,219,.3) 50%,transparent 100%)', 
-          height: 2 
+          borderColor: 'rgba(255,255,255,0.5)',
+          borderWidth: 1,
+          background: 'linear-gradient(90deg,transparent 0%,rgba(52,152,219,.3) 50%,transparent 100%)',
+          height: 2
         }} />
 
-        <SectionHeader 
-          sx={{ justifyContent: 'space-between' }} 
+        <SectionHeader
+          sx={{ justifyContent: 'space-between' }}
           onClick={() => setOpenCollections(o => !o)}
         >
           <Typography
@@ -341,72 +344,72 @@ const [openSubVersions, setOpenSubVersions] = useState({});
                   />
                   <Collapse in={isSubOpen}>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, pl: 1 }}>
-      {item.versions.map(v => {
-const thisChecked = pathname.startsWith(v.url);
+                      {item.versions.map(v => {
+                        const thisChecked = pathname.startsWith(v.url);
 
 
-  const hasSubVersions = Array.isArray(v.subversions);
-  const openThisSub = openSubVersions[v.label];
+                        const hasSubVersions = Array.isArray(v.subversions);
+                        const openThisSub = openSubVersions[v.label];
 
-  return (
-    <Box key={v.label}>
-      <VersionItem
-        selected={thisChecked}
-        control={
-          <Checkbox
-            size="small"
-            checked={thisChecked}
-            onChange={go(v.url)}
-            onClick={(e) => e.stopPropagation()}
-          />
-        }
-        label={
-          <Box
-            onClick={() => {
-              if (hasSubVersions) {
-                setOpenSubVersions(prev => ({
-                  ...prev,
-                  [v.label]: !prev[v.label],
-                }));
-              }
-            }}
-            style={{ display: "flex", alignItems: "center", width: "100%" }}
-          >
-            <Typography sx={{ flexGrow: 1 }}>{v.label}</Typography>
+                        return (
+                          <Box key={v.label}>
+                            <VersionItem
+                              selected={thisChecked}
+                              control={
+                                <Checkbox
+                                  size="small"
+                                  checked={thisChecked}
+                                  onChange={go(v.url)}
+                                  onClick={(e) => e.stopPropagation()}
+                                />
+                              }
+                              label={
+                                <Box
+                                  onClick={() => {
+                                    if (hasSubVersions) {
+                                      setOpenSubVersions(prev => ({
+                                        ...prev,
+                                        [v.label]: !prev[v.label],
+                                      }));
+                                    }
+                                  }}
+                                  style={{ display: "flex", alignItems: "center", width: "100%" }}
+                                >
+                                  <Typography sx={{ flexGrow: 1 }}>{v.label}</Typography>
 
-            {hasSubVersions &&
-              (openThisSub ? (
-                <ExpandLessIcon sx={{ ml: 1, fontSize: 18 }} />
-              ) : (
-                <ExpandMoreIcon sx={{ ml: 1, fontSize: 18 }} />
-              ))}
-          </Box>
-        }
-      />
+                                  {hasSubVersions &&
+                                    (openThisSub ? (
+                                      <ExpandLessIcon sx={{ ml: 1, fontSize: 18 }} />
+                                    ) : (
+                                      <ExpandMoreIcon sx={{ ml: 1, fontSize: 18 }} />
+                                    ))}
+                                </Box>
+                              }
+                            />
 
-      {/* ▼▼ SubVersions Collapse ▼▼ */}
-      {hasSubVersions && (
-        <Collapse in={openThisSub}>
-          <Box sx={{ pl: 4, pt: 0.5 }}>
-            {v.subversions.map(sv => (
-              <VersionItem
-                key={sv.label}
-                control={
-                  <Checkbox
-                    size="small"
-                    checked={pathname === sv.url}
-                    onChange={go(sv.url)}
-                  />
-                }
-                label={sv.label}
-              />
-            ))}
-          </Box>
-        </Collapse>
-      )}
-    </Box>
-  );
-})}
+                            {/* ▼▼ SubVersions Collapse ▼▼ */}
+                            {hasSubVersions && (
+                              <Collapse in={openThisSub}>
+                                <Box sx={{ pl: 4, pt: 0.5 }}>
+                                  {v.subversions.map(sv => (
+                                    <VersionItem
+                                      key={sv.label}
+                                      control={
+                                        <Checkbox
+                                          size="small"
+                                          checked={pathname === sv.url}
+                                          onChange={go(sv.url)}
+                                        />
+                                      }
+                                      label={sv.label}
+                                    />
+                                  ))}
+                                </Box>
+                              </Collapse>
+                            )}
+                          </Box>
+                        );
+                      })}
 
                     </Box>
                   </Collapse>

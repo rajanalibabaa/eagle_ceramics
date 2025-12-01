@@ -21,6 +21,8 @@ import {
   ArrowUpward
 } from '@mui/icons-material';
 import ContactUsImage from '../assets/ContactUsImage.jpg'
+import BackgroundWhite from '../assets/BackgroundWhite.jpg'
+import HeadingImg from '../assets/ParkingTiles/PunchCollection1.jpg'
 
 const ContactUs = () => {
   const theme = useTheme();
@@ -70,11 +72,14 @@ const ContactUs = () => {
   ];
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{
+      flexGrow: 1,
+    }}>
       {/* Hero Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #a9cfbaff 0%, #2cb676ff 100%)',   
+        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.70), rgba(0, 0, 0, 0.75)), url(${HeadingImg})`,
+        backgroundSize: 'cover',
           color: 'white',
           py: 8,
           textAlign: 'center'
@@ -108,7 +113,11 @@ const ContactUs = () => {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ py: 2, backgroundColor: '#f5f5f5' }}>
+      <Box sx={{
+        py: 2, minHeight: '100vh',
+        backgroundImage: `url(${BackgroundWhite})`,
+        backgroundSize: 'cover',
+      }}>
         <Container maxWidth="lg">
           {/* Contact Form Section */}
           <Grid container spacing={3}>
@@ -117,7 +126,7 @@ const ContactUs = () => {
               <Card
                 sx={{
                   borderRadius: 2,
-                  boxShadow: '0 4px 12px rgba(40, 197, 25, 0.1)',
+                  // boxShadow: '0 4px 12px rgba(40, 197, 25, 0.1)',
                   border: '1px solid #e0e0e0',
                   backgroundColor: 'white',
                   height: '100%',
@@ -266,7 +275,7 @@ const ContactUs = () => {
                             fontSize: '1.1rem',
                             fontWeight: 600,
                             textTransform: 'none',
-                            backgroundColor: '#016b61',                        
+                            backgroundColor: '#016b61',
                             '&:hover': {
                               backgroundColor: '#A0522D'
                             },
@@ -287,7 +296,6 @@ const ContactUs = () => {
             <Card
               sx={{
                 borderRadius: 2,
-                boxShadow: '0 4px 12px rgba(42, 160, 26, 0.1)',
                 border: '1px solid #e0e0e0',
                 backgroundColor: 'white'
               }}
@@ -344,7 +352,6 @@ const ContactUs = () => {
             <Card
               sx={{
                 borderRadius: 2,
-                boxShadow: '0 4px 12px rgba(139, 69, 19, 0.1)',
                 border: '1px solid #e0e0e0',
                 backgroundColor: 'white',
                 width: '100%'

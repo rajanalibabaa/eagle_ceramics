@@ -69,6 +69,34 @@ const AboutUs = () => {
             }}
           />
 
+        {/* Rotating Outer Circle */}
+        <Box
+          sx={{
+            position: "absolute",
+            right: "-90px",
+            bottom: "130px",
+            width: { xs: "150px", md: "200px" },
+            height: { xs: "150px", md: "200px" },
+            animation: `${rotateAnim} 12s linear infinite`,
+            borderRadius: "50%",
+            background: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            p: 10,
+          }}
+        >
+          {/* Dashed Border */}
+          <Box
+            sx={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              border: "2px dashed #b5b5b5",
+            }}
+          />
+
           {/* Curved Text */}
           <svg
             width="100%"
@@ -80,19 +108,15 @@ const AboutUs = () => {
               <path
                 id="circlePath"
                 d="
-                  M 100, 100
-                  m -60, 0
-                  a 60,60 0 1,1 120,0
-                  a 60,60 0 1,1 -120,0
-                "
+          M 100, 100
+          m -60, 0
+          a 60,60 0 1,1 120,0
+          a 60,60 0 1,1 -120,0
+        "
               />
             </defs>
-            <text
-              fill="#757575"
-              fontSize={theme.breakpoints.down("sm") ? 11 : 13}
-              fontWeight="500"
-              letterSpacing="2"
-            >
+
+            <text fill="#757575" fontSize="13" fontWeight="500" letterSpacing="2px">
               <textPath href="#circlePath" startOffset="0%">
                 EXPERIENCE IN INDUSTRY   •   EXPERIENCE IN INDUSTRY   •
               </textPath>
@@ -100,56 +124,38 @@ const AboutUs = () => {
           </svg>
         </Box>
 
-        {/* INNER (static) CIRCLE */}
+        {/* Inner Circle (Static) */}
         <Box
           sx={{
             position: "absolute",
-            right: { xs: "51%",sm: "48.3%", md: "-90px" },
-            bottom: { xs: "-60px",sm: "-60px", md: "130px" },
-            transform: {
-              xs: "translateX(50%)",
-              sm: "translateX(50%)",
-              md: "none",
-            },
-            width: { xs: 140, sm: 160, md: 200 },
-            height: { xs: 140, sm: 160, md: 200 },
+            right: "-90px",
+            bottom: "130px",
+            width: { xs: "150px", md: "200px" },
+            height: { xs: "150px", md: "200px" },
             borderRadius: "50%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             zIndex: 5,
-            pointerEvents: "none",
           }}
         >
           <Box
             sx={{
-              width: { xs: "52%", md: "50%" },
-              height: { xs: "52%", md: "50%" },
-              backgroundColor: "white",
+              width: "50%",
+              height: "50%",
+              background: "white",
               borderRadius: "50%",
-              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
               display: "flex",
-              flexDirection: "column",
               alignItems: "center",
               justifyContent: "center",
+              flexDirection: "column",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
             }}
           >
-            <Typography
-              sx={{
-                fontSize: { xs: 18, sm: 22, md: 28 },
-                fontWeight: 700,
-                lineHeight: 1,
-              }}
-            >
-              35
+            <Typography sx={{ fontSize: { xs: "20px", md: "28px" }, fontWeight: "700" }}>
+              20+
             </Typography>
-            <Typography
-              sx={{
-                fontSize: { xs: 10, sm: 11, md: 12 },
-                letterSpacing: 2,
-                lineHeight: 1,
-              }}
-            >
+            <Typography sx={{ fontSize: "12px", letterSpacing: "2px" }}>
               YEARS
             </Typography>
           </Box>
@@ -199,6 +205,7 @@ const AboutUs = () => {
           </Button>
         </Box>
       </Box>
+    </Box>
     </Box>
   );
 };

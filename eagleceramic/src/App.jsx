@@ -10,6 +10,7 @@ import CoolRoofTiles10MM from './pages/ServicesContent/CoolRoofTiles/CoolRoofTil
 import CoolRoofTiles600x600 from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles600x600.jsx'
 import KitchenSink from './pages/ServicesContent/KitchenSink/KitchenSink.jsx'
 
+import AboutPageContent from "./pages/ServicesContent/AboutPageContent/AboutPageContent.jsx";
 const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
 const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
@@ -18,6 +19,7 @@ const TrustedChoise = React.lazy(() => import("./components/TrustedChoise.jsx"))
 const WhyOurProducts = React.lazy(() => import("./components/WhyOurProducts.jsx"));
 const Testimonials = React.lazy(() => import("./components/Testimonials.jsx"));
 const OurClients = React.lazy(() => import("./components/OurClients.jsx"));
+// const AboutUs = React.lazy(() => import("./pages/AboutUs.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
 const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
@@ -71,7 +73,7 @@ function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutUs />} />
+            <Route path="/about" element={<AboutPageContent/>} />
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/trusted-choice" element={<TrustedChoise />} />
             <Route path='/why-our-products' element={<WhyOurProducts/>}/>
