@@ -16,6 +16,8 @@ const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
 const AboutUs = React.lazy(() => import("./pages/AboutUs.jsx"));
 const TrustedChoise = React.lazy(() => import("./components/TrustedChoise.jsx"));
 const WhyOurProducts = React.lazy(() => import("./components/WhyOurProducts.jsx"));
+const Testimonials = React.lazy(() => import("./components/Testimonials.jsx"));
+const OurClients = React.lazy(() => import("./components/OurClients.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
 const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
@@ -55,7 +57,7 @@ const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
 const theme = createTheme({
   typography: {
-    fontFamily: "Pacifico, cursive",
+    fontFamily: "Arial, Helvetica, sans-serif;",
   },
 });
 
@@ -73,6 +75,8 @@ function App() {
             <Route path="/contact" element={<ContactUs />} />
             <Route path="/trusted-choice" element={<TrustedChoise />} />
             <Route path='/why-our-products' element={<WhyOurProducts/>}/>
+            <Route path="/our-clients" element={<OurClients />} />
+            <Route path="testimonials" element={<Testimonials />} />
             <Route path="/services" element={<ServicesLayout />}>
               <Route index element={<Walltiles />} />
               <Route path="walltiles" element={<Walltiles />} />

@@ -26,25 +26,25 @@ const uspData = [
   {
     icon: <Business sx={{ fontSize: 40 }} />,
     title: "Two Industry-Leading Brands",
-    desc: "Eagle Ceramics & Gaurada Ceramics serving all style and budget needs.",
+    desc: "Eagle Ceramics & Gaurada Ceramics serving diverse style and budget needs.",
     gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
   },
   {
     icon: <Inventory sx={{ fontSize: 40 }} />,
     title: "End-to-End B2B Supply Chain",
-    desc: "Bulk inventories, commercial fulfilment, and dependable stock supply.",
+    desc: "Large inventories, bulk supply, and commercial fulfilment.",
     gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
   },
   {
     icon: <Apartment sx={{ fontSize: 40 }} />,
     title: "Specialized for Builders & Commercial Projects",
-    desc: "Tiles for residential complexes, malls, hospitals, IT parks, and retail spaces.",
+    desc: "Tiles for residential complexes, malls, hospitals, IT parks, retail, and more.",
     gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
   },
   {
     icon: <LocalShipping sx={{ fontSize: 40 }} />,
     title: "On-Time Delivery Assurance",
-    desc: "Robust logistics for uninterrupted project execution.",
+    desc: "Strong logistics network for uninterrupted project execution.",
     gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
   },
 ];
@@ -167,7 +167,7 @@ const USPCard = memo(({ item, index, onNavigate }) => {
             sx={{
               fontWeight: 700,
               mb: 2,
-              color: "#f1f5f9", 
+              color: "#a7a8a7", 
               textShadow: "0 0 4px rgba(0,0,0,0.4)",
               fontSize: { xs: "1rem", md: "1.1rem" },
               lineHeight: 1.3,
@@ -214,8 +214,8 @@ const CTAButton = memo(({ onClick, children, variant = "primary" }) => {
       return {
         ...baseStyles,
         border: "1px solid rgba(255,255,255,0.3)",
-        background: "rgba(255,255,255,0.15)",
-        color: "black",
+        background: "#d11f25",
+        color: "white",
         backdropFilter: "blur(12px)",
         WebkitBackdropFilter: "blur(12px)",
         boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
@@ -311,11 +311,6 @@ const TrustedChoice = () => {
     px: 2,
     position: "relative",
     overflow: "hidden",
-    backgroundColor: "#f4f6f9",
-    backgroundImage: `
-      repeating-linear-gradient(0deg, transparent, transparent 35px, rgba(0,0,0,0.03) 36px),
-      repeating-linear-gradient(90deg, transparent, transparent 35px, rgba(0,0,0,0.03) 36px)
-    `,
   }), []);
 
   return (

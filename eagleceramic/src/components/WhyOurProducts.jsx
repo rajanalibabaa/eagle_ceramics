@@ -62,7 +62,7 @@ const FeatureItem = memo(({ item, index }) => (
           width: { xs: 50, sm: 56 },
           height: { xs: 50, sm: 56 },
           boxShadow: "0 3px 10px rgba(0,0,0,0.2)",
-          "& svg": { color: "#d6336c", fontSize: { xs: 24, sm: 30 } },
+          "& svg": { color: "#d11f25", fontSize: { xs: 24, sm: 30 } },
         }}
       >
         {item.icon}
@@ -109,9 +109,11 @@ const containedStyles = {
   fontWeight: 600,
   borderRadius: 3,
   textTransform: "none",
-  backgroundColor: "#d6336c",
-  "&:hover": { backgroundColor: "#bf295c" },
-  color: "#fff",
+  backgroundColor: "#d11f25",
+"&:hover": {
+                      background: "linear-gradient(135deg, #e2683fff, #E57C3B)",
+                    } ,
+                     color: "#fff",
 };
 
 const outlinedStyles = {
@@ -120,10 +122,11 @@ const outlinedStyles = {
   fontWeight: 600,
   borderRadius: 3,
   textTransform: "none",
-  borderColor: "#d6336c",
-  color: "#d6336c",
-  "&:hover": { backgroundColor: "rgba(214, 51, 108, 0.08)", borderColor: "#bf295c" },
-};
+  borderColor: "#d11f25",
+  color: "#d11f25",
+"&:hover": {
+                      background: "linear-gradient(135deg, #d06744ff, #fca26bff)",
+                    }};
 
 const WhyOurProducts = () => {
   const navigate = useNavigate();
@@ -146,7 +149,7 @@ const WhyOurProducts = () => {
       <Box
         sx={{
           width: { xs: "100%", md: "50%" },
-          background: "linear-gradient(135deg, #FCE7E9, #F8DCE2)",
+          background: "#a7a8a7",
           borderTopRightRadius: { xs: 0, md: "1100px" },
           borderBottomRightRadius: { xs: 0, md: "1100px" },
           textAlign: "center",

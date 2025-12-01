@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence} from "framer-motion";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 import Banner from "../assets/BannerImage.png";
 import Banner2 from "../assets/BannerImage2.png";
@@ -19,99 +21,207 @@ const preloadImages = (imageUrls) => {
   });
 };
 
+// Enhanced Animation Variants
 const backgroundVariants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.8, ease: "easeOut" } },
-  exit: { opacity: 0, transition: { duration: 0.8, ease: "easeIn" } },
+  initial: { opacity: 0, scale: 1.1 },
+  animate: { 
+    opacity: 1, 
+    scale: 1,
+    transition: { 
+      duration: 1.2, 
+      ease: [0.43, 0.13, 0.23, 0.96] 
+    } 
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.95,
+    transition: { 
+      duration: 0.8, 
+      ease: "easeIn" 
+    } 
+  },
 };
 
 const textVariants = {
-  initial: { opacity: 0, y: 30 },
-  animate: { 
+  hidden: { opacity: 0, y: 50 },
+  visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { duration: 0.8, ease: "easeOut" } 
+    transition: { 
+      duration: 0.8, 
+      ease: "easeOut",
+      staggerChildren: 0.15,
+      delayChildren: 0.3
+    } 
   },
+};
+
+const textChildrenVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    transition: { duration: 0.7, ease: "easeOut" }
+  }
 };
 
 const formVariants = {
-  initial: { opacity: 0, x: 50 },
-  animate: { 
+  hidden: { opacity: 0, x: 100, rotateY: 10 },
+  visible: { 
     opacity: 1, 
     x: 0, 
-    transition: { duration: 0.6, ease: "easeOut", delay: 0.3 } 
+    rotateY: 0,
+    transition: { 
+      duration: 0.9, 
+      ease: "easeOut", 
+      delay: 0.5,
+      type: "spring",
+      stiffness: 100
+    } 
   },
 };
 
+const buttonVariants = {
+  initial: { scale: 1 },
+  hover: { 
+    scale: 1.05,
+    transition: { 
+      type: "spring", 
+      stiffness: 400, 
+      damping: 10 
+    }
+  },
+  tap: { scale: 0.95 }
+};
+
+const fieldVariants = {
+  initial: { opacity: 0, y: 20 },
+  animate: (i) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      delay: i * 0.1 + 0.6,
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  })
+};
+
+const successPopupVariants = {
+  hidden: { 
+    opacity: 0, 
+    scale: 0.8,
+    y: 50 
+  },
+  visible: { 
+    opacity: 1, 
+    scale: 1,
+    y: 0,
+    transition: { 
+      type: "spring",
+      stiffness: 200,
+      damping: 25
+    }
+  },
+  exit: { 
+    opacity: 0, 
+    scale: 0.8,
+    transition: { duration: 0.3 }
+  }
+};
+
 const HeroSection = () => {
+  const navigate = useNavigate();
   const images = useMemo(() => [Banner, Banner2, Banner3, Banner4, Banner5], []);
 
   const [index, setIndex] = useState(0);
-  const intervalRef = React.useRef(null);
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [isAnimating, setIsAnimating] = useState(false);
   const [formData, setFormData] = useState({
-  fullName: "",
-  email: "",
-  phone: "",
-  message: ""
-});
+    fullName: "",
+    email: "",
+    phone: "",
+    message: ""
+  });
+  const [showPopup, setShowPopup] = useState(false);
+  const intervalRef = React.useRef(null);
 
-const [showPopup, setShowPopup] = useState(false);
-const handleChange = (e) => {
-  const { name, value } = e.target;
-  setFormData((prev) => ({
-    ...prev,
-    [name]: value
-  }));
-};
-const handleSubmit = (e) => {
-  e.preventDefault();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  if (!formData.fullName || !formData.email || !formData.phone) {
-    alert("Please fill in all required fields");
-    return;
-  }
+  const handleSubmit = (e) => {
+    e.preventDefault();
 
-  if (!formData.email.includes("@")) {
-    alert("Please enter a valid email address");
-    return;
-  }
+    if (!formData.fullName || !formData.email || !formData.phone) {
+      alert("Please fill in all required fields");
+      return;
+    }
 
-  setShowPopup(true);
+    if (!formData.email.includes("@")) {
+      alert("Please enter a valid email address");
+      return;
+    }
 
-  const submissionData = new FormData();
-  submissionData.append("fullName", formData.fullName);
-  submissionData.append("email", formData.email);
-  submissionData.append("phone", formData.phone);
-  submissionData.append("message", formData.message);
-  submissionData.append("_subject", "New Hero Section Form Submission");
-  submissionData.append("_captcha", "false");
-  submissionData.append("_template", "table");
-  submissionData.append("_autoresponse", `Thank you ${formData.fullName}! We will contact you shortly.`);
+    setShowPopup(true);
+    
+    // Auto-hide popup after 3 seconds
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 3000);
 
-  fetch("https://formsubmit.co/4928bdeea462118f9e193be9cd0da148", {
-    method: "POST",
-    body: submissionData,
-  })
-    .then((res) => {
-      if (res.ok) {
-        setFormData({
-          fullName: "",
-          email: "",
-          phone: "",
-          message: ""
-        });
-      } else {
-        console.error("Form submission failed");
-      }
+    const submissionData = new FormData();
+    submissionData.append("fullName", formData.fullName);
+    submissionData.append("email", formData.email);
+    submissionData.append("phone", formData.phone);
+    submissionData.append("message", formData.message);
+    submissionData.append("_subject", "New Hero Section Form Submission");
+    submissionData.append("_captcha", "false");
+    submissionData.append("_template", "table");
+    submissionData.append("_autoresponse", `Thank you ${formData.fullName}! We will contact you shortly.`);
+
+    fetch("https://formsubmit.co/4928bdeea462118f9e193be9cd0da148", {
+      method: "POST",
+      body: submissionData,
     })
-    .catch((err) => console.error("Error submitting form:", err));
-};
+      .then((res) => {
+        if (res.ok) {
+          setFormData({
+            fullName: "",
+            email: "",
+            phone: "",
+            message: ""
+          });
+        }
+      })
+      .catch((err) => console.error("Error submitting form:", err));
+  };
 
+  const slide = (newDirection) => {
+    if (isAnimating) return;
+    
+    setIsAnimating(true);
+    setDirection(newDirection);
+    
+    setIndex((prevIndex) => {
+      let nextIndex = prevIndex + newDirection;
+      if (nextIndex < 0) nextIndex = images.length - 1;
+      if (nextIndex >= images.length) nextIndex = 0;
+      return nextIndex;
+    });
+
+    setTimeout(() => setIsAnimating(false), 800);
+    startAutoSlide();
+  };
 
   const startAutoSlide = () => {
     clearInterval(intervalRef.current);
     intervalRef.current = setInterval(() => {
-      setIndex((prev) => (prev + 1) % images.length);
+      slide(1);
     }, 9000);
   };
 
@@ -137,9 +247,11 @@ const handleSubmit = (e) => {
         justifyContent: "center",
       }}
     >
-      <AnimatePresence mode="wait" initial={false}>
+      {/* Background Images with Slide Animation */}
+      <AnimatePresence mode="wait" custom={direction}>
         <motion.div
           key={index}
+          custom={direction}
           variants={backgroundVariants}
           initial="initial"
           animate="animate"
@@ -150,16 +262,55 @@ const handleSubmit = (e) => {
             backgroundImage: `url(${images[index]})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
+            willChange: "transform, opacity",
           }}
         />
       </AnimatePresence>
 
-      {/* Enhanced Gradient Overlay */}
-      <Box
-        sx={{
+      {/* Enhanced Gradient Overlay with Animation */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        style={{
           position: "absolute",
           inset: 0,
-          background: "linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.6) 100%)",
+          background: "linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.7) 100%)",
+          zIndex: 1,
+        }}
+      />
+
+      {/* Floating Elements */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ duration: 2, delay: 1 }}
+        style={{
+          position: "absolute",
+          top: "10%",
+          left: "5%",
+          width: "100px",
+          height: "100px",
+          background: "linear-gradient(135deg, #FF6B35, transparent)",
+          borderRadius: "50%",
+          filter: "blur(40px)",
+          zIndex: 1,
+        }}
+      />
+      
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{ duration: 2, delay: 1.2 }}
+        style={{
+          position: "absolute",
+          bottom: "10%",
+          right: "5%",
+          width: "150px",
+          height: "150px",
+          background: "linear-gradient(45deg, #4CAF50, transparent)",
+          borderRadius: "50%",
+          filter: "blur(50px)",
           zIndex: 1,
         }}
       />
@@ -178,7 +329,7 @@ const handleSubmit = (e) => {
           gap: { xs: 4, md: 8 },
         }}
       >
-        {/* Enhanced Left Side Text */}
+        {/* Left Side Text with Staggered Animation */}
         <Box sx={{ 
           color: "white", 
           textAlign: { xs: "center", md: "left" },
@@ -188,102 +339,258 @@ const handleSubmit = (e) => {
         }}>
           <motion.div
             variants={textVariants}
-            initial="initial"
-            animate="animate"
+            initial="hidden"
+            animate="visible"
           >
-            <Typography
-              variant="h3"
-              sx={{
-                fontWeight: 600,
-                fontSize: { xs: "2.5rem", sm: "2.5rem", md: "3.5rem" },
-                lineHeight: 1.1,
-                mb: 3,
-                background: "linear-gradient(135deg, #FFFFFF 0%, #E8F4FD 100%)",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textShadow: "0 4px 20px rgba(0,0,0,0.5)",
-                position: "relative",
-                '&::after': {
-                  content: '""',
-                  position: "absolute",
-                  bottom: "-12px",
-                  left: { xs: "50%", md: "0" },
-                  transform: { xs: "translateX(-50%)", md: "translateX(0)" },
-                  width: "100px",
-                  height: "4px",
-                  background: "linear-gradient(90deg, #FF6B35, #FF8E53)",
-                  borderRadius: "2px",
-                }
-              }}
-            >
-              Premium Tiles for Professional Builders & Commercial Spaces
-            </Typography>
+            <motion.div variants={textChildrenVariants}>
+              <Typography
+                variant="h3"
+                sx={{
+                  fontWeight: 600,
+                  fontSize: { xs: "2.5rem", sm: "2.5rem", md: "3.5rem" },
+                  lineHeight: 1.1,
+                  mb: 3,
+                  background: "linear-gradient(135deg, #FFFFFF 0%, #E8F4FD 100%)",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textShadow: "0 4px 20px rgba(0,0,0,0.5)",
+                  position: "relative",
+                  '&::after': {
+                    content: '""',
+                    position: "absolute",
+                    bottom: "-12px",
+                    left: { xs: "50%", md: "0" },
+                    transform: { xs: "translateX(-50%)", md: "translateX(0)" },
+                    width: "100px",
+                    height: "4px",
+                    background: "linear-gradient(90deg, #FF6B35, #FF8E53)",
+                    borderRadius: "2px",
+                  }
+                }}
+              >
+                Premium Tiles for Professional Builders & Commercial Spaces
+              </Typography>
+            </motion.div>
 
-            {/* Subheading with Icon-style Elements */}
-            <Typography
-              variant="h5"
-              sx={{
-                fontWeight: 400,
-                fontSize: { xs: "1.2rem", sm: "1.4rem", md: "1.5rem" },
-                mb: 4,
-                color: "white",
-                opacity: 0.95,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: { xs: "center", md: "flex-start" },
-                gap: 2,
-                flexWrap: "wrap",
-              }}
-            >
-              Delivering trusted ceramic solutions for 35 years across South India
-            </Typography>
+            <motion.div variants={textChildrenVariants}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: 400,
+                  fontSize: { xs: "1.2rem", sm: "1.4rem", md: "1.5rem" },
+                  mb: 4,
+                  color: "white",
+                  opacity: 0.95,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: { xs: "center", md: "flex-start" },
+                  gap: 2,
+                  flexWrap: "wrap",
+                }}
+              >
+                Delivering trusted ceramic solutions for 35 years across South India
+              </Typography>
+            </motion.div>
 
-            {/* Trust Indicators */}
-            <Box sx={{ 
-              display: "flex", 
-              gap: 4, 
-              mt: 4,
-              justifyContent: { xs: "center", md: "flex-start" },
-              flexWrap: "wrap"
-            }}>
-              <Box sx={{ textAlign: "center" }}>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "#FF6B35", mb: 0.5 }}>
-                  35+
-                </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                  Years Experience
-                </Typography>
-              </Box>
-              <Box sx={{ textAlign: "center" }}>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "#4CAF50", mb: 0.5 }}>
-                  5000+
-                </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                  Projects Completed
-                </Typography>
-              </Box>
-              <Box sx={{ textAlign: "center" }}>
-                <Typography variant="h4" sx={{ fontWeight: 700, color: "#2196F3", mb: 0.5 }}>
-                  100%
-                </Typography>
-                <Typography variant="body1" sx={{ opacity: 0.9 }}>
-                  Client Satisfaction
-                </Typography>
-              </Box>
-            </Box>
+            {/* CTA Buttons with Animation */}
+          <motion.div 
+  variants={textChildrenVariants}
+  style={{ 
+    display: "flex", 
+    gap: 20, 
+    marginTop: "2.5rem", 
+    justifyContent: { xs: "center", md: "flex-start" },
+    flexWrap: "wrap" 
+  }}
+>
+  {/* Primary Button - Glow Effect */}
+  <motion.div
+    variants={buttonVariants}
+    whileHover="hover"
+    whileTap="tap"
+    style={{ position: "relative" }}
+  >
+    {/* Animated Glow Effect */}
+    <motion.div
+      animate={{
+        scale: [1, 0.9, 1],
+        opacity: [0.5, 0.8, 0.5],
+      }}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }}
+      style={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: "linear-gradient(135deg, #FF6B35, #FF8E53, #4CAF50, #FF6B35)",
+        backgroundSize: "400% 400%",
+        borderRadius: 12,
+        filter: "blur(10px)",
+        opacity: 0.5,
+        zIndex: 0,
+      }}
+    />
+    
+    <Button
+      variant="contained"
+      onClick={() => navigate('/services')}
+      sx={{
+        position: "relative",
+        px: 1.5,
+        py: 1.75,
+        borderRadius: 3,
+        fontSize: "1.1rem",
+        fontWeight: 700,
+        background: "#d11f25",
+        boxShadow: `
+          0 4px 20px rgba(255, 107, 53, 0.5),
+          0 0 30px rgba(255, 107, 53, 0.3),
+          inset 0 1px 0 rgba(255, 255, 255, 0.3)
+        `,
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+        overflow: "hidden",
+        zIndex: 1,
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: "-100%",
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)",
+          transition: "left 0.6s ease",
+        },
+        "&:hover": {
+          background: "linear-gradient(135deg, #E55A2B 0%, #E57C3B 100%)",
+          boxShadow: `
+            0 5px 15px rgba(255, 107, 53, 0.7),
+            0 0 30px rgba(255, 107, 53, 0.5),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3)
+          `,
+          transform: "translateY(-2px)",
+          "&::before": {
+            left: "100%",
+          }
+        },
+        "&:active": {
+          transform: "translateY(0)",
+          boxShadow: "0 2px 15px rgba(255, 107, 53, 0.4)",
+        }
+      }}
+      
+    >
+      Explore Premium Products
+    </Button>
+  </motion.div>
+
+  {/* Secondary Button - Modern Outline */}
+  <motion.div
+    variants={buttonVariants}
+    whileHover="hover"
+    whileTap="tap"
+    style={{ position: "relative" }}
+  >
+    <Button
+      onClick={() => navigate('/contact')}
+      variant="outlined"
+      sx={{
+        position: "relative",
+        px: 1.5,
+        py: 1.5,
+        borderRadius: 3,
+        fontSize: "1.1rem",
+        fontWeight: 700,
+        background: "rgba(255, 255, 255, 0.05)",
+        backdropFilter: "blur(10px)",
+        border: "2px solid",
+        color: "white",
+        textTransform: "uppercase",
+        letterSpacing: "0.5px",
+        overflow: "hidden",
+        transition: "all 0.3s ease",
+        "&::before": {
+          content: '""',
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "0%",
+          background: "linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(255, 107, 53, 0.2))",
+          transition: "height 0.3s ease",
+          zIndex: -1,
+        },
+        "&:hover": {
+          background: "rgba(255, 255, 255, 0.1)",
+          color: "#FF8E53",
+          transform: "translateY(-2px)",
+          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
+          "&::before": {
+            height: "100%",
+          }
+        },
+        "&:active": {
+          transform: "translateY(0)",
+        }
+      }}
+      
+    >
+      Request B2B Quote
+    </Button>
+
+    {/* Floating particles around button */}
+    {[...Array(3)].map((_, i) => (
+      <motion.div
+        key={i}
+        animate={{
+          y: [0, -10, 0],
+          x: [0, 5, 0],
+          opacity: [0.3, 0.7, 0.3],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+          delay: i * 0.3,
+        }}
+        style={{
+          position: "absolute",
+          width: "4px",
+          height: "4px",
+          background: "#4CAF50",
+          borderRadius: "50%",
+          top: "50%",
+          left: `${-10 - i * 15}px`,
+          filter: "blur(1px)",
+          zIndex: 0,
+        }}
+      />
+    ))}
+  </motion.div>
+
+ 
+</motion.div>
+
+         
           </motion.div>
         </Box>
 
-        {/* Enhanced Modern Form */}
+        {/* Enhanced Modern Form with Staggered Fields */}
         <motion.div
           variants={formVariants}
-          initial="initial"
-          animate="animate"
+          initial="hidden"
+          animate="visible"
           style={{ flexShrink: 0 }}
         >
           <Paper
             elevation={16}
+            component={motion.div}
+            whileHover={{ y: -5 }}
             sx={{
               p: 4,
               borderRadius: 3,
@@ -304,128 +611,103 @@ const handleSubmit = (e) => {
               }
             }}
           >
-            <Typography 
-              variant="h4" 
-              fontWeight={700} 
-              mb={3}
-              sx={{
-                background: "#FF6B35",
-                backgroundClip: "text",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                textAlign: "center",
-                fontSize: { xs: "1.5rem", sm: "1.75rem" }
-              }}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
             >
-              Get Expert Consultation
-            </Typography>
+              <Typography 
+                variant="h4" 
+                fontWeight={700} 
+                mb={3}
+                sx={{
+                  background: "#050608",
+                  backgroundClip: "text",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  textAlign: "center",
+                  fontSize: { xs: "1.5rem", sm: "1.75rem" }
+                }}
+              >
+                Get Expert Consultation
+              </Typography>
+            </motion.div>
 
             <Box
               component="form"
               sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
             >
-             <TextField
-  label="Company / Builder Name"
-  name="fullName"
-  value={formData.fullName}
-  onChange={handleChange}
-  fullWidth
-  variant="outlined"
-  size="medium"
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 2,
-      backgroundColor: "rgba(255,255,255,0.8)",
-      "&:hover fieldset": { borderColor: "#FF6B35" },
-      "&.Mui-focused fieldset": { borderColor: "#4CAF50" }
-    }
-  }}
-/>
-<TextField
-  label="Phone"
-  name="phone"
-  value={formData.phone}
-  onChange={handleChange}
-  fullWidth
-  variant="outlined"
-  size="medium"
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 2,
-      backgroundColor: "rgba(255,255,255,0.8)",
-      "&:hover fieldset": { borderColor: "#FF6B35" },
-      "&.Mui-focused fieldset": { borderColor: "#4CAF50" }
-    }
-  }}
-/>
+              {[
+                { label: "Company / Builder Name", name: "fullName", value: formData.fullName },
+                { label: "Phone", name: "phone", value: formData.phone },
+                { label: "Email", name: "email", value: formData.email },
+                { label: "Message", name: "message", value: formData.message, multiline: true, rows: 3 }
+              ].map((field, i) => (
+                <motion.div
+                  key={field.name}
+                  custom={i}
+                  variants={fieldVariants}
+                  initial="initial"
+                  animate="animate"
+                >
+                  <TextField
+                    label={field.label}
+                    name={field.name}
+                    value={field.value}
+                    onChange={handleChange}
+                    fullWidth
+                    variant="outlined"
+                    size="medium"
+                    multiline={field.multiline}
+                    rows={field.rows}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: 2,
+                        backgroundColor: "rgba(255,255,255,0.8)",
+                        "&:hover fieldset": { borderColor: "#FF6B35" },
+                        "&.Mui-focused fieldset": { 
+                          borderColor: "#4CAF50",
+                          boxShadow: "0 0 0 2px rgba(76, 175, 80, 0.1)" 
+                        }
+                      }
+                    }}
+                  />
+                </motion.div>
+              ))}
 
-           <TextField
-  label="Email"
-  name="email"
-  value={formData.email}
-  onChange={handleChange}
-  fullWidth
-  variant="outlined"
-  size="medium"
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 2,
-      backgroundColor: "rgba(255,255,255,0.8)",
-      "&:hover fieldset": { borderColor: "#FF6B35" },
-      "&.Mui-focused fieldset": { borderColor: "#4CAF50" }
-    }
-  }}
-/>
-
-              <TextField
-  label="Message"
-  name="message"
-  value={formData.message}
-  onChange={handleChange}
-  multiline
-  rows={3}
-  fullWidth
-  variant="outlined"
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 2,
-      backgroundColor: "rgba(255,255,255,0.8)",
-      "&:hover fieldset": { borderColor: "#FF6B35" },
-      "&.Mui-focused fieldset": { borderColor: "#4CAF50" }
-    }
-  }}
-/>
-
-
-             <Button
-  variant="contained"
-  size="large"
-  onClick={handleSubmit}
-  sx={{
-    mt: 2,
-    py: 1.5,
-    borderRadius: 3,
-    fontWeight: 700,
-    fontSize: "1.1rem",
-    background: "linear-gradient(135deg, #FF6B35, #FF8E53)",
-    boxShadow: "0 4px 15px rgba(255,107,53,0.4)",
-    "&:hover": {
-      background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
-      transform: "translateY(-2px)"
-    }
-  }}
->
-  Get Free Quote
-</Button>
-
+              <motion.div
+                variants={fieldVariants}
+                custom={4}
+                initial="initial"
+                animate="animate"
+              >
+                <Button
+                  fullWidth
+                  variant="contained"
+                  size="large"
+                  onClick={handleSubmit}
+                  sx={{
+                    mt: 2,
+                    py: 1.5,
+                    borderRadius: 3,
+                    fontWeight: 700,
+                    fontSize: "1.1rem",
+                    background: "#d11f25",
+                    boxShadow: "0 4px 15px rgba(255,107,53,0.4)",
+                    "&:hover": {
+                      background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
+                    }
+                  }}
+                >
+                  Get Free Quote
+                </Button>
+              </motion.div>
             </Box>
-
-           
           </Paper>
         </motion.div>
       </Box>
 
-      {/* Enhanced Bottom Dots Navigation */}
+      {/* Enhanced Navigation with Arrows */}
       <Box
         sx={{
           position: "absolute",
@@ -438,6 +720,9 @@ const handleSubmit = (e) => {
           gap: 2,
         }}
       >
+       
+
+        {/* Dots Navigation */}
         <Box sx={{ 
           display: "flex", 
           gap: 1, 
@@ -448,31 +733,135 @@ const handleSubmit = (e) => {
           backdropFilter: "blur(10px)"
         }}>
           {images.map((_, i) => (
-            <Box
+            <motion.div
               key={i}
               onClick={() => {
-                setIndex(i);
-                startAutoSlide();
+                if (!isAnimating) {
+                  setIndex(i);
+                  startAutoSlide();
+                }
               }}
-              sx={{
-                width: i === index ? 32 : 12,
-                height: 12,
-                borderRadius: "6px",
-                background: i === index 
-                  ? "linear-gradient(135deg, #FF6B35, #FF8E53)" 
-                  : "rgba(255,255,255,0.4)",
+              whileHover={{ scale: 1.2 }}
+              whileTap={{ scale: 0.9 }}
+              style={{
                 cursor: "pointer",
-                transition: "all 0.3s ease",
-                boxShadow: i === index ? "0 2px 8px rgba(255, 107, 53, 0.5)" : "none",
-                "&:hover": {
-                  backgroundColor: "rgba(255,255,255,0.8)",
-                  transform: "scale(1.1)",
-                },
               }}
-            />
+            >
+              <Box
+                sx={{
+                  width: i === index ? 32 : 12,
+                  height: 12,
+                  borderRadius: "6px",
+                  background: i === index 
+                    ? "linear-gradient(135deg, #FF6B35, #FF8E53)" 
+                    : "rgba(255,255,255,0.4)",
+                  transition: "all 0.3s ease",
+                  boxShadow: i === index ? "0 2px 8px rgba(255, 107, 53, 0.5)" : "none",
+                }}
+              />
+            </motion.div>
           ))}
         </Box>
+
+       
       </Box>
+
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showPopup && (
+          <motion.div
+            variants={successPopupVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            style={{
+              position: "fixed",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 9999,
+              background: "linear-gradient(135deg, #4CAF50, #45a049)",
+              color: "white",
+              padding: "24px 32px",
+              borderRadius: "16px",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.3)",
+              textAlign: "center",
+              minWidth: "300px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "16px",
+            }}
+          >
+            <motion.div
+              animate={{ 
+                scale: [1, 1.2, 1],
+                rotate: [0, 10, -10, 0] 
+              }}
+              transition={{ 
+                duration: 0.6,
+                times: [0, 0.3, 0.6, 1]
+              }}
+            >
+              <CheckCircleIcon sx={{ fontSize: 60 }} />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <Typography variant="h5" fontWeight={700}>
+                Success!
+              </Typography>
+              <Typography variant="body1" sx={{ mt: 1, opacity: 0.9 }}>
+                Thank you for your inquiry. We'll contact you shortly.
+              </Typography>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Scroll Indicator */}
+      {/* <motion.div
+        animate={{ 
+          y: [0, 10, 0],
+        }}
+        transition={{ 
+          duration: 2,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+        style={{
+          position: "absolute",
+          bottom: "80px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          width: "30px",
+          height: "50px",
+          border: "2px solid rgba(255,255,255,0.5)",
+          borderRadius: "25px",
+          display: { xs: "none", md: "block" }
+        }}
+      >
+        <motion.div
+          animate={{ 
+            y: [0, 20, 0],
+            opacity: [1, 0, 1]
+          }}
+          transition={{ 
+            duration: 1.5,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+          style={{
+            width: "4px",
+            height: "10px",
+            background: "white",
+            borderRadius: "2px",
+            margin: "10px auto",
+          }}
+        />
+      </motion.div> */}
     </Box>
   );
 };

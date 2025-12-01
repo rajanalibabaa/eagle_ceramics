@@ -178,24 +178,21 @@ const AboutUs = () => {
             textAlign: { xs: "justify", md: "justify" },
           }}
         >
-          At Eagle Ceramics and Gaurada Ceramics, we bring over three decades of
-          expertise in supplying high-quality tiles and ceramic products to
-          builders, contractors, architects, interior designers, and commercial
-          project developers. With a strong B2B supply chain and an unmatched
-          product portfolio, we ensure consistent quality, timely delivery, and
-          value-driven pricing for every project.
+         At <strong>Eagle Ceramics</strong> and Gaurada Ceramics, we bring over three decades of expertise in supplying high-quality tiles and ceramic products to builders, contractors, architects, interior designers, and commercial project developers. With a strong B2B supply chain and an unmatched product portfolio, we ensure consistent quality, timely delivery, and value-driven pricing for every project.
         </Typography>
 
         <Box sx={{ textAlign: { xs: "center", md: "left" } }}>
           <Button
             variant="contained"
             sx={{
-              backgroundColor: "black",
+              backgroundColor: "#d11f25",
               color: "white",
               px: { xs: 3, sm: 4 },
               py: 1.5,
               borderRadius: 0,
-              "&:hover": { backgroundColor: "#333" },
+               "&:hover": {
+                      background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
+                    }
             }}
           >
             KNOW MORE

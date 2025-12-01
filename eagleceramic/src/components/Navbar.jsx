@@ -15,7 +15,7 @@ import { motion } from "framer-motion";
 import About from "../pages/AboutUs";
 import Contact from "../pages/ContactUs";
 import Services from "../pages/Services";
-import logo from '../assets/eagle_ceramics_logo.jpg'
+import logo from '../assets/EagleCeramicsLogo.png'
 const fadeDown = {
   initial: { opacity: 0, y: -15 },
   animate: { opacity: 1, y: 0 },
