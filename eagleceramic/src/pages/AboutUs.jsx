@@ -38,96 +38,96 @@ const AboutUs = () => {
         />
 
         {/* Rotating Outer Circle */}
-       <Box
-  sx={{
-    position: "absolute",
-    right: "-90px",
-    bottom: "130px",
-    width: { xs: "150px", md: "200px" },
-    height: { xs: "150px", md: "200px" },
-    animation: `${rotateAnim} 12s linear infinite`,
-    borderRadius: "50%",
-    background: "white",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    p: 10,
-  }}
->
-  {/* Dashed Border */}
-  <Box
-    sx={{
-      position: "absolute",
-      width: "100%",
-      height: "100%",
-      borderRadius: "50%",
-      border: "2px dashed #b5b5b5",
-    }}
-  />
+        <Box
+          sx={{
+            position: "absolute",
+            right: "-90px",
+            bottom: "130px",
+            width: { xs: "150px", md: "200px" },
+            height: { xs: "150px", md: "200px" },
+            animation: `${rotateAnim} 12s linear infinite`,
+            borderRadius: "50%",
+            background: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            p: 10,
+          }}
+        >
+          {/* Dashed Border */}
+          <Box
+            sx={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              borderRadius: "50%",
+              border: "2px dashed #b5b5b5",
+            }}
+          />
 
-  {/* Curved Text */}
-  <svg
-    width="100%"
-    height="100%"
-    viewBox="0 0 200 200"
-    style={{ position: "absolute" }}
-  >
-    <defs>
-      <path
-        id="circlePath"
-        d="
+          {/* Curved Text */}
+          <svg
+            width="100%"
+            height="100%"
+            viewBox="0 0 200 200"
+            style={{ position: "absolute" }}
+          >
+            <defs>
+              <path
+                id="circlePath"
+                d="
           M 100, 100
           m -60, 0
           a 60,60 0 1,1 120,0
           a 60,60 0 1,1 -120,0
         "
-      />
-    </defs>
+              />
+            </defs>
 
-    <text fill="#757575" fontSize="13" fontWeight="500" letterSpacing="2px">
-      <textPath href="#circlePath" startOffset="0%">
-        EXPERIENCE IN INDUSTRY   •   EXPERIENCE IN INDUSTRY   •
-      </textPath>
-    </text>
-  </svg>
-</Box>
+            <text fill="#757575" fontSize="13" fontWeight="500" letterSpacing="2px">
+              <textPath href="#circlePath" startOffset="0%">
+                EXPERIENCE IN INDUSTRY   •   EXPERIENCE IN INDUSTRY   •
+              </textPath>
+            </text>
+          </svg>
+        </Box>
 
         {/* Inner Circle (Static) */}
-      <Box
-  sx={{
-    position: "absolute",
-    right: "-90px",
-    bottom: "130px",
-    width: { xs: "150px", md: "200px" },
-    height: { xs: "150px", md: "200px" },
-    borderRadius: "50%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 5,
-  }}
->
-  <Box
-    sx={{
-      width: "50%",
-      height: "50%",
-      background: "white",
-      borderRadius: "50%",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "column",
-      boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
-    }}
-  >
-    <Typography sx={{ fontSize: { xs: "20px", md: "28px" }, fontWeight: "700" }}>
-      20+
-    </Typography>
-    <Typography sx={{ fontSize: "12px", letterSpacing: "2px" }}>
-      YEARS
-    </Typography>
-  </Box>
-</Box>
+        <Box
+          sx={{
+            position: "absolute",
+            right: "-90px",
+            bottom: "130px",
+            width: { xs: "150px", md: "200px" },
+            height: { xs: "150px", md: "200px" },
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 5,
+          }}
+        >
+          <Box
+            sx={{
+              width: "50%",
+              height: "50%",
+              background: "white",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexDirection: "column",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Typography sx={{ fontSize: { xs: "20px", md: "28px" }, fontWeight: "700" }}>
+              20+
+            </Typography>
+            <Typography sx={{ fontSize: "12px", letterSpacing: "2px" }}>
+              YEARS
+            </Typography>
+          </Box>
+        </Box>
       </Box>
 
       {/* Right Content Section */}

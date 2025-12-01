@@ -10,7 +10,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
-  import("../ServicesCollectionCard ") 
+  import("../ServicesCollectionCard ")
 );
 import img1 from "../../../assets/ParkingTiles/PlainCollection1.jpg";
 import img2 from "../../../assets/ParkingTiles/PlainCollection2.jpg";
@@ -31,71 +31,71 @@ import pdf8 from "../../../assets/pdf/PUNCH COLLECTION-5.pdf"
 
 const goldenCollection = [
   {
-     title: "FISH POSTER",
-        mainImage: img1,
-        hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-        pdf: pdf1,
-},
-{
-  title: "GLITTER SERIES",
-     mainImage: img2,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf2,
-},
-{
-  title: "GLOSSY 1",
-     mainImage: img3,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf3,
-},
-{
-  title: "PUNCH COLLECTION 1",
-     mainImage: img4,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf4,
-},
-{
-  title: "PUNCH COLLECTION 2",
-      mainImage: img5,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf5,
-},
-{
-  title: "PUNCH COLLECTION 3",
-      mainImage: img6,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf6,
+    title: "FISH POSTER",
+    mainImage: img1,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf1,
+  },
+  {
+    title: "GLITTER SERIES",
+    mainImage: img2,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf2,
+  },
+  {
+    title: "GLOSSY 1",
+    mainImage: img3,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf3,
+  },
+  {
+    title: "PUNCH COLLECTION 1",
+    mainImage: img4,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf4,
+  },
+  {
+    title: "PUNCH COLLECTION 2",
+    mainImage: img5,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf5,
+  },
+  {
+    title: "PUNCH COLLECTION 3",
+    mainImage: img6,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf6,
 
-},
-{
-  title: "PUNCH COLLECTION 4",
-      mainImage: img7,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf7,
-},
-{
-  title: "PUNCH COLLECTION 5",
-      mainImage: img8,
-      hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
-      pdf: pdf8,  
-}
+  },
+  {
+    title: "PUNCH COLLECTION 4",
+    mainImage: img7,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf7,
+  },
+  {
+    title: "PUNCH COLLECTION 5",
+    mainImage: img8,
+    hoverParagraph: "Decorate your walls with the pristine, polished look of our surfaces, elevating your interiors to new heights of sophistication and luxury. Our surfaces provide the perfect backdrop for creating timeless, classic spaces. Ideal for both modern and traditional interiors, these wall tiles are highly practical and low-maintenance. Available in a variety of cooors and textures, they offer endless possiblilites for crafting a stunning space. ",
+    pdf: pdf8,
+  }
 ];
 const Collection2 = () => {
-     const [openPdf, setOpenPdf] = useState(false);
-      const [currentPdf, setCurrentPdf] = useState("");
-    
-      const handleOpenPdf = (pdfFile) => {
-        setCurrentPdf(pdfFile);
-        setOpenPdf(true);
-      };
-    
-      const handleClosePdf = () => {
-        setOpenPdf(false);
-        setCurrentPdf("");
-      };
+  const [openPdf, setOpenPdf] = useState(false);
+  const [currentPdf, setCurrentPdf] = useState("");
+
+  const handleOpenPdf = (pdfFile) => {
+    setCurrentPdf(pdfFile);
+    setOpenPdf(true);
+  };
+
+  const handleClosePdf = () => {
+    setOpenPdf(false);
+    setCurrentPdf("");
+  };
 
   return (
- <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
       <Typography
         variant="h4"
         align="center"
@@ -105,14 +105,31 @@ const Collection2 = () => {
           fontWeight: 700,
           textTransform: "uppercase",
           letterSpacing: 1,
-          mb:2
+          mb: 2
         }}
       >
-       400 X 400
+        400 X 400
+      </Typography>
+      <Typography
+        variant="h5"
+        sx={{
+          color: "#0c0d0dff",
+          fontWeight: 400,
+          justifyContent: "center",
+          display: "flex",
+          textAlign: "center",
+          mb: 4,
+          px: 4,
+          fontSize: { xs: "1rem", md: "1.25rem" },
+          textShadow: "0 2px 4px rgba(0,0,0,0.8)",
+          fontFamily: "'Roboto', sans-serif",
+        }}
+      >
+        Anti-skid, weather-resistant tiles for outdoor projects.
       </Typography>
 
       {/* COLLECTION LOOP */}
-      <Box sx={{marginTop:10}}>
+      <Box sx={{ marginTop: 10 }}>
         {goldenCollection.map((item, index) => (
           <Suspense
             key={index}
@@ -125,7 +142,7 @@ const Collection2 = () => {
               subtitle={item.subtitle}
               titleColor={item.titleColor}
               subtitleColor="Explore More"
-        pdfFile={item.pdf}
+              pdfFile={item.pdf}
               onExploreClick={handleOpenPdf}
             />
           </Suspense>
@@ -179,7 +196,7 @@ const Collection2 = () => {
           )}
         </Box>
       </Modal>
-    </Container>  )
+    </Container>)
 }
 
 export default Collection2

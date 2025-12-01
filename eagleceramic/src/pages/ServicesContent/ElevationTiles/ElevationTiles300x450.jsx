@@ -130,12 +130,12 @@ const ElevationTiles300x450 = () => {
     return (
         <Box sx={{ 
             minHeight: "100vh",
-            // background: `
-            //     radial-gradient(circle at 20% 80%, rgba(255,215,0,0.15) 0%, transparent 50%),
-            //     radial-gradient(circle at 80% 20%, rgba(1,107,97,0.12) 0%, transparent 50%),
-            //     radial-gradient(circle at 40% 40%, rgba(255,182,193,0.08) 0%, transparent 50%),
-            //     linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)
-            // `,
+            backgroundImage: `
+                    linear-gradient(45deg, rgba(255,215,0,0.03) 25%, transparent 25%),
+                    linear-gradient(-45deg, rgba(1,107,97,0.03) 25%, transparent 25%),
+                    linear-gradient(45deg, transparent 75%, rgba(255,215,0,0.03) 75%),
+                    linear-gradient(-45deg, transparent 75%, rgba(1,107,97,0.03) 75%)
+                `,
             position: "relative",
             overflow: "hidden",
             "::before": {
@@ -169,6 +169,10 @@ const ElevationTiles300x450 = () => {
                 zIndex: 2,
             }
         }}>
+            {/* Decorative animated background blobs */}
+            <Box className="bg-blob blob1" />
+            <Box className="bg-blob blob2" />
+            <Box className="bg-blob blob3" />
             <Container maxWidth="lg" sx={{ py: 4, position: "relative", zIndex: 10 }}>
                 {/* HERO HEADER - Premium Design for Team Lead */}
                 <Box
