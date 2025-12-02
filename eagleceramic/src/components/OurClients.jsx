@@ -1,30 +1,18 @@
 import React, { useRef, useState, useMemo, useCallback, memo } from 'react';
-
-// MUI Components
 import {
   Container,
   Typography,
   Box,
   Avatar,
   Paper,
-  IconButton,
   Grid
 } from '@mui/material';
-
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
-// Framer Motion
 import { motion } from 'framer-motion';
-
-// Swiper
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Navigation, Autoplay } from 'swiper/modules';
+import { EffectCoverflow, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
-import 'swiper/css/navigation';
 
-// === Image Imports (assuming paths are correct) ===
 import resident from '../assets/ResidentialBuilders.jpg';
 import commercial from '../assets/comercialdevelopers.jpeg';
 import architect from "../assets/Architects.jpg";
@@ -40,7 +28,6 @@ import mall from "../assets/malls.jpg";
 import government from "../assets/government.jpg";
 import flooring from "../assets/flooring.jpeg";
 
-// === Data (Memoized) ===
 const clients = [
   { name: 'Residential Builders', image: resident },
   { name: 'Commercial Developers', image: commercial },
@@ -76,11 +63,30 @@ const ClientSlide = memo(({ client, isActive }) => (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       <Avatar
         src={client.image}
-        sx={{ width: 100, height: 100, border: "3px solid white", boxShadow: "0 4px 12px rgba(0,0,0,0.1)", mb: "-50px", zIndex: 1 }}
+        sx={{ 
+          width: 100, 
+          height: 100, 
+          border: "3px solid white", 
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)", 
+          mb: "-50px", 
+          zIndex: 1 
+        }}
         alt={client.name}
       />
-      <Paper elevation={3} sx={{ width: "90%", textAlign: "center", pt: "60px", pb: 2, px: 2, minHeight: "140px", borderRadius: "16px" }}>
-        <Typography variant="subtitle1" fontWeight="bold">
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          width: "90%", 
+          textAlign: "center", 
+          pt: "60px", 
+          pb: 2, 
+          px: 2, 
+          minHeight: "140px", 
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)"
+        }}
+      >
+        <Typography variant="subtitle1" fontWeight="bold" color="text.primary">
           {client.name}
         </Typography>
       </Paper>
@@ -101,19 +107,45 @@ const ProjectCard = memo(({ item }) => {
       initial="rest"
       whileHover="hover"
       transition={{ duration: 0.4 }}
-      style={{ position: "relative", width: "100%", height: 280, borderRadius: "20px", overflow: "hidden", cursor: "pointer", }}
+      style={{ 
+        position: "relative", 
+        width: "100%", 
+        height: 280, 
+        borderRadius: "20px", 
+        overflow: "hidden", 
+        cursor: "pointer" 
+      }}
     >
       <motion.img
         variants={imageVariants}
         src={item.image}
         alt={item.title}
-        style={{ width: "100%", height: "100%", objectFit: "cover", filter: imageLoaded ? 'none' : 'blur(10px)', transition: 'filter 0.3s ease-out' }}
+        style={{ 
+          width: "100%", 
+          height: "100%", 
+          objectFit: "cover", 
+          filter: imageLoaded ? 'none' : 'blur(10px)', 
+          transition: 'filter 0.3s ease-out' 
+        }}
         loading="lazy"
         onLoad={() => setImageLoaded(true)}
       />
-      <Box sx={{ position: "absolute", inset: 0,  display: "flex", alignItems: "flex-end", justifyContent: "center", color: "white", p: 2 }}>
+      <Box 
+        sx={{ 
+          position: "absolute", 
+          inset: 0,  
+          display: "flex", 
+          alignItems: "flex-end", 
+          justifyContent: "center", 
+          color: "white", 
+          p: 2,
+          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)"
+        }}
+      >
         <motion.div variants={overlayVariants}>
-           <Typography variant="h6" fontWeight="bold" textAlign="center">{item.title}</Typography>
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
+            {item.title}
+          </Typography>
         </motion.div>
       </Box>
     </motion.div>
@@ -126,13 +158,18 @@ const OurClients = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
 
-  const handleSlidePrev = useCallback(() => swiperRef.current?.slidePrev(), []);
-  const handleSlideNext = useCallback(() => swiperRef.current?.slideNext(), []);
   const handleSlideChange = useCallback((swiper) => setActiveIndex(swiper.realIndex), []);
 
   const swiperConfig = useMemo(() => ({
-    effect: "coverflow", centeredSlides: true, loop: true, grabCursor: true,
-    autoplay: { delay: 2500, disableOnInteraction: false, pauseOnMouseEnter: true },
+    effect: "coverflow", 
+    centeredSlides: true, 
+    loop: true, 
+    grabCursor: true,
+    autoplay: { 
+      delay: 2500, 
+      disableOnInteraction: false, 
+      pauseOnMouseEnter: true 
+    },
     slidesPerView: 'auto',
     spaceBetween: 20,
     breakpoints: {
@@ -140,23 +177,60 @@ const OurClients = () => {
       900: { slidesPerView: 3, spaceBetween: 40 },
       1200: { slidesPerView: 3, spaceBetween: 50 },
     },
-    coverflowEffect: { rotate: 0, stretch: 0, depth: 100, modifier: 2.5, slideShadows: false },
+    coverflowEffect: { 
+      rotate: 0, 
+      stretch: 0, 
+      depth: 100, 
+      modifier: 2.5, 
+      slideShadows: false 
+    },
     onSlideChange: handleSlideChange,
-    modules: [EffectCoverflow, Navigation, Autoplay],
+    modules: [EffectCoverflow, Autoplay],
   }), [handleSlideChange]);
   
   const projectsGrid = useMemo(() => (
-    <Box sx={{ mt: 4 }} component={motion.div} variants={staggerWrapper} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-100px' }}>
-      <Box sx={{ display: { xs: 'flex', md: 'none' }, overflowX: 'auto', gap: 2, py: 2, px: { xs: 2, sm: 3 }, '&::-webkit-scrollbar': { display: 'none' }, scrollbarWidth: 'none' }}>
+    <Box 
+      sx={{ mt: 4 }} 
+      component={motion.div} 
+      variants={staggerWrapper} 
+      initial="hidden" 
+      whileInView="visible" 
+      viewport={{ once: true, margin: '-100px' }}
+    >
+      <Box sx={{ 
+        display: { xs: 'flex', md: 'none' }, 
+        overflowX: 'auto', 
+        gap: 2, 
+        py: 2, 
+        px: { xs: 2, sm: 3 }, 
+        '&::-webkit-scrollbar': { display: 'none' }, 
+        scrollbarWidth: 'none' 
+      }}>
         {highlightedProjects.map((item, i) => (
           <Box key={i} sx={{ width: '80%', flexShrink: 0 }} component={motion.div} variants={fadeUp}>
             <ProjectCard item={item} />
           </Box>
         ))}
       </Box>
-      <Grid container spacing={4} justifyContent="center" sx={{ display: { xs: 'none', md: 'flex' } }}>
+      <Grid 
+        container 
+        spacing={4} 
+        justifyContent="center" 
+        sx={{ display: { xs: 'none', md: 'flex' } }}
+      >
         {highlightedProjects.map((item, i) => (
-          <Grid item xs={12} sm={10} md={6} lg={4} key={i} display="flex" justifyContent="center" component={motion.div} variants={fadeUp}>
+          <Grid 
+            item 
+            xs={12} 
+            sm={10} 
+            md={6} 
+            lg={4} 
+            key={i} 
+            display="flex" 
+            justifyContent="center" 
+            component={motion.div} 
+            variants={fadeUp}
+          >
             <ProjectCard item={item} />
           </Grid>
         ))}
@@ -167,15 +241,44 @@ const OurClients = () => {
   return (
     <Container 
       maxWidth={false} 
-      sx={{ textAlign: 'center', py: { xs: 4, md: 6 }, overflowX: 'hidden' }}
-      component={motion.div} initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.1 }} variants={fadeUp}
+      sx={{ 
+        textAlign: 'center', 
+        py: { xs: 4, md: 6 }, 
+        overflowX: 'hidden',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)'
+      }}
+      component={motion.div} 
+      initial="hidden" 
+      whileInView="visible" 
+      viewport={{ once: true, amount: 0.1 }} 
+      variants={fadeUp}
     >
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 3, fontSize: { xs: '2rem', sm: '2.8rem', md: '3.2rem' } }}>
+          <Typography 
+            variant="h2" 
+            sx={{ 
+              fontWeight: 'bold', 
+              mb: 3, 
+              fontSize: { xs: '2rem', sm: '2.8rem', md: '3.2rem' },
+              background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}
+          >
             Trusted by Leading Builders & Businesses
           </Typography>
-          <Typography variant="body1" color="text.secondary" sx={{ mb: 4, maxWidth: '750px', mx: 'auto' }}>
+          <Typography 
+            variant="body1" 
+            color="text.secondary" 
+            sx={{ 
+              mb: 4, 
+              maxWidth: '750px', 
+              mx: 'auto',
+              fontSize: { xs: '1rem', sm: '1.1rem' }
+            }}
+          >
             Over the past 35 years, we have supplied tiles and ceramic products to hundreds of construction and commercial projects.
           </Typography>
         </motion.div>
@@ -183,7 +286,16 @@ const OurClients = () => {
 
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography variant="h4" sx={{ mt: 6, mb: 2, fontWeight: 600, fontSize: { xs: '1.8rem', md: '2.2rem' } }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              mt: 6, 
+              mb: 2, 
+              fontWeight: 600, 
+              fontSize: { xs: '1.8rem', md: '2.2rem' },
+              color: '#1e293b'
+            }}
+          >
             Our Clients Include
           </Typography>
         </motion.div>
@@ -194,44 +306,32 @@ const OurClients = () => {
         variants={fadeUp}
         sx={{ 
           position: 'relative', 
-          width: { xs: '100%', md: '85%' },
+          width: { xs: '100%', md: '90%' },
           mx: 'auto',
-          py: 4 // Add some vertical padding for visual spacing
-          // 🔥 FIXED: Removed minHeight: '380px'
+          py: 4
         }}
       >
         <Swiper {...swiperConfig} onSwiper={(swiper) => (swiperRef.current = swiper)}>
           {clients.map((client, index) => (
-            <SwiperSlide key={client.name} style={{ width: '280px', willChange: 'transform' }}>
+            <SwiperSlide key={client.name} style={{ width: '280px' }}>
               <ClientSlide client={client} isActive={index === activeIndex} />
             </SwiperSlide>
           ))}
         </Swiper>
-        <IconButton
-          onClick={handleSlidePrev}
-          sx={{
-            position: 'absolute', left: { xs: -8, md: -20 }, top: '60%', transform: 'translateY(-50%)', zIndex: 2,
-            bgcolor: 'background.paper', boxShadow: 3, '&:hover': { bgcolor: 'background.default' }
-          }}
-          aria-label="Previous slide"
-        >
-          <ArrowBackIosNewIcon />
-        </IconButton>
-        <IconButton
-          onClick={handleSlideNext}
-          sx={{
-            position: 'absolute', right: { xs: -8, md: -20 }, top: '60%', transform: 'translateY(-50%)', zIndex: 2,
-            bgcolor: 'background.paper', boxShadow: 3, '&:hover': { bgcolor: 'background.default' }
-          }}
-          aria-label="Next slide"
-        >
-          <ArrowForwardIosIcon />
-        </IconButton>
       </Box>
 
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography variant="h4" sx={{ mt: 10, mb: 4, fontWeight: 'bold', fontSize: { xs: '1.8rem', md: '2.2rem' } }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              mt: 10, 
+              mb: 4, 
+              fontWeight: 'bold', 
+              fontSize: { xs: '1.8rem', md: '2.2rem' },
+              color: '#1e293b'
+            }}
+          >
             Our Projects
           </Typography>
         </motion.div>

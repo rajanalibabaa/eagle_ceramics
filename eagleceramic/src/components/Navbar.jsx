@@ -123,7 +123,7 @@ const Navbar = () => {
 
           {/* MOBILE MENU ICON */}
           <IconButton
-            sx={{ display: { xs: "flex", md: "none" }, color: "#fff" }}
+            sx={{ display: { xs: "flex", md: "none" }, color: "black" }}
             onClick={() => setOpen(true)}
           >
             <MenuIcon sx={{ fontSize: 30 }} />
@@ -160,7 +160,7 @@ const Navbar = () => {
 </ListItemButton>
 
 <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/services"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>SERVICES</Typography>
+  <Typography sx={{ fontWeight: 600 }}>PRODUCTS</Typography>
 </ListItemButton>
 
 {/* <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/blog"); setOpen(false); }}>
