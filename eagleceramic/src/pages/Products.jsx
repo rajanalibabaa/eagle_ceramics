@@ -1,4 +1,3 @@
-"use client";
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Container, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -53,7 +52,6 @@ const RightSticky = styled(Box)(({ theme }) => ({
 }));
 
 const Section = styled(Box)(({ theme }) => ({
-  // Each section fills the viewport so its center lines up with the sticky image center
   minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
@@ -136,11 +134,9 @@ function StickyScrollReveal() {
               ref={(el) => (sectionRefs.current[i] = el)}
               onMouseEnter={() => handleSectionHover(i)}
               sx={{
-                // visually de-emphasize non-active items but keep them in flow
                 opacity: i === activeIndex ? 1 : 0.35,
               }}
             >
-              {/* Use framer-motion for text entrance, same duration as image Fade below */}
               <motion.div
                 animate={{ opacity: i === activeIndex ? 1 : 0, y: i === activeIndex ? 0 : 12 }}
                 transition={{ duration: 0.45 }}
@@ -150,7 +146,6 @@ function StickyScrollReveal() {
                   {item.title}
                 </Typography>
 
-                {/* Only show the description for the active item for clarity */}
                 {i === activeIndex && (
                   <Typography variant="h6" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                     {item.description}
@@ -162,7 +157,6 @@ function StickyScrollReveal() {
         </LeftColumn>
 
         <RightSticky>
-          {/* Image Fade synchronized with the same duration used for text */}
           <motion.div
             key={activeIndex}
             initial={{ opacity: 0, scale: 0.98 }}

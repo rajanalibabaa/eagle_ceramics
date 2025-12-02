@@ -40,7 +40,7 @@ const AboutUs = () => {
         <Box
           sx={{
             position: "absolute",
-            right: { xs: "31%",sm: "300px", md: "-90px" },
+            right: { xs: "31%",sm: "330px", md: "-90px" },
             bottom: { xs: "-60px",sm: "-60px", md: "130px" },
             transform: {
               xs: "translateX(50%)",
@@ -104,7 +104,7 @@ const AboutUs = () => {
         <Box
           sx={{
             position: "absolute",
-            right: { xs: "51%",sm: "48.3%", md: "-90px" },
+            right: { xs: "51%",sm: "410px", md: "-90px" },
             bottom: { xs: "-60px",sm: "-60px", md: "130px" },
             transform: {
               xs: "translateX(50%)",
@@ -159,7 +159,7 @@ const AboutUs = () => {
       <Box sx={{ width: { xs: "100%", md: "50%" } ,ml:{md:5}}}>
         <Typography
           sx={{
-            fontSize: { xs: 20, sm: 28, md: 34 },
+            fontSize: { xs: 20, sm: 35, md: 34 },
             fontWeight: 700,
             mb: { xs: 1.5, sm: 2 },
             lineHeight: 1.3,
@@ -171,7 +171,7 @@ const AboutUs = () => {
 
         <Typography
           sx={{
-            fontSize: { xs: 13, sm: 15, md: 16 },
+            fontSize: { xs: 13, sm: 17, md: 16 },
             color: "#555",
             lineHeight: 1.7,
             mb: { xs: 3, sm: 3.5 },

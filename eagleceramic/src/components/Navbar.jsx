@@ -29,12 +29,16 @@ const Navbar = () => {
   return (
     <AppBar
       sx={{
-        backgroundColor: "#016b60",
+        backgroundColor: "transparent",
         boxShadow: "none",
         py: 1.5,
         position: "sticky",
         top: 0,
         zIndex: 1000,
+        // Ensure toolbar content is visible over images
+        color: "#fff",
+        // Optional: add a subtle backdrop blur for readability
+        backdropFilter: "blur(4px)",
       }}
     >
       <motion.div {...fadeDown}>
@@ -63,6 +67,7 @@ const Navbar = () => {
               display: { xs: "none", md: "flex" },
               alignItems: "center",
               gap: 3,
+              color: "black",
             }}
           >
             <Button
@@ -118,7 +123,7 @@ const Navbar = () => {
 
           {/* MOBILE MENU ICON */}
           <IconButton
-            sx={{ display: { xs: "flex", md: "none" }, color: "white" }}
+            sx={{ display: { xs: "flex", md: "none" }, color: "#fff" }}
             onClick={() => setOpen(true)}
           >
             <MenuIcon sx={{ fontSize: 30 }} />

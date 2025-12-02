@@ -148,10 +148,10 @@ const WhyOurProducts = () => {
       {/* LEFT SECTION */}
       <Box
         sx={{
-          width: { xs: "100%", md: "50%" },
+          width: { xs: "100%", sm: "100%", md: "50%" },
           background: "#a7a8a7",
-          borderTopRightRadius: { xs: 0, md: "1100px" },
-          borderBottomRightRadius: { xs: 0, md: "1100px" },
+          borderTopRightRadius: { xs: 0,sm:0, md: "1100px" },
+          borderBottomRightRadius: { xs: 0,sm:0, md: "1100px" },
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
@@ -196,7 +196,7 @@ const WhyOurProducts = () => {
   sx={{
     width: { xs: "100%", md: "50%" },
     height: { xs: "350px", sm: "450px", md: "650px", lg: "700px" },
-    display: { xs: "none", sm: "flex" }, 
+    display: { xs: "none", sm: "none", md: "flex" }, 
     justifyContent: "center",
     alignItems: "center",
     position: "relative",
