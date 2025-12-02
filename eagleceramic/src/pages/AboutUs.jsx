@@ -1,15 +1,17 @@
 import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, useTheme } from "@mui/material";
 import { keyframes } from "@mui/system";
 import carving from "../assets/FloorTiles/Carvingcollection.jpg";
 
-// Smooth rotation
+// Rotation animation
 const rotateAnim = keyframes`
   from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  to   { transform: rotate(360deg); }
 `;
 
 const AboutUs = () => {
+  const theme = useTheme();
+
   return (
     <Box
       sx={{
@@ -17,13 +19,12 @@ const AboutUs = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: { xs: 4, md: 8 },
+        gap: { xs: 9, md: 8 },
         flexDirection: { xs: "column", md: "row" },
-        py: 8,
-        px: { xs: 2, md: 6 }
+        py: { xs: 6, sm: 7, md: 8 },
+        px: { xs: 2, sm: 3, md: 6, lg: 10 },
       }}
     >
-      {/* Left Image Section */}
       <Box sx={{ position: "relative", width: { xs: "100%", md: "50%" } }}>
         <Box
           component="img"
@@ -33,9 +34,40 @@ const AboutUs = () => {
             width: "100%",
             height: "auto",
             borderRadius: "8px",
-            objectFit: "cover"
+            objectFit: "cover",
           }}
         />
+        <Box
+          sx={{
+            position: "absolute",
+            right: { xs: "31%",sm: "300px", md: "-90px" },
+            bottom: { xs: "-60px",sm: "-60px", md: "130px" },
+            transform: {
+              xs: "translateX(50%)",
+              sm: "translateX(50%)",
+              md: "none",
+            },
+            width: { xs: 140, sm: 160, md: 200 },
+            height: { xs: 140, sm: 160, md: 200 },
+            animation: `${rotateAnim} 12s linear infinite`,
+            borderRadius: "50%",
+            backgroundColor: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            p: { xs: 4, sm: 6, md: 10 },
+            zIndex: 3,
+          }}
+        >
+          {/* Dashed Border */}
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              borderRadius: "50%",
+              border: "2px dashed #b5b5b5",
+            }}
+          />
 
         {/* Rotating Outer Circle */}
         <Box
@@ -130,45 +162,50 @@ const AboutUs = () => {
         </Box>
       </Box>
 
-      {/* Right Content Section */}
-      <Box sx={{ width: { xs: "100%", md: "50%" }, ml: { xs: 0, md: 5 } }}>
+      <Box sx={{ width: { xs: "100%", md: "50%" } ,ml:{md:5}}}>
         <Typography
           sx={{
-            fontSize: { xs: "26px", md: "34px" },
+            fontSize: { xs: 20, sm: 28, md: 34 },
             fontWeight: 700,
-            mb: 2,
-            lineHeight: 1.3
+            mb: { xs: 1.5, sm: 2 },
+            lineHeight: 1.3,
+            textAlign: { xs: "center", md: "left" },
           }}
         >
-          About Eagle Ceramics: The Leading Vitrified Tiles Company in India
+          About Eagle Ceramics: The Leading Tiles Company in India
         </Typography>
 
         <Typography
           sx={{
-            fontSize: "16px",
+            fontSize: { xs: 13, sm: 15, md: 16 },
             color: "#555",
             lineHeight: 1.7,
-            mb: 3
+            mb: { xs: 3, sm: 3.5 },
+            textAlign: { xs: "justify", md: "justify" },
           }}
         >
-          At Eagle Ceramics, we curate collections that bring together beauty,
-          innovation, and strength Lorem ipsum, dolor sit amet consectetur adipisicing elit. Doloribus tenetur ducimus fuga temporibus, sint error, impedit eos, laboriosam modi officiis dolorem non obcaecati asperiores iste qui cum vel saepe sit!
+         At <strong>Eagle Ceramics</strong> and Gaurada Ceramics, we bring over three decades of expertise in supplying high-quality tiles and ceramic products to builders, contractors, architects, interior designers, and commercial project developers. With a strong B2B supply chain and an unmatched product portfolio, we ensure consistent quality, timely delivery, and value-driven pricing for every project.
         </Typography>
 
-        <Button
-          variant="contained"
-          sx={{
-            background: "black",
-            color: "white",
-            px: 4,
-            py: 1.5,
-            borderRadius: 0,
-            "&:hover": { background: "#333" }
-          }}
-        >
-          KNOW MORE
-        </Button>
+        <Box sx={{ textAlign: { xs: "center", md: "left" } }}>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: "#d11f25",
+              color: "white",
+              px: { xs: 3, sm: 4 },
+              py: 1.5,
+              borderRadius: 0,
+               "&:hover": {
+                      background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
+                    }
+            }}
+          >
+            KNOW MORE
+          </Button>
+        </Box>
       </Box>
+    </Box>
     </Box>
   );
 };

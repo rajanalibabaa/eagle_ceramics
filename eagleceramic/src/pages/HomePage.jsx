@@ -1,4 +1,8 @@
 import HeroSection from '../components/HeroSection'
+import OurClients from '../components/OurClients'
+import Testimonials from '../components/Testimonials'
+import TrustedChoise from '../components/TrustedChoise'
+import WhyOurProducts from '../components/WhyOurProducts'
 import AboutUs from './AboutUs'
 import Products from './Products'
 const HomePage = () => {
@@ -6,7 +10,12 @@ const HomePage = () => {
     <>
       <HeroSection />
       <AboutUs />
+      <WhyOurProducts/>
+            <TrustedChoise/>
+  <OurClients/>
+  <Testimonials/>
       <Products/>
+    
     </>
   )
 }
