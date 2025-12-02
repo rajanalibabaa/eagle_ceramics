@@ -163,7 +163,6 @@ const MainPopUp = () => {
     },
   }), [isMobile]);
 
-  // Memoized button styles
   const buttonStyles = useMemo(() => ({
     py: isMobile ? 1.5 : 1.8,
     fontSize: isMobile ? "15px" : "17px",
@@ -214,10 +213,11 @@ const MainPopUp = () => {
         fullWidth
         PaperProps={paperProps}
         sx={{
-          "& .MuiDialog-container": {
-            alignItems: isMobile ? "flex-end" : "center",
-          }
-        }}
+            "& .MuiDialog-container": {
+              alignItems: "center",
+              justifyContent: "center",
+            }
+          }}
       >
         {/* Background Image Container */}
         <Box
@@ -287,11 +287,13 @@ const MainPopUp = () => {
                 variant="h4" 
                 fontWeight={800} 
                 sx={{ 
+                  textAlign:"center",
                   mb: isMobile ? 1 : 2,
                   textShadow: "0 2px 8px rgba(0,0,0,0.6)",
                   lineHeight: 1.1,
                   fontSize: getTitleFontSize(),
-                  whiteSpace: isMobile ? "normal" : "nowrap",
+                  whiteSpace: "normal",
+                  overflowWrap: "break-word",
                   wordBreak: "break-word",
                 }}
               >
