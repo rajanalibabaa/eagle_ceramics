@@ -73,13 +73,11 @@ const TestimonialCard = React.memo(({ item, isMobile }) => (
       sx={{
         textAlign: "center",
         color: "#d11f25",
-        backgroundColor: "rgba(209, 31, 37, 0.05)",
         display: "inline-block",
         px: 2,
         py: 0.5,
         borderRadius: "20px",
         fontSize: isMobile ? "0.8rem" : "0.89rem",
-        border: "1px solid rgba(209, 31, 37, 0.1)",
       }}
     >
       {item.role}
@@ -373,7 +371,6 @@ const Testimonials = () => {
         </Box>
       )}
 
-      {/* Tablet Pagination Dots Adjustment */}
       {isTablet && (
         <Box sx={{ 
           mt: 2, 
