@@ -8,9 +8,16 @@ import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import CloseIcon from "@mui/icons-material/Close";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import { useTheme } from "@mui/material/styles";
 import sideimg from "../assets/AdvertismentPopUp.jpg"; 
 
 const MainPopUp = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
+  
   const [open, setOpen] = useState(false); 
   const [dontShow, setDontShow] = useState(false); 
   const [email, setEmail] = useState(''); 
@@ -72,7 +79,6 @@ const MainPopUp = () => {
     setDontShow(e.target.checked);
   }, []);
 
-  // Effect to show the main popup after a delay, only if not seen before
   useEffect(() => {
     const timer = setTimeout(() => {
       const hasSeen = localStorage.getItem("popupShown");
@@ -84,16 +90,56 @@ const MainPopUp = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  const getDialogWidth = useCallback(() => {
+    if (isMobile) return "95vw";
+    if (isTablet) return "85vw";
+    return 1100;
+  }, [isMobile, isTablet]);
+
   // Memoized paper props for the main dialog
   const paperProps = useMemo(() => ({
     sx: { 
       borderRadius: "16px", 
       overflow: "hidden", 
-      width: 1100,
-      maxWidth: "90vw",
-      boxShadow: "0 20px 40px rgba(0,0,0,0.3)" 
+      width: getDialogWidth(),
+      maxWidth: "95vw",
+      maxHeight: "95vh",
+      boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+      m: 1,
     }
-  }), []);
+  }), [getDialogWidth]);
+
+  // Responsive image height
+  const getImageHeight = useCallback(() => {
+    if (isMobile) return 400;
+    if (isTablet) return 450;
+    return 500;
+  }, [isMobile, isTablet]);
+
+  // Responsive content width
+  const getContentWidth = useCallback(() => {
+    if (isMobile) return "100%";
+    return "48%";
+  }, [isMobile]);
+
+  // Responsive padding
+  const getContentPadding = useCallback(() => {
+    if (isMobile) return { px: 3, py: 4 };
+    if (isTablet) return { px: 4, py: 4 };
+    return { px: 6, py: 5 };
+  }, [isMobile, isTablet]);
+
+  // Responsive typography font size
+  const getTitleFontSize = useCallback(() => {
+    if (isMobile) return "1.75rem";
+    if (isTablet) return "2rem";
+    return "2.2rem";
+  }, [isMobile, isTablet]);
+
+  const getSubtitleFontSize = useCallback(() => {
+    if (isMobile) return "0.95rem";
+    return "1rem";
+  }, [isMobile]);
 
   // Memoized text field styles
   const textFieldStyles = useMemo(() => ({
@@ -112,15 +158,15 @@ const MainPopUp = () => {
       },
     },
     "& .MuiInputBase-input": {
-      padding: "14px 16px",
-      fontSize: "16px"
+      padding: isMobile ? "12px 14px" : "14px 16px",
+      fontSize: isMobile ? "14px" : "16px"
     },
-  }), []);
+  }), [isMobile]);
 
   // Memoized button styles
   const buttonStyles = useMemo(() => ({
-    py: 1.8,
-    fontSize: "17px",
+    py: isMobile ? 1.5 : 1.8,
+    fontSize: isMobile ? "15px" : "17px",
     fontWeight: 700,
     backgroundColor: "#a8d8d3",
     color: "black",
@@ -133,8 +179,9 @@ const MainPopUp = () => {
       boxShadow: "0 8px 20px rgba(168,216,211,0.5)",
     },
     transition: "all 0.3s ease-in-out",
-    letterSpacing: "0.5px"
-  }), []);
+    letterSpacing: "0.5px",
+    minHeight: isMobile ? "48px" : "52px",
+  }), [isMobile]);
 
   // Memoized checkbox styles
   const checkboxStyles = useMemo(() => ({
@@ -147,14 +194,15 @@ const MainPopUp = () => {
   const successDialogPaperProps = useMemo(() => ({
     sx: {
       borderRadius: "16px",
-      padding: 4,
+      padding: isMobile ? 3 : 4,
       textAlign: "center",
       boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
       backgroundColor: "white",
       color: "black",
-      maxWidth: "400px",
+      maxWidth: isMobile ? "90vw" : "400px",
+      m: 2,
     },
-  }), []);
+  }), [isMobile]);
 
   return (
     <>
@@ -165,38 +213,47 @@ const MainPopUp = () => {
         maxWidth="lg"
         fullWidth
         PaperProps={paperProps}
+        sx={{
+          "& .MuiDialog-container": {
+            alignItems: isMobile ? "flex-end" : "center",
+          }
+        }}
       >
         {/* Background Image Container */}
         <Box
           sx={{
-            height: 500,
-            backgroundImage: `url(${sideimg})`,
+            height: getImageHeight(),
+            backgroundImage: isMobile 
+              ? `linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url(${sideimg})`
+              : `url(${sideimg})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
             position: "relative",
             display: "flex",
-            justifyContent: "flex-end",
+            justifyContent: isMobile ? "center" : "flex-end",
             alignItems: "center",
-            px: 6,
-            py: 5,
+            ...getContentPadding(),
           }}
         >
-          {/* Overlay */}
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              background: "linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%)",
-            }}
-          />
+          {/* Overlay - Only show on larger screens since we added gradient to mobile */}
+          {!isMobile && (
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                background: "linear-gradient(90deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.6) 100%)",
+              }}
+            />
+          )}
 
           {/* Close Button */}
           <IconButton
             onClick={handleClose}
             sx={{
               position: "absolute",
-              top: 16,
-              right: 16,
+              top: 12,
+              right: 12,
               color: "white",
               backgroundColor: "rgba(255,255,255,0.1)",
               backdropFilter: "blur(10px)",
@@ -204,34 +261,38 @@ const MainPopUp = () => {
                 backgroundColor: "rgba(255,255,255,0.2)",
               },
               zIndex: 10,
+              width: isMobile ? 36 : 48,
+              height: isMobile ? 36 : 48,
             }}
           >
-            <CloseIcon />
+            <CloseIcon sx={{ fontSize: isMobile ? "1.2rem" : "1.5rem" }} />
           </IconButton>
 
-          {/* RIGHT SIDE CONTENT */}
+          {/* CONTENT */}
           <Box
             component="form"
             onSubmit={handleSubmit}
             sx={{
-              width: { xs: "90%", sm: "48%" },
+              width: getContentWidth(),
               position: "relative",
               color: "white",
               display: "flex",
               flexDirection: "column",
-              gap: 3,
+              gap: isMobile ? 2 : 3,
+              textAlign: isMobile ? "center" : "left",
             }}
           >
-            <Box sx={{ mb: 1 }}>
+            <Box sx={{ mb: isMobile ? 0.5 : 1 }}>
               <Typography 
-                variant="h3" 
+                variant="h4" 
                 fontWeight={800} 
                 sx={{ 
-                  mb: 2,
+                  mb: isMobile ? 1 : 2,
                   textShadow: "0 2px 8px rgba(0,0,0,0.6)",
                   lineHeight: 1.1,
-                  fontSize: { xs: "2rem", sm: "2.5rem" },
-                  whiteSpace: "nowrap"
+                  fontSize: getTitleFontSize(),
+                  whiteSpace: isMobile ? "normal" : "nowrap",
+                  wordBreak: "break-word",
                 }}
               >
                 Get 20% Discount Today
@@ -242,9 +303,9 @@ const MainPopUp = () => {
                 sx={{ 
                   opacity: 0.95,
                   lineHeight: 1.5,
-                  fontSize: "1.1rem",
+                  fontSize: getSubtitleFontSize(),
                   fontWeight: 400,
-                  textAlign:"center"
+                  textAlign: isMobile ? "center" : "center",
                 }}
               >
                 Subscribe to our newsletter and receive a 20% discount instantly.
@@ -278,19 +339,27 @@ const MainPopUp = () => {
             <FormControlLabel
               control={
                 <Checkbox
-                  sx={checkboxStyles}
+                  sx={{
+                    ...checkboxStyles,
+                    padding: isMobile ? "6px" : "9px",
+                  }}
                   onChange={handleDontShowChange}
-                  checked={dontShow} // Bind to state
+                  checked={dontShow}
                 />
               }
               label={
-                <Typography sx={{ fontSize: "0.95rem", opacity: 0.9, fontWeight: 500 }}>
+                <Typography sx={{ 
+                  fontSize: isMobile ? "0.85rem" : "0.95rem", 
+                  opacity: 0.9, 
+                  fontWeight: 500,
+                  textAlign: "left",
+                }}>
                   Don't show this pop-up again
                 </Typography>
               }
               sx={{ 
-                mt: 1.5, 
-                alignSelf: "flex-start",
+                mt: isMobile ? 1 : 1.5, 
+                alignSelf: isMobile ? "center" : "flex-start",
                 "& .MuiFormControlLabel-label": {
                   color: "white"
                 }
@@ -306,13 +375,36 @@ const MainPopUp = () => {
         onClose={() => setShowSuccessDialog(false)}
         PaperProps={successDialogPaperProps}
       >
-        <Typography variant="h5" sx={{ mb: 2, fontWeight: 700, color: "#a8d8d3" }}>
+        <Typography 
+          variant="h5" 
+          sx={{ 
+            mb: 2, 
+            fontWeight: 700, 
+            color: "#a8d8d3",
+            fontSize: isMobile ? "1.5rem" : "1.75rem"
+          }}
+        >
           Thank You! 🎉
         </Typography>
-        <Typography variant="body1" sx={{ mb: 3, color: "black" }}>
+        <Typography 
+          variant="body1" 
+          sx={{ 
+            mb: 3, 
+            color: "black",
+            fontSize: isMobile ? "0.95rem" : "1rem"
+          }}
+        >
           Thank you for subscribing to our newsletter!
         </Typography>
-        <Typography variant="body2" sx={{ mb: 3, opacity: 0.8, color: "black" }}>
+        <Typography 
+          variant="body2" 
+          sx={{ 
+            mb: 3, 
+            opacity: 0.8, 
+            color: "black",
+            fontSize: isMobile ? "0.85rem" : "0.875rem"
+          }}
+        >
           You'll be the first to know about our latest updates and exclusive offers.
         </Typography>
         <Button
@@ -322,10 +414,13 @@ const MainPopUp = () => {
             backgroundColor: "#a8d8d3",
             color: "black",
             fontWeight: 700,
+            fontSize: isMobile ? "14px" : "16px",
+            py: isMobile ? 1 : 1.2,
             "&:hover": {
               backgroundColor: "#98c8c3",
             },
           }}
+          fullWidth={isMobile}
         >
           Close
         </Button>

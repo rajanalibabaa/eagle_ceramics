@@ -10,11 +10,12 @@ const HomePage = () => {
     <>
       <HeroSection />
       <AboutUs />
+            <Products/>
+
       <WhyOurProducts/>
             <TrustedChoise/>
   <OurClients/>
   <Testimonials/>
-      <Products/>
     
     </>
   )
