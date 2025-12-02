@@ -687,64 +687,93 @@ const AboutPageContent = () => {
               }
             ].map((card, index) => (
               <MotionBox
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                whileHover={{ scale: 1.02, boxShadow: '0 30px 60px rgba(0,0,0,0.15)', width: '100' }}
-                transition={{ duration: 0.5, delay: card.delay }}
-                sx={{
-                  bgcolor: 'white',
-                  borderRadius: 2,
-                  overflow: 'hidden',
-                  mb: index < 2 ? 4 : 0,
-                  height: { xs: 'auto', md: '300px' },
-                  display: 'flex',
-                  flexDirection: { xs: 'column', md: 'row' },
-                  boxShadow: '0 15px 40px rgba(0,0,0,0.08)',
-                  transition: 'all 0.3s ease',
-                  position: 'relative',
-                  width: '100%',
-                  marginX: 'auto',
-                  '&:hover': {
-                    width: '95%', 
-                    marginX: 'auto',
-                  },
-                  '&:hover .hover-image': { opacity: 1, transform: 'scale(1.05)' }
-                }}
-              >
-                {/* Left Content */}
-                <Box sx={{
-                  p: { xs: 4, md: 4 },
-                  flex: 1,
-                  display: 'flex',
-                  flexDirection: { xs: 'column', md: 'row' },
-                  alignItems: { md: 'center' },
-                  gap: 4
-                }}>
-                  <Box sx={{ width: { xs: '80px', md: '120px' }, height: { xs: '80px', md: '120px' }, flexShrink: 0 }}>
-                    <img src={card.icon} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                  </Box>
+  key={index}
+  initial={{ opacity: 0, y: 50 }}
+  whileInView={{ opacity: 1, y: 0 }}
+  whileHover={{ scale: 1.02, boxShadow: '0 30px 60px rgba(0,0,0,0.15)' }}
+  transition={{ duration: 0.5, delay: card.delay }}
+  sx={{
+    bgcolor: 'white',
+    borderRadius: 2,
+    overflow: 'hidden',
+    mb: index < 2 ? 4 : 0,
+    height: { xs: 'auto', md: '300px' },
+    display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
+    boxShadow: '0 15px 40px rgba(0,0,0,0.08)',
+    transition: 'all 0.3s ease',
+    position: 'relative',
+    width: '100%',
+    marginX: 'auto',
+    '&:hover': {
+      width: '95%',
+      marginX: 'auto',
+    },
+    '&:hover .hover-image': { 
+      opacity: 1, 
+      transform: 'rotate(40deg) scale(1)' 
+    },
+    '&:hover .content-text': {
+      mr: 34 // Add margin right on card hover
+    }
+  }}
+>
+  {/* Left Content */}
+  <Box sx={{
+    p: { xs: 4, md: 4 },
+    flex: 1,
+    display: 'flex',
+    flexDirection: { xs: 'column', md: 'row' },
+    alignItems: { md: 'center' },
+    gap: 4
+  }}>
+    <Box sx={{ width: { xs: '80px', md: '120px' }, height: { xs: '80px', md: '120px' }, flexShrink: 0 }}>
+      <img src={card.icon} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+    </Box>
 
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant="h3" sx={{ fontWeight: 700, fontSize: { xs: '1.8rem', md: '2.2rem' }, mb: 3, color: '#0f172a' }}>
-                      {card.title}
-                    </Typography>
-                    <Typography variant="h6" sx={{ color: '#64748b', lineHeight: 1.8, fontSize: '1.1rem', fontWeight: 400 }}>
-                      {card.content.split('Eagle & Gaurada Ceramics').map((part, i, arr) => (
-                        i === arr.length - 1 ? part : <span key={i}>{part}<strong style={{ color: '#dc2626' }}>Eagle & Gaurada Ceramics</strong></span>
-                      ))}
-                    </Typography>
-                  </Box>
-                </Box>
+    <Box sx={{ flex: 1 }}>
+      <Typography variant="h3" sx={{ fontWeight: 700, fontSize: { xs: '1.8rem', md: '2.2rem' }, mb: 3, color: '#0f172a' }}>
+        {card.title}
+      </Typography>
+      <Typography 
+        className="content-text" // Added className for targeting
+        variant="h6" 
+        sx={{ 
+          color: '#64748b', 
+          lineHeight: 1.8, 
+          fontSize: '1.1rem', 
+          fontWeight: 400,
+          transition: 'margin-right 0.3s ease', // Smooth transition for margin
+          // Removed mr:30 from here (now only on hover)
+        }}
+      >
+        {card.content.split('Eagle & Gaurada Ceramics').map((part, i, arr) => (
+          i === arr.length - 1 ? part : <span key={i}>{part}<strong style={{ color: '#dc2626' }}>Eagle & Gaurada Ceramics</strong></span>
+        ))}
+      </Typography>
+    </Box>
+  </Box>
 
-                {/* Hover Image */}
-                <Box className="hover-image" sx={{
-                  position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', marginLeft: '40%',
-                  opacity: 0, transition: 'all 0.5s ease', pointerEvents: 'none', zIndex: 2, transform: 'rotate(75deg)', '&:hover': { transform: 'rotate(75deg) scale(1.05)' }
-                }}>
-                  <img src={card.hoverImg} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                </Box>
-              </MotionBox>
+  {/* Hover Image */}
+  <Box className="hover-image" sx={{
+    position: 'absolute', 
+    top: 0, 
+    left: 0, 
+    width: '100%', 
+    height: '100%', 
+    marginLeft: '40%',
+    opacity: 0, 
+    transition: 'all 0.5s ease', 
+    pointerEvents: 'none', 
+    zIndex: 2, 
+    transform: 'rotate(75deg)', 
+    '&:hover': { 
+      transform: 'rotate(75deg) scale(1.05)' 
+    }
+  }}>
+    <img src={card.hoverImg} alt={card.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+  </Box>
+</MotionBox>
             ))}
           </Box>
         </Container>
