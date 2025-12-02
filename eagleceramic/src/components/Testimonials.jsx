@@ -189,12 +189,19 @@ const Testimonials = () => {
         position: "relative",
       }}
     >
-      <Typography
-        variant={isMobile ? "h4" : "h3"}
-        fontWeight="bold"
-        textAlign="center"
-        mb={isMobile ? 4 : 6}
-      >
+       <Typography
+                    variant="h2"
+                    sx={{
+                      fontWeight: 900,
+                      mb: 2,
+                      background:"black",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                      lineHeight: 1.2,
+                      textAlign: "center",
+                    }}
+                  >
         What Our Clients Say
       </Typography>
 

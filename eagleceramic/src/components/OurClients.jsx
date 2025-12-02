@@ -255,18 +255,18 @@ const OurClients = () => {
     >
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography 
-            variant="h2" 
-            sx={{ 
-              fontWeight: 'bold', 
-              mb: 3, 
-              fontSize: { xs: '2rem', sm: '2.8rem', md: '3.2rem' },
-              background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}
-          >
+           <Typography
+                        variant="h2"
+                        sx={{
+                          fontWeight: 900,
+                          mb: 2,
+                          background:"black",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                          lineHeight: 1.2,
+                        }}
+                      >
             Trusted by Leading Builders & Businesses
           </Typography>
           <Typography 
