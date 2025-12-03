@@ -87,7 +87,7 @@ function App() {
               <Route path="cool-roof-tiles-9mm" element={<CoolRoofTiles9MM />} />
               <Route path="cool-roof-tiles-10mm" element={<CoolRoofTiles10MM />} />
               <Route path="cool-roof-tiles-600x600" element={<CoolRoofTiles600x600 />} />
-              <Route path="kitchen-sink" element={<KitchenSink />} />
+              <Route path="kitchen-sink" element={<KitchenSink/>} />
 
               {/* Floor Tiles */}
               <Route path="floortiles">
