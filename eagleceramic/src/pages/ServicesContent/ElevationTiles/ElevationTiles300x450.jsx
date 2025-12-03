@@ -135,7 +135,7 @@ const ElevationTiles300x450 = () => {
             <Box className="bg-blob blob1" />
             <Box className="bg-blob blob2" />
             <Box className="bg-blob blob3" />
-            <Container maxWidth="lg" sx={{ py: 4, position: "relative", zIndex: 10 }}>
+            <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
                 {/* HERO HEADER - Premium Design for Team Lead */}
               <Box
                sx={{
@@ -143,7 +143,7 @@ const ElevationTiles300x450 = () => {
                 textAlign: "center",
                 mb: {xs: 0, sm: 4},
                 pt: 1,
-                pb: {xs: 0, sm: 4},
+                // pb: {xs: 0, sm: 2},
               
                 backgroundImage: {
                   xs: "none",               

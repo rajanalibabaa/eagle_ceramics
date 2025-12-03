@@ -19,7 +19,7 @@ import React, { useState } from 'react';
 
 // Define colors (you can adjust these as needed)
 const colors = {
-  primary: '#FFD700', // Gold color for highlights
+  primary: '#FFD700', 
 };
 
 // Define legal links

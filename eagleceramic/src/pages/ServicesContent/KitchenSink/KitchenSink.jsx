@@ -40,7 +40,7 @@ const KitchenSink = () => {
             minHeight: "100vh",
             position: 'relative',
             overflow: 'hidden',
-            py: { xs: 4, md: 6 }
+            py: { xs: 1, md: 3 }
         }}>
             <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
                 {/* Enhanced HERO HEADER */}
@@ -49,7 +49,6 @@ const KitchenSink = () => {
                                                                 position: "relative",
                                                                 textAlign: "center",
                                                                 mb: {xs: 0, sm: 4},
-                                                                pt: 3,
                                                                 pb: {xs: 0, sm: 4},
                                                               
                                                                 backgroundImage: {
