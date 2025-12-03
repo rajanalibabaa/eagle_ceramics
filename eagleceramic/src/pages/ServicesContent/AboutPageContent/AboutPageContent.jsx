@@ -758,7 +758,7 @@ const AboutPageContent = () => {
                   },
                   '&:hover .hover-image': {
                     opacity: { xs: 0, md: 1 },
-                    transform: { xs: 'rotate(75deg) scale(1)', md: 'rotate(40deg) scale(1)' }
+                    transform: { xs: 'rotate(75deg) scale(1)', md: 'rotate(0deg) scale(1)' }
                   },
                   '&:hover .content-text': {
                     mr: { xs: 0, md: 34 }
