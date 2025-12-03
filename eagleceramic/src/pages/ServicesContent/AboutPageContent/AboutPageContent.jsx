@@ -48,7 +48,7 @@ const AboutPageContent = () => {
           top: 0, left: 0, right: 0, bottom: 0,
           background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.88) 100%)',
         }
-      }}>
+       }}>
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, py: { xs: 5, md: 0 } }}>
           <Grid container justifyContent='center' alignItems="center">
             <Grid item xs={12} md={8}>
@@ -171,10 +171,10 @@ const AboutPageContent = () => {
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 8, md: 15 }} justifyContent='center' alignItems='center' textAlign="center">
             {[
-              { number: "35+", label: "Years of Trust", icon: <EmojiEvents /> },
-              { number: "15M+", label: "Sq. Ft. Delivered", icon: <Architecture /> },
-              { number: "1000+", label: "Happy Builders", icon: <Handshake /> },
-              { number: "Zero", label: "Supply Delays", icon: <Speed /> },
+              { number: "35+", label: "Years of Trust" },
+              { number: "15M+", label: "Sq. Ft. Delivered"},
+              { number: "1000+", label: "Happy Builders" },
+              { number: "Zero", label: "Supply Delays"},
             ].map((stat, i) => (
               <Grid item xs={6} sm={3} key={i}>
                 <MotionBox
@@ -182,17 +182,12 @@ const AboutPageContent = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                 >
-                  <Box sx={{
-                    color: '#dc2626',
-                    fontSize: { xs: 50, sm: 50, md: 60, lg: 80 },
-                    mb: { xs: 0.5, md: 2 }
-                  }}>
-                    {stat.icon}
-                  </Box>
                   <Typography variant="h3" sx={{
                     color: 'black',
                     fontWeight: 800,
-                    fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' }
+                    fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                    mt:5,
+                    pb:3
                   }}>
                     {stat.number}
                   </Typography>
@@ -758,7 +753,7 @@ const AboutPageContent = () => {
                   },
                   '&:hover .hover-image': {
                     opacity: { xs: 0, md: 1 },
-                    transform: { xs: 'rotate(75deg) scale(1)', md: 'rotate(40deg) scale(1)' }
+                    transform: { xs: 'rotate(75deg) scale(1)', md: 'rotate(0deg) scale(1)' }
                   },
                   '&:hover .content-text': {
                     mr: { xs: 0, md: 34 }

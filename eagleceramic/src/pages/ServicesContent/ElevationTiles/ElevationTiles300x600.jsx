@@ -88,39 +88,7 @@ const ElevationTiles300x600 = () => {
 
     return (
         <Box sx={{ 
-            minHeight: "100vh",
-            position: "relative",
-            overflow: "hidden",
-            "::before": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                // backgroundImage: `url(${BackgroundImage})`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                opacity: 0.3,
-                zIndex: 1,
-            },
-            "::after": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                backgroundImage: `
-                    linear-gradient(45deg, rgba(255,215,0,0.03) 25%, transparent 25%),
-                    linear-gradient(-45deg, rgba(1,107,97,0.03) 25%, transparent 25%),
-                    linear-gradient(45deg, transparent 75%, rgba(255,215,0,0.03) 75%),
-                    linear-gradient(-45deg, transparent 75%, rgba(1,107,97,0.03) 75%)
-                `,
-                backgroundSize: "40px 40px",
-                animation: "movePattern 20s linear infinite",
-                zIndex: 2,
-            }
+            minHeight: "100vh"
         }}>
             <Container maxWidth="lg" sx={{ py: 4, position: "relative", zIndex: 10 }}>
                 {/* HERO HEADER - Premium Design for Team Lead */}
@@ -141,11 +109,11 @@ const ElevationTiles300x600 = () => {
                         backgroundPosition: "center",
                         borderImage: "linear-gradient(45deg, #FFD700, #016B61, #FFD700) 1",
                         borderRadius: "25px",
-                        boxShadow: `
-                            0 25px 50px rgba(0,0,0,0.5),
-                            0 0 0 1px rgba(255,215,0,0.3),
-                            inset 0 1px 0 rgba(255,255,255,0.2)
-                        `,
+                        // boxShadow: `
+                        //     0 25px 50px rgba(0,0,0,0.5),
+                        //     0 0 0 1px rgba(255,215,0,0.3),
+                        //     inset 0 1px 0 rgba(255,255,255,0.2)
+                        // `,
                         overflow: "hidden",
                         "::before": {
                             content: '""',
