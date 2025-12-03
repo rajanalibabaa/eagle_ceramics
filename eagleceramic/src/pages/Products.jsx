@@ -22,7 +22,7 @@ import {
   LocalOffer,
   Star,
 } from "@mui/icons-material";
-
+import { useNavigate } from "react-router-dom";
 // Import images
 import walltile from "../assets/WallTiles/Nature.jpg";
 import elevationTile from "../assets/ElevationTiles300x450/Eagle008image.png";
@@ -37,6 +37,7 @@ const content = [
     id: 1,
     title: "WALL TILES",
     subtitle: "Transform Your Spaces",
+    path : "/services/walltiles",
     description:
       "Explore our premium range of wall tiles — the perfect blend of style, texture, and durability to elevate any room. Crafted with precision for lasting beauty.",
     image: walltile,
@@ -68,6 +69,7 @@ const content = [
     id: 2,
     title: "ELEVATION TILES",
     subtitle: "Stunning Exteriors",
+    path :'/services/elevation-tiles-300x450',
     description:
       "Enhance your building's exterior with our stylish and weather-resistant elevation tiles. Designed to withstand extreme conditions while maintaining elegance.",
     image: elevationTile,
@@ -102,6 +104,7 @@ const content = [
     id: 3,
     title: "FLOOR TILES",
     subtitle: "Walk in Style",
+    path :'/services/floortiles/600x1200',
     description:
       "Glossy or matte — our floor tiles deliver strength, beauty, and long-lasting performance. Perfect foundation for your dream spaces.",
     image: floorTile,
@@ -134,6 +137,7 @@ const content = [
     id: 4,
     title: "PARKING TILES",
     subtitle: "Built to Endure",
+    path :'/services/parkingtiles/collection1',
     description:
       "Sturdy, anti-skid parking tiles engineered to handle heavy loads effortlessly. Maximum grip, minimum maintenance.",
     image: parkingTile,
@@ -165,6 +169,7 @@ const content = [
     id: 5,
     title: "COOLROOF TILES",
     subtitle: "Beat the Heat",
+    path :'/services/cool-roof-tiles-9mm',
     description:
       "Reduce heat naturally with high-reflective cool roof tiles for thermal comfort. Save energy, stay cool.",
     image: coolroof,
@@ -196,6 +201,7 @@ const content = [
     id: 6,
     title: "KITCHEN SINK",
     subtitle: "Modern Functionality",
+    path :'/services/kitchen-sink',
     description:
       "Modern, durable kitchen sinks that complement your interiors and enhance functionality. Premium quality for everyday use.",
     image: kitchenSink,
@@ -570,19 +576,7 @@ const ImageDisplay = memo(({ item, isMobile }) => (
       boxShadow: `0 25px 50px -12px ${item.color}40`,
     }}
   >
-    {/* Gradient Overlay */}
-    {/* <Box
-      sx={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: `linear-gradient(135deg, ${item.color}30 0%, transparent 40%, transparent 60%, ${item.color}20 100%)`,
-        zIndex: 1,
-      }}
-    /> */}
-
+  
     {/* Main Image */}
     <Box
       component="img"
@@ -612,21 +606,7 @@ const ImageDisplay = memo(({ item, isMobile }) => (
         zIndex: 2,
       }}
     >
-      {/* <Box sx={{ display: "flex", alignItems: "center", gap: 2, mb: 1 }}>
-        {item.bestSeller && (
-          <Chip
-            // icon={<Star sx={{ fontSize: 12, color: "red" }} />}
-            label="Best Seller"
-            size="small"
-            sx={{
-              background: "rgba(255,255,255,0.2)",
-              color: "red",
-              // backdropFilter: "blur(10px)",
-              fontSize: "0.9rem",
-            }}
-          />
-        )}
-      </Box> */}
+      
 
       <Typography
         variant="h4"
@@ -652,29 +632,10 @@ const ImageDisplay = memo(({ item, isMobile }) => (
       </Typography>
     </Box>
 
-    {/* Decorative Corner */}
-    {/* <Box
-      sx={{
-        position: "absolute",
-        top: 20,
-        right: 20,
-        width: 60,
-        height: 60,
-        borderRadius: "50%",
-        background: "linear-gradient(135deg, #ff00ff, #00ffff)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        boxShadow: "0 4px 20px rgba(217, 43, 43, 0.3)",
-        zIndex: 3,
-      }}
-    >
-      <Typography variant="caption" sx={{ color: "red", fontWeight: 700 }}>
-        NEW
-      </Typography>
-    </Box> */}
+    
   </motion.div>
 ));
+
 
 // Navigation Dots Component
 const NavigationDots = memo(({ content, activeIndex, onNavigate, vertical = true }) => (
@@ -797,20 +758,13 @@ function StickyScrollReveal() {
   }, []);
 
   // Arrow navigation
-  const handlePrevNext = useCallback(
-    (direction) => {
-      const newIndex =
-        direction === "next"
-          ? Math.min(activeIndex + 1, content.length - 1)
-          : Math.max(activeIndex - 1, 0);
-      handleSectionClick(newIndex);
-    },
-    [activeIndex, handleSectionClick]
-  );
+ 
+ const navigate = useNavigate();
 
   return (
     <Box
       sx={{
+        background: "#f8f8f8",
         minHeight: "100vh",
       }}
     >
@@ -868,7 +822,9 @@ function StickyScrollReveal() {
 
         
         {/* Main Content Area */}
-        <Box
+       {!isMobile && (
+         <>
+          <Box
           ref={containerRef}
           sx={{
             display: "flex",
@@ -926,115 +882,70 @@ function StickyScrollReveal() {
                 />
               </AnimatePresence>
 
-              {/* Desktop Navigation Dots */}
-              {/* {!isMobile && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    right: -40,
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                  }}
-                >
-                  <NavigationDots
-                    content={content}
-                    activeIndex={activeIndex}
-                    onNavigate={handleSectionClick}
-                    vertical={true}
-                  />
-                </Box>
-              )} */}
-
-              {/* Arrow Navigation */}
-              {/* {!isMobile && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    bottom: -60,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    display: "flex",
-                    gap: 2,
-                  }}
-                >
-                  <IconButton
-                    onClick={() => handlePrevNext("prev")}
-                    disabled={activeIndex === 0}
-                    sx={{
-                      backgroundColor: "white",
-                      boxShadow: 2,
-                      "&:hover": { backgroundColor: currentItem.color, color: "white" },
-                      "&:disabled": { opacity: 0.3 },
-                    }}
-                  >
-                    <ArrowBack />
-                  </IconButton>
-                  <IconButton
-                    onClick={() => handlePrevNext("next")}
-                    disabled={activeIndex === content.length - 1}
-                    sx={{
-                      backgroundColor: "white",
-                      boxShadow: 2,
-                      "&:hover": { backgroundColor: currentItem.color, color: "white" },
-                      "&:disabled": { opacity: 0.3 },
-                    }}
-                  >
-                    <ArrowForward />
-                  </IconButton>
-                </Box>
-              )} */}
+              
             </Box>
           </Box>
           </>
           )}
           
-        </Box>
+        </Box></>
+       )}
+       {isMobile && (<>
+       
+       <Box>
+        {content.map((item, index) => (
+          <Box key={item.id} position={'relative'} mt={5} sx={{ transition: "transform 0.6s ease",
+        "&:hover": {
+          transform: "scale(1.02)",
+        },}} >
+            <Box  onClick={()=>navigate(item.path)}  component={'img'} src={item.image} sx={{height:'250px',width:'350px',objectFit:'cover'}} />
+            <Box
+      sx={{
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        background: "linear-gradient(transparent, rgba(0, 0, 0, 1.92))",
+        padding: { xs: 2, md: 5 },
+        zIndex: 2,
+      }}
+    >
+     
 
-        {/* Mobile Navigation */}
-        {isMobile && (
-          <Box
-            sx={{
-              position: "fixed",
-              bottom: 20,
-              left: "50%",
-              transform: "translateX(-50%)",
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              backgroundColor: "rgba(255, 255, 255, 1)",
-              backdropFilter: "blur(10px)",
-              padding: "12px 20px",
-              borderRadius: 4,
-              boxShadow: "0 10px 40px rgba(0,0,0,0.15)",
-              zIndex: 1000,
-            }}
-          >
-            <IconButton
-              size="small"
-              onClick={() => handlePrevNext("prev")}
-              disabled={activeIndex === 0}
-              sx={{ color: currentItem.color }}
-            >
-              <ArrowBack fontSize="small" />
-            </IconButton>
+      <Typography
+        variant="h4"
+        sx={{
+          fontWeight: 800,
+          color: "white",
+          fontSize: { xs: "1.25rem", md: "2.75rem" },
+          textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+          mb: 0.5,
+        }}
+      >
+        {item.title}
+      </Typography>
 
-            <NavigationDots
-              content={content}
-              activeIndex={activeIndex}
-              onNavigate={handleSectionClick}
-              vertical={false}
-            />
+      <Typography
+        variant="body2"
+        sx={{
+          color: "rgba(255, 255, 255, 1)",
+          fontSize: { xs: "0.8rem", md: "0.9rem" },
+        }}
+      >
+        {item.subtitle} • {item.specifications.sizes.length} Sizes Available
+      </Typography>
+    </Box>
+            
+            </Box>
+          
+        ))}
+        <Box>
 
-            <IconButton
-              size="small"
-              onClick={() => handlePrevNext("next")}
-              disabled={activeIndex === content.length - 1}
-              sx={{ color: currentItem.color }}
-            >
-              <ArrowForward fontSize="small" />
-            </IconButton>
           </Box>
-        )}
+       </Box>
+       </>)}
+
+        
       </Container>
     </Box>
   );
