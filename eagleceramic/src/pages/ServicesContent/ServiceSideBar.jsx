@@ -59,7 +59,6 @@ const CollectionItem = styled(FormControlLabel)(({ selected }) => ({
   padding: '8px 12px',
   borderRadius: 10,
   transition: 'all .3s',
-  background: selected ? 'rgba(41,128,185,0.1)' : 'transparent',
   '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 500,
@@ -68,7 +67,7 @@ const CollectionItem = styled(FormControlLabel)(({ selected }) => ({
     textOverflow: 'ellipsis'
   },
   '& .MuiCheckbox-root': {
-    color: selected ? '#2980b9' : '#7f8c8d'
+    color: selected ? '#c41f25' : '#7f8c8d'
   }
 }))
 
@@ -79,13 +78,12 @@ const VersionItem = styled(FormControlLabel)(({ selected }) => ({
   padding: '6px 12px 6px 24px',
   borderRadius: 8,
   transition: 'all .3s',
-  background: selected ? 'rgba(41,128,185,0.1)' : 'transparent',
   '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 400
   },
   '& .MuiCheckbox-root': {
-    color: selected ? '#2980b9' : '#7f8c8d'
+    color: selected ? '#c41f25' : '#7f8c8d'
   }
 }))
 
@@ -207,7 +205,7 @@ export default function ServiceSideBar() {
           sx={{
             fontSize: 20,
             fontWeight: 700,
-            background: 'linear-gradient(45deg,#2c3e50 0%,#2980b9 100%)',
+            background: '#c41f25',
             WebkitBackgroundClip: 'text',
             color: 'transparent'
           }}
@@ -252,17 +250,18 @@ export default function ServiceSideBar() {
                 <CollectionItem
                   selected={isSelected}
                   control={
-                    <Checkbox
-                      size="small"
-                      checked={isSelected}
-                      indeterminate={hasVersions && childMatches && !allChildMatches}
-                      onChange={go(
-                        hasVersions
-                          ? item.versions[0].url
-                          : item.url || '/services'
-                      )}
-                      onClick={e => e.stopPropagation()}
-                    />
+                   <Checkbox
+  size="small"
+  checked={isSelected}  
+  indeterminate={false}  
+  onChange={go(
+    hasVersions
+      ? item.versions[0].url
+      : item.url || '/services'
+  )}
+  onClick={e => e.stopPropagation()}
+/>
+
                   }
                   label={
                     hasVersions ? (
@@ -394,7 +393,7 @@ export default function ServiceSideBar() {
       {showFab && !drawerOpen && (
         <Fab
           variant="extended"
-          color="primary"
+          color="#c41f25"
           onClick={() => setDrawerOpen(true)}
           sx={{
             position: 'fixed',

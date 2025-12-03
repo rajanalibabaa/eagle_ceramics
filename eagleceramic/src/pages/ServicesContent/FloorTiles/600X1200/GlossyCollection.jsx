@@ -12,7 +12,6 @@ import CloseIcon from "@mui/icons-material/Close";
 const ServicesCollectionCard = lazy(() =>
   import("../../ServicesCollectionCard ") 
 );
-
 import pdf1 from "../../../../assets/pdf/3DCollection.pdf"
 import pdf2 from "../../../../assets/pdf/BookMatch.pdf"
 import pdf3 from "../../../../assets/pdf/DoubleCharge.pdf"
