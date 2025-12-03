@@ -72,7 +72,7 @@ const FeatureItem = memo(({ item, index }) => (
         <Typography sx={{ fontSize: { xs: "1rem", sm: "1.2rem" }, fontWeight: 700, color: "#333" }}>
           {item.title}
         </Typography>
-        <Typography sx={{ fontSize: { xs: "0.875rem", sm: "1rem" }, color: "#555", mt: 0.3 }}>
+        <Typography sx={{ fontSize: { xs: "0.875rem", sm: "1rem" }, color: "#000000ff", mt: 0.3 }}>
           {item.sub}
         </Typography>
       </Box>

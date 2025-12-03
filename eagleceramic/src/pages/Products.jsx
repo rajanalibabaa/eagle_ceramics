@@ -764,7 +764,7 @@ function StickyScrollReveal() {
   return (
     <Box
       sx={{
-        background: "#f8f8f8",
+        background: "#ffffffff",
         minHeight: "100vh",
       }}
     >

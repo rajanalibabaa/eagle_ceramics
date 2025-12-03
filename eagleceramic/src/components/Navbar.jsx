@@ -1,21 +1,16 @@
 import React, { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import  Button from "@mui/material/Button";
-import  Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import AppBar from "@mui/material/AppBar";
 import IconButton from "@mui/material/IconButton";
-import Drawer from "@mui/material/Drawer";
-import List from "@mui/material/List";
-import ListItemButton from "@mui/material/ListItemButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { motion } from "framer-motion";
-import About from "../pages/AboutUs";
-import Contact from "../pages/ContactUs";
-import Services from "../pages/Services";
-import logo from '../assets/EagleCeramicsLogo.png'
+import logo from "../assets/EagleCeramicsLogo.png";
+
 const fadeDown = {
   initial: { opacity: 0, y: -15 },
   animate: { opacity: 1, y: 0 },
@@ -24,7 +19,7 @@ const fadeDown = {
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
 
   return (
     <AppBar
@@ -35,9 +30,7 @@ const Navbar = () => {
         position: "sticky",
         top: 0,
         zIndex: 1000,
-        // Ensure toolbar content is visible over images
         color: "#fff",
-        // Optional: add a subtle backdrop blur for readability
         backdropFilter: "blur(4px)",
       }}
     >
@@ -53,15 +46,15 @@ const Navbar = () => {
           }}
         >
           {/* LOGO */}
-          <Box
-            sx={{
-              cursor:'pointer'
-            }}
-            onClick={() => navigate("/")}
-           ><img src={logo} alt="logo" style={{maxWidth:'150px',maxHeight:'50px'}}/>
+          <Box sx={{ cursor: "pointer" }} onClick={() => navigate("/")}>
+            <img
+              src={logo}
+              alt="logo"
+              style={{ maxWidth: "150px", maxHeight: "50px" }}
+            />
           </Box>
-           
 
+          {/* DESKTOP MENU */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
@@ -70,101 +63,48 @@ const Navbar = () => {
               color: "black",
             }}
           >
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 600 }}
-              component={motion.button}
-              whileHover={{ scale: 1.04 }}
-              onClick={() => navigate("/")}
-            >
-              HOME
-            </Button>
-
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 600 }}
-              component={motion.button}
-              whileHover={{ scale: 1.04 }}
-              onClick={()=> navigate("/about")}
-            >
-              ABOUT US
-            </Button>
-
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 600 }}
-              component={motion.button}
-              whileHover={{ scale: 1.04 }}
-              onClick={() => navigate("/services")}
-            >
-              Products
-            </Button>
-
-
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 600 }}
-              component={motion.button}
-              whileHover={{ scale: 1.04 }}
-              onClick={() => navigate("/contact")}
-            >
-              CONTACT US
-            </Button>
+            <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/")}>HOME</Button>
+            <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/about")}>ABOUT US</Button>
+            <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/services")}>PRODUCTS</Button>
+            <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/contact")}>CONTACT US</Button>
           </Box>
 
-          {/* MOBILE MENU ICON */}
+          {/* MOBILE HAMBURGER ICON */}
           <IconButton
             sx={{ display: { xs: "flex", md: "none" }, color: "black" }}
-            onClick={() => setOpen(true)}
+            onClick={() => setOpenMenu(!openMenu)}
           >
-            <MenuIcon sx={{ fontSize: 30 }} />
+            {openMenu ? (
+              <CloseIcon sx={{ fontSize: 30 }} />
+            ) : (
+              <MenuIcon sx={{ fontSize: 30 }} />
+            )}
           </IconButton>
         </Toolbar>
       </motion.div>
 
-      <Drawer
-        anchor="right"
-        open={open}
-        onClose={() => setOpen(false)}
-        PaperProps={{
-          sx: {
-            width: 240,
-            backgroundColor: "#016B61",
-            color: "white",
-          },
-        }}
-      >
-        <Box sx={{ p: 2 }}>
-          <Box display="flex" justifyContent="flex-end">
-            <IconButton onClick={() => setOpen(false)} sx={{ color: "white" }}>
-              <CloseIcon />
-            </IconButton>
-          </Box>
-
-          <List>
-            <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>HOME</Typography>
-</ListItemButton>
-
-<ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/about"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>ABOUT US</Typography>
-</ListItemButton>
-
-<ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/services"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>PRODUCTS</Typography>
-</ListItemButton>
-
-{/* <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/blog"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>BLOG</Typography>
-</ListItemButton> */}
-
-<ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/contact"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>CONTACT US</Typography>
-</ListItemButton>
-
-          </List>
+      {/* MOBILE DROPDOWN MENU */}
+      {openMenu && (
+        <Box
+          component={motion.div}
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          sx={{
+            display: { xs: "flex", md: "none" },
+            flexDirection: "column",
+            backgroundColor: "#ffffff36",
+            px: 2,
+            py: 2,
+            color: "black",
+          }}
+        >
+          <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/"); setOpenMenu(false); }}>HOME</Typography>
+          <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/about"); setOpenMenu(false); }}>ABOUT US</Typography>
+          <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/services"); setOpenMenu(false); }}>PRODUCTS</Typography>
+          <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/contact"); setOpenMenu(false); }}>CONTACT US</Typography>
         </Box>
-      </Drawer>
+      )}
     </AppBar>
   );
 };
