@@ -67,7 +67,7 @@ const CollectionItem = styled(FormControlLabel)(({ selected }) => ({
     textOverflow: 'ellipsis'
   },
   '& .MuiCheckbox-root': {
-    color: selected ? '#c41f25' : '#7f8c8d'
+    color: '#c41f25'
   }
 }))
 
@@ -83,7 +83,7 @@ const VersionItem = styled(FormControlLabel)(({ selected }) => ({
     fontWeight: selected ? 600 : 400
   },
   '& .MuiCheckbox-root': {
-    color: selected ? '#c41f25' : '#7f8c8d'
+    color: '#c41f25'
   }
 }))
 
@@ -139,7 +139,6 @@ export default function ServiceSideBar() {
     }))
   }, [collectionKey, maybeVersion])
 
-  /* Data */
   const collections = [
     {
       label: 'Wall Tiles',
@@ -192,7 +191,7 @@ export default function ServiceSideBar() {
         { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
       ]
     },
-    { label: 'Kitchen Sink', key: 'kitchen-sink', versions: [] }
+    { label: 'Kitchen Sink',url: '/services/kitchen-sink', key: 'kitchen-sink', versions: [] }
   ]
 
   /* Sidebar content */
@@ -205,7 +204,7 @@ export default function ServiceSideBar() {
           sx={{
             fontSize: 20,
             fontWeight: 700,
-            background: '#c41f25',
+            background: 'black',
             WebkitBackgroundClip: 'text',
             color: 'transparent'
           }}
@@ -253,7 +252,8 @@ export default function ServiceSideBar() {
                    <Checkbox
   size="small"
   checked={isSelected}  
-  indeterminate={false}  
+  indeterminate={false}
+  sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
   onChange={go(
     hasVersions
       ? item.versions[0].url
@@ -296,6 +296,7 @@ export default function ServiceSideBar() {
                                 <Checkbox
                                   size="small"
                                   checked={thisChecked}
+                                  sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
                                   onChange={go(v.url)}
                                   onClick={e => e.stopPropagation()}
                                 />
@@ -330,6 +331,7 @@ export default function ServiceSideBar() {
                                         <Checkbox
                                           size="small"
                                           checked={pathname === sv.url}
+                                          sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
                                           onChange={go(sv.url)}
                                         />
                                       }
@@ -391,21 +393,27 @@ export default function ServiceSideBar() {
   return (
     <>
       {showFab && !drawerOpen && (
-        <Fab
-          variant="extended"
-          color="#c41f25"
-          onClick={() => setDrawerOpen(true)}
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            zIndex: theme.zIndex.modal + 1
-          }}
-        >
-          <FilterListIcon sx={{ mr: 1 }} /> Filters
-        </Fab>
-      )}
+  <Fab
+    variant="extended"
+    onClick={() => setDrawerOpen(true)}
+    sx={{
+      position: 'fixed',
+      bottom: 16,
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: theme.zIndex.modal + 1,
+      color: '#c41f25',               
+      backgroundColor: '#fff',         
+      border: '1px solid #c41f25',     
+      '&:hover': {
+        backgroundColor: '#ffe5e6'     
+      }
+    }}
+  >
+    <FilterListIcon sx={{ mr: 1 }} /> Filters
+  </Fab>
+)}
+
 
       <SwipeableDrawer
         anchor="bottom"

@@ -49,61 +49,53 @@ const DoubleCharge = () => {
     }}>
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
         {/* Enhanced HERO HEADER */}
-        <Box
-          sx={{
-            position: "relative",
-            textAlign: "center",
-            mb: 8,
-            pt: 4,
-            pb: 4,
-            background: `
-              linear-gradient(135deg, rgba(15,32,39,0.95) 0%, rgba(32,58,67,0.9) 50%, rgba(44,83,100,0.95) 100%),
-              linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(1,107,97,0.2) 100%)
-            `,
-            backgroundImage: `url(${BackgroundImage})`,
-            backgroundBlendMode: "overlay",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            borderImage: "linear-gradient(45deg, #FFD700, #016B61, #FFD700) 1",
-            borderRadius: "25px",
-            // boxShadow: `
-            //   0 25px 50px rgba(0,0,0,0.5),
-            //   0 0 0 1px rgba(255,215,0,0.3),
-            //   inset 0 1px 0 rgba(255,255,255,0.2)
-            // `,
-            overflow: "hidden",
-            "::before": {
-              content: '""',
-              position: "absolute",
-              top: -2,
-              left: -2,
-              right: -2,
-              bottom: -2,
-              background: "linear-gradient(45deg, transparent, rgba(255,215,0,0.1), transparent)",
-              zIndex: -1,
-              animation: "glowBorder 3s ease-in-out infinite alternate",
-            },
-            animation: "floatHeader 6s ease-in-out infinite",
-          }}
-        >
-          <Typography
-            variant="h2"
-            sx={{
-              color: "#ffffffff",
-              fontWeight: 800,
-              textTransform: "uppercase",
-              letterSpacing: 1,
-              lineHeight: 1,
-              mb: 2,
-              whiteSpace: "nowrap",
-              fontSize: { xs: "2rem", sm: "3rem", md: "3.7rem", lg: "4.5rem" },
-              textShadow: `
-                0 0 10px rgba(255,215,0,0.8),
-                0 2px 4px rgba(0,0,0,0.8)
-              `,
-              fontFamily: "'Montserrat', 'Roboto', sans-serif",
-            }}
-          >
+         <Box
+                        sx={{
+                          position: "relative",
+                          textAlign: "center",
+                          mb: 8,
+                          pt: 4,
+                          pb: 4,
+                         
+                          backgroundImage: `url(${BackgroundImage})`,
+                          backgroundBlendMode: "overlay",
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                          borderRadius: "25px",
+                          
+                          overflow: "hidden",
+                          "::before": {
+                            content: '""',
+                            position: "absolute",
+                            top: -2,
+                            left: -2,
+                            right: -2,
+                            bottom: -2,
+                            background: "linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.84))",
+                            zIndex: -1,
+                            animation: "glowBorder 3s ease-in-out infinite alternate",
+                          },
+                          animation: "floatHeader 6s ease-in-out infinite",
+                        }}
+                      >
+                        <Typography
+                          variant="h2"
+                          sx={{
+                            color: "#ffffffff",
+                            fontWeight: 800,
+                            textTransform: "uppercase",
+                            letterSpacing: 1,
+                            lineHeight: 1,
+                            mb: 2,
+                            whiteSpace: "nowrap",
+                            fontSize: { xs: "2rem", sm: "3rem", md: "3.7rem", lg: "4.5rem" },
+                            // textShadow: `
+                            //   0 0 10px rgba(255,215,0,0.8),
+                            //   0 2px 4px rgba(0,0,0,0.8)
+                            // `,
+                            fontFamily: "'Montserrat', 'Roboto', sans-serif",
+                          }}
+                        >
             DOUBLE CHARGE TILES
           </Typography>
           <Typography
@@ -111,8 +103,8 @@ const DoubleCharge = () => {
             sx={{
               color: "#E8F4F8",
               fontWeight: 400,
-              mb: 4,
-              px: 4,
+              mb: 2,
+              px: 2,
               fontSize: { xs: "0.875rem", sm: "1rem", md: "1.25rem" },
               textShadow: "0 2px 4px rgba(0,0,0,0.8)",
               fontFamily: "'Roboto', sans-serif",
@@ -120,7 +112,7 @@ const DoubleCharge = () => {
           >
             Durable, stylish, and suitable for heavy-traffic areas
           </Typography>
-          <Box
+          {/* <Box
             sx={{
               height: 4,
               background: "linear-gradient(90deg, #FFD700, #016B61, #FFD700)",
@@ -128,7 +120,7 @@ const DoubleCharge = () => {
               animation: "shineLine 2s ease-in-out infinite",
               boxShadow: "0 0 10px rgba(255,215,0,0.6)",
             }}
-          />
+          /> */}
         </Box>
 
         {/* COLLECTION CARDS */}
