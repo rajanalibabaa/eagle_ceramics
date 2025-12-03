@@ -32,6 +32,44 @@ const AboutPageContent = () => {
 
   return (
     <Box sx={{ background: '#ffffff', color: '#0f172a', overflow: 'hidden' }}>
+
+      {/* STATS BAR - Premium Horizontal */}
+      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 1, md: 3, sm: 4 }, px: { sm: 6 }, position: 'absolute', marginTop: { xs: 67, sm: 98, md: 65 }, marginLeft: { sm: 13 }, zIndex: 3, mx: { xs: 3, md: "14%" }, borderRadius: 5 }}>
+        <Container maxWidth="lg">
+          <Grid container spacing={{ xs: 2, md: 12 }} justifyContent='center' alignItems='center' textAlign="center">
+            {[
+              { number: "35+", label: "Years of Trust" },
+              { number: "15M+", label: "Sq. Ft. Delivered" },
+              { number: "1000+", label: "Happy Builders" },
+              { number: "Zero", label: "Supply Delays" },
+            ].map((stat, i) => (
+              <Grid item xs={6} sm={3} key={i}>
+                <MotionBox
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Typography variant="h3" sx={{
+                    color: 'black',
+                    fontWeight: 800,
+                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                    // mt:5,
+                    pb: { xs: 0, md: 3 }
+                  }}>
+                    {stat.number}
+                  </Typography>
+                  <Typography variant="h6" sx={{
+                    color: '#000000ff',
+                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
+                  }}>
+                    {stat.label}
+                  </Typography>
+                </MotionBox>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
       {/* HERO - Ultra Clean & Powerful */}
       <Box sx={{
         position: 'relative',
@@ -48,7 +86,7 @@ const AboutPageContent = () => {
           top: 0, left: 0, right: 0, bottom: 0,
           background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(15, 23, 42, 0.88) 100%)',
         }
-       }}>
+      }}>
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 2, py: { xs: 5, md: 0 } }}>
           <Grid container justifyContent='center' alignItems="center">
             <Grid item xs={12} md={8}>
@@ -100,7 +138,7 @@ const AboutPageContent = () => {
                   For over 35 years, we've been the silent backbone behind India's finest construction projects — supplying premium tiles with unwavering quality, speed, and trust.
                 </Typography>
 
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ justifyContent: 'center', px: { xs: 2, sm: 0 } }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ justifyContent: 'center', px: { xs: 2, sm: 0 }, mb: 0 }}>
                   <Button
                     component={Link}
                     to="/contact"
@@ -166,52 +204,19 @@ const AboutPageContent = () => {
         }} />
       </Box>
 
-      {/* STATS BAR - Premium Horizontal */}
-      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 1, md: 3 } }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={{ xs: 8, md: 15 }} justifyContent='center' alignItems='center' textAlign="center">
-            {[
-              { number: "35+", label: "Years of Trust" },
-              { number: "15M+", label: "Sq. Ft. Delivered"},
-              { number: "1000+", label: "Happy Builders" },
-              { number: "Zero", label: "Supply Delays"},
-            ].map((stat, i) => (
-              <Grid item xs={6} sm={3} key={i}>
-                <MotionBox
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Typography variant="h3" sx={{
-                    color: 'black',
-                    fontWeight: 800,
-                    fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
-                    mt:5,
-                    pb:3
-                  }}>
-                    {stat.number}
-                  </Typography>
-                  <Typography variant="h6" sx={{
-                    color: '#000000ff',
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
-                  }}>
-                    {stat.label}
-                  </Typography>
-                </MotionBox>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+
+
 
       {/* FOUNDER STORY - Elegant & Emotional */}
       <Box sx={{
         py: { xs: 8, sm: 10, lg: 12 },
         background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
-        px: { xs: 2, sm: 3, md: 0 }
+        px: { xs: 2, sm: 3, md: 0 },
+
+
       }}>
         <Container maxWidth="lg">
-          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" flexDirection={{ xs: 'column-reverse', md: 'row' }}>
+          <Grid container spacing={{ xs: 4, md: 6 }} alignItems="center" flexDirection={{ xs: 'column-reverse', md: 'row' }} sx={{ mt: 8 }}>
             {/* Left Content */}
             <Grid item xs={12} md={6} sx={{
               width: { xs: '100%', md: '45%' },
@@ -388,10 +393,11 @@ const AboutPageContent = () => {
         bgcolor: 'rgba(252, 248, 251, 0.2)',
         position: 'relative',
         overflow: 'hidden',
-        py: { xs: 6, md: 8 },
-        px: { xs: 2, sm: 3, md: 0 }
+        py: { xs: 8, md: 10 },
+        px: { xs: 2, sm: 3, md: 0 },
+        background: 'linear-gradient(135deg, #f8fafc 0%, #f0f9ff 50%, #f1f5f9 100%)'
       }}>
-        {/* Animated Circles Background */}
+        {/* Animated Background Elements */}
         <Box sx={{
           position: 'absolute',
           top: '10%',
@@ -403,7 +409,7 @@ const AboutPageContent = () => {
             width: '300px',
             height: '300px',
             borderRadius: '50%',
-            border: '1px solid rgba(220, 38, 38, 0.1)',
+            border: '2px solid rgba(220, 38, 38, 0.15)',
             position: 'relative',
             animation: 'rotate 40s linear infinite reverse',
             '@keyframes rotate': {
@@ -415,142 +421,381 @@ const AboutPageContent = () => {
               position: 'absolute',
               top: '0',
               left: '50%',
-              width: '15px',
-              height: '15px',
+              width: '20px',
+              height: '20px',
               borderRadius: '50%',
               bgcolor: '#dc2626',
-              transform: 'translate(-50%, -50%)'
+              transform: 'translate(-50%, -50%)',
+              boxShadow: '0 0 20px rgba(220, 38, 38, 0.5)'
             }} />
           </Box>
         </Box>
 
+        {/* Additional floating elements */}
+        <Box sx={{
+          position: 'absolute',
+          bottom: '15%',
+          right: '5%',
+          width: '200px',
+          height: '200px',
+          borderRadius: '50%',
+          border: '1px solid rgba(56, 196, 14, 0.1)',
+          zIndex: 0,
+          display: { xs: 'none', md: 'block' },
+          animation: 'float 8s ease-in-out infinite',
+          '@keyframes float': {
+            '0%, 100%': { transform: 'translateY(0px)' },
+            '50%': { transform: 'translateY(-20px)' }
+          }
+        }} />
+
         <Container maxWidth="lg" sx={{ position: 'relative', zIndex: 1 }}>
-          {/* Title Section */}
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            mb: { xs: 4, md: 6 },
-            textAlign: 'center'
-          }}>
+          {/* Enhanced Title Section */}
+          <MotionBox
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mb: { xs: 6, md: 10 },
+              textAlign: 'center'
+            }}
+          >
             <Typography
               variant="h3"
               fontWeight="bold"
               sx={{
-                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '3.5rem' },
+                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.5rem', lg: '4rem' },
                 color: '#0f172a',
-                maxWidth: '800px',
+                maxWidth: '900px',
                 mx: 'auto',
+                mb: 2,
                 px: { xs: 1, sm: 0 },
-                whiteSpace: { xs: 'normal', md: 'nowrap' }
+                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                textShadow: '0 2px 10px rgba(15, 23, 42, 0.1)'
               }}
             >
               Our Foundation & Our Promise
             </Typography>
-          </Box>
 
-          {/* Cards Grid - Updated for proper spacing */}
+            <Typography
+              variant="h6"
+              sx={{
+                color: '#64748b',
+                maxWidth: '600px',
+                mx: 'auto',
+                fontSize: { xs: '1rem', md: '1.25rem' },
+                fontWeight: 400,
+                lineHeight: 1.6
+              }}
+            >
+              Building lasting relationships through excellence, reliability, and innovation
+            </Typography>
+          </MotionBox>
+
+          {/* Enhanced Cards Grid */}
           <Box sx={{
             width: '100%',
-            overflowX: { xs: 'auto', sm: 'visible' },
-            overflowY: 'hidden',
-            py: { xs: 2, sm: 0 },
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
+            py: { xs: 2, sm: 3, md: 4 },
+            overflowX: { xs: 'auto', sm: 'visible' }, // Enable horizontal scroll on mobile
             '&::-webkit-scrollbar': {
-              display: 'none',
+              height: '6px',
             },
-            WebkitOverflowScrolling: 'touch',
+            '&::-webkit-scrollbar-track': {
+              background: '#f1f1f1',
+              borderRadius: '3px',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#dc2626',
+              borderRadius: '3px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#b91c1c',
+            }
           }}>
-            <Box sx={{
-              width: { xs: 'max-content', sm: '100%' },
-              px: { xs: 2, sm: 0 }
-            }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexWrap: { xs: 'nowrap', sm: 'wrap' },
-                  justifyContent: { xs: 'flex-start', sm: 'space-around' },
-                  gap: { xs: '16px', sm: '20px', md: '24px' },
-                  width: { xs: 'max-content', sm: '100%' },
-                  pb: { xs: 2, sm: 0 }
-                }}
-              >
-                {[
-                  {
-                    title: "Quality Commitment",
-                    image: QualityCommitment
-                  },
-                  {
-                    title: "On-Time Delivery",
-                    image: OnTimeDelivery
-                  },
-                  {
-                    title: "Consistent Supply",
-                    image: ConsistentSupply
-                  },
-                  {
-                    title: "Integrity & Transparency",
-                    image: IntegrityTransparency
-                  },
-                  {
-                    title: "Customer-First Approach",
-                    image: CustomerFirstApproach
-                  },
-                  {
-                    title: "Timely Fulfilment",
-                    image: TimelyFulfilment
-                  }
-                ].map((item, i) => (
-                  <Box
-                    key={i}
+            <Grid container
+              spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}
+              justifyContent="center"
+              sx={{
+                flexWrap: { xs: 'nowrap', sm: 'wrap' }, // No wrap on mobile for horizontal scroll
+                justifyContent: { xs: 'flex-start', sm: 'center' }, // Start from left on mobile
+                width: { xs: 'max-content', sm: '100%' }, // Make grid wider than container on mobile
+                mx: { xs: 'auto', sm: 0 },
+                px: { xs: 2, sm: 0 }, // Add padding on mobile for better scroll
+              }}
+            >
+              {[
+                {
+                  title: "Quality Commitment",
+                  image: QualityCommitment,
+                  color: '#dc2626',
+                  gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
+                },
+                {
+                  title: "On-Time Delivery",
+                  image: OnTimeDelivery,
+                  color: '#2563eb',
+                  gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                },
+                {
+                  title: "Consistent Supply",
+                  image: ConsistentSupply,
+                  color: '#059669',
+                  gradient: 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                },
+                {
+                  title: "Integrity & Transparency",
+                  image: IntegrityTransparency,
+                  color: '#7c3aed',
+                  gradient: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)'
+                },
+                {
+                  title: "Customer-First Approach",
+                  image: CustomerFirstApproach,
+                  color: '#d97706',
+                  gradient: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)'
+                },
+                {
+                  title: "Timely Fulfilment",
+                  image: TimelyFulfilment,
+                  color: '#0d9488',
+                  gradient: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)'
+                }
+              ].map((item, i) => (
+                <Grid item
+                  xs={12}
+                  sm={6}
+                  md={4}
+                  key={i}
+                  sx={{
+                    flex: { xs: '0 0 auto', sm: '1 0 auto' }, // Don't shrink on mobile
+                    width: { xs: '280px', sm: 'auto' }, // Fixed width on mobile for scrolling
+                  }}
+                >
+                  <MotionBox
+                    initial={{
+                      opacity: 0,
+                      x: { xs: -100, sm: 0, md: 0 }, // Slide from left on mobile only
+                      y: { xs: 0, sm: 50, md: 50 } // Keep y animation for tablet/desktop
+                    }}
+                    whileInView={{
+                      opacity: 1,
+                      x: 0,
+                      y: 0
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      delay: i * 0.15, // Staggered delay for slide effect
+                      type: { xs: "spring", sm: "tween" }, // Spring animation for mobile slide
+                      stiffness: { xs: 100, sm: 0 },
+                      damping: { xs: 12, sm: 0 }
+                    }}
+                    viewport={{ once: true, margin: "-100px" }}
                     sx={{
-                      flexShrink: { xs: 0, sm: 1 },
-                      flexBasis: { xs: '260px', sm: 'calc(50% - 20px)', md: 'calc(33.333% - 24px)' },
-                      minWidth: { xs: '260px', sm: 'auto' }
+                      height: '100%',
+                      display: 'flex',
+                      justifyContent: 'center'
                     }}
                   >
                     <Box
                       sx={{
                         bgcolor: 'white',
-                        p: { xs: 3, sm: 4 },
-                        borderRadius: { xs: 2, sm: 3 },
+                        p: { xs: 2, sm: 3, md: 3, lg: 4 },
+                        borderRadius: {
+                          xs: 16,    // Mobile
+                          sm: 20,    // Tablet
+                          md: 22,    // Mac
+                          lg: 24     // Desktop (unchanged)
+                        },
                         textAlign: 'center',
-                        height: { xs: '260px', sm: '300px' },
-                        width: { xs: '260px', sm: '100%', md: '300px' },
+                        height: {
+                          xs: '280px',   // Mobile
+                          sm: '320px',   // Tablet
+                          md: '300px',   // Mac (matches your md value)
+                          lg: '360px'    // Desktop
+                        },
+                        width: {
+                          xs: '280px',   // Mobile (fixed for scroll)
+                          sm: '100%',    // Tablet+
+                        },
+                        maxWidth: {
+                          xs: '280px',   // Mobile
+                          sm: '280px',   // Tablet
+                          md: '280px',   // Mac (matches your maxWidth)
+                          lg: '320px'    // Desktop
+                        },
                         display: 'flex',
                         flexDirection: 'column',
-                        justifyContent: 'space-around',
+                        justifyContent: 'space-between',
                         alignItems: 'center',
-                        boxShadow: '0 5px 15px rgba(0,0,0,0.08)',
-                        borderTop: '5px solid #38c40eff',
+                        boxShadow: '0 10px 40px rgba(0,0,0,0.08)',
+                        border: '1px solid rgba(0,0,0,0.05)',
                         position: 'relative',
                         overflow: 'hidden',
                         cursor: 'pointer',
-                        transition: 'all 0.3s ease',
-                        mx: 'auto',
+                        transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                         '&:hover': {
-                          transform: 'scale(1.02)', // 2px bigger on hover
-                          boxShadow: '0 10px 25px rgba(220, 38, 38, 0.15)',
+                          transform: {
+                            xs: 'translateY(-6px) scale(1.02)',   // Mobile: scale effect for touch
+                            sm: 'translateY(-8px)',   // Tablet
+                            md: 'translateY(-10px)',  // Mac
+                            lg: 'translateY(-12px)'   // Desktop (unchanged)
+                          },
+                          boxShadow: {
+                            xs: '0 20px 40px rgba(0,0,0,0.15)',
+                            sm: '0 20px 40px rgba(0,0,0,0.15)',
+                            md: '0 25px 50px rgba(0,0,0,0.15)',
+                            lg: '0 25px 50px rgba(0,0,0,0.15)'  // Desktop (unchanged)
+                          },
+                          '& .icon-container': {
+                            transform: {
+                              xs: 'scale(1.05)',
+                              sm: 'scale(1.07)',
+                              md: 'scale(1.09)',
+                              lg: 'scale(1.1)'
+                            },
+                            boxShadow: `0 15px 30px ${item.color}40`
+                          },
+                          '& .title-text': {
+                            color: item.color
+                          },
+                          '& .divider': {
+                            width: {
+                              xs: '60px',   // Mobile
+                              sm: '70px',   // Tablet
+                              md: '75px',   // Mac
+                              lg: '80px'    // Desktop (unchanged)
+                            },
+                            backgroundColor: item.color
+                          }
                         }
                       }}
                     >
+                      {/* Background Gradient */}
                       <Box sx={{
-                        mb: { xs: 2, sm: 3 },
-                        transition: 'transform 0.3s ease',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: item.gradient,
+                        opacity: 0,
+                        transition: 'opacity 0.4s ease',
+                        zIndex: 0,
                         '&:hover': {
-                          transform: 'scale(1.05)',
+                          opacity: 0.05
                         }
-                      }}>
-                        <Box sx={{
-                          width: { xs: 80, sm: 90 },
-                          height: { xs: 80, sm: 90 },
+                      }} />
+
+                      {/* Corner Accents */}
+                      <Box sx={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: {
+                          xs: '40px',   // Mobile
+                          sm: '50px',   // Tablet
+                          md: '55px',   // Mac
+                          lg: '60px'    // Desktop (unchanged)
+                        },
+                        height: {
+                          xs: '40px',   // Mobile
+                          sm: '50px',   // Tablet
+                          md: '55px',   // Mac
+                          lg: '60px'    // Desktop (unchanged)
+                        },
+                        borderTop: `2px solid ${item.color}`,
+                        borderLeft: `2px solid ${item.color}`,
+                        borderTopLeftRadius: {
+                          xs: '12px',   // Mobile
+                          sm: '16px',   // Tablet
+                          md: '18px',   // Mac
+                          lg: '20px'    // Desktop (unchanged)
+                        },
+                        opacity: 0.3
+                      }} />
+
+                      <Box sx={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 0,
+                        width: {
+                          xs: '40px',   // Mobile
+                          sm: '50px',   // Tablet
+                          md: '55px',   // Mac
+                          lg: '60px'    // Desktop (unchanged)
+                        },
+                        height: {
+                          xs: '40px',   // Mobile
+                          sm: '50px',   // Tablet
+                          md: '55px',   // Mac
+                          lg: '60px'    // Desktop (unchanged)
+                        },
+                        borderBottom: `2px solid ${item.color}`,
+                        borderRight: `2px solid ${item.color}`,
+                        borderBottomRightRadius: {
+                          xs: '12px',   // Mobile
+                          sm: '16px',   // Tablet
+                          md: '18px',   // Mac
+                          lg: '20px'    // Desktop (unchanged)
+                        },
+                        opacity: 0.3
+                      }} />       
+
+                      {/* Icon Container with Enhanced Design */}
+                      <Box className="icon-container"
+                        sx={{
+                          width: {
+                            xs: '80px',    // Mobile
+                            sm: '90px',    // Tablet
+                            md: '100px',   // Mac
+                            lg: '120px'    // Desktop (matches your sm value)
+                          },
+                          height: {
+                            xs: '80px',    // Mobile
+                            sm: '90px',    // Tablet
+                            md: '100px',   // Mac
+                            lg: '120px'    // Desktop (matches your sm value)
+                          },
                           borderRadius: '50%',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           overflow: 'hidden',
+                          backgroundColor: 'white',
+                          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+                          border: `2px solid ${item.color}20`,
+                          position: 'relative',
+                          transition: 'all 0.3s ease',
+                          '&::before': {
+                            content: '""',
+                            position: 'absolute',
+                            top: '-2px',
+                            left: '-2px',
+                            right: '-2px',
+                            bottom: '-2px',
+                            borderRadius: '50%',
+                            background: item.gradient,
+                            zIndex: -1,
+                            opacity: 0.2
+                          }
+                        }}
+                      >
+                        <Box sx={{
+                          width: '80%',
+                          height: '80%',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'white',
+                          overflow: 'hidden'
                         }}>
                           <img
                             src={item.image}
@@ -559,72 +804,195 @@ const AboutPageContent = () => {
                               width: '100%',
                               height: '100%',
                               objectFit: 'cover',
-                              filter: 'drop-shadow(0 3px 6px rgba(220, 38, 38, 0.15))',
+                              filter: `drop-shadow(0 5px 15px ${item.color}30)`
                             }}
                           />
                         </Box>
                       </Box>
 
+                      {/* Content Section */}
                       <Box sx={{
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        width: '100%'
+                        width: '100%',
+                        zIndex: 1,
+                        flex: 1,
+                        pt: { xs: 1, sm: 2 }
                       }}>
-                        <Typography
-                          variant="h6"
+                        <Typography className="title-text"
+                          variant="h5"
                           fontWeight="bold"
                           sx={{
                             color: '#0f172a',
-                            fontSize: { xs: '1rem', sm: '1.1rem' },
-                            mb: { xs: 1, sm: 2 },
+                            fontSize: {
+                              xs: '1rem',      // Mobile
+                              sm: '1.125rem',  // Tablet
+                              md: '1.25rem',   // Mac
+                              lg: '1.5rem'     // Desktop (matches your sm value)
+                            },
+                            mb: {
+                              xs: 1.5,   // Mobile
+                              sm: 2,     // Tablet
+                              md: 2.5,   // Mac
+                              lg: 3      // Desktop (unchanged)
+                            },
                             textAlign: 'center',
                             width: '100%',
                             lineHeight: 1.3,
-                            minHeight: { xs: '48px', sm: '56px' },
+                            minHeight: {
+                              xs: '48px',   // Mobile
+                              sm: '56px',   // Tablet
+                              md: '60px',   // Mac
+                              lg: '70px'    // Desktop (unchanged)
+                            },
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'center'
+                            justifyContent: 'center',
+                            transition: 'color 0.3s ease'
                           }}
                         >
                           {item.title}
                         </Typography>
 
-                        <Box sx={{
-                          width: { xs: '40px', sm: '50px' },
-                          height: '3px',
-                          backgroundColor: '#dc2626',
-                          borderRadius: '2px',
-                          mt: { xs: 1, sm: 2 },
-                          transition: 'width 0.3s ease',
-                          '&:hover': {
-                            width: { xs: '50px', sm: '60px' }
-                          }
-                        }} />
+                        {/* Animated Divider */}
+                        <Box className="divider"
+                          sx={{
+                            width: {
+                              xs: '40px',   // Mobile
+                              sm: '50px',   // Tablet
+                              md: '55px',   // Mac
+                              lg: '60px'    // Desktop (unchanged)
+                            },
+                            height: {
+                              xs: '3px',   // Mobile
+                              sm: '3.5px', // Tablet
+                              md: '4px',   // Mac
+                              lg: '4px'    // Desktop (unchanged)
+                            },
+                            backgroundColor: `${item.color}80`,
+                            borderRadius: '2px',
+                            transition: 'all 0.4s ease',
+                            position: 'relative',
+                            overflow: 'hidden',
+                            '&::before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: '-100%',
+                              width: '100%',
+                              height: '100%',
+                              background: item.gradient,
+                              animation: 'slide 2s infinite',
+                              '@keyframes slide': {
+                                '0%': { left: '-100%' },
+                                '100%': { left: '100%' }
+                              }
+                            }
+                          }}
+                        />
                       </Box>
 
-                      {/* Background Glow */}
+                      {/* Hover Effect Lines (Desktop only) */}
                       <Box sx={{
                         position: 'absolute',
                         top: 0,
                         left: 0,
                         width: '100%',
                         height: '100%',
-                        background: 'radial-gradient(circle at center, rgba(220, 38, 38, 0.05) 0%, transparent 70%)',
+                        pointerEvents: 'none',
                         opacity: 0,
                         transition: 'opacity 0.3s ease',
-                        zIndex: -1,
+                        display: { xs: 'none', md: 'block' }, // Only show on md and above
                         '&:hover': {
                           opacity: 1
+                        },
+                        '&::before, &::after': {
+                          content: '""',
+                          position: 'absolute',
+                          top: '50%',
+                          left: '50%',
+                          width: '200%',
+                          height: '200%',
+                          background: `radial-gradient(circle, ${item.color}20 0%, transparent 70%)`,
+                          transform: 'translate(-50%, -50%)',
+                          animation: 'ripple 2s linear infinite'
+                        },
+                        '&::after': {
+                          animationDelay: '1s'
+                        },
+                        '@keyframes ripple': {
+                          '0%': { transform: 'translate(-50%, -50%) scale(0.5)' },
+                          '100%': { transform: 'translate(-50%, -50%) scale(1)' }
                         }
                       }} />
                     </Box>
-                  </Box>
-                ))}
-              </Box>
-            </Box>
+                  </MotionBox>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
+
+          {/* Call to Action Section */}
+          <MotionBox
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            viewport={{ once: true }}
+            sx={{
+              textAlign: 'center',
+              mt: { xs: 8, md: 12 },
+              p: { xs: 3, md: 5 },
+              borderRadius: 4,
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.95) 100%)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.08)',
+              border: '1px solid rgba(0,0,0,0.05)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+          >
+            <Typography variant="h4" fontWeight="bold" sx={{
+              color: '#0f172a',
+              mb: 2,
+              background: 'linear-gradient(135deg, #dc2626 0%, #2563eb 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}>
+              Ready to Experience Excellence?
+            </Typography>
+            <Typography variant="h6" sx={{
+              color: '#64748b',
+              mb: 4,
+              maxWidth: '600px',
+              mx: 'auto'
+            }}>
+              Join thousands of satisfied builders who trust Eagle & Gaurada Ceramics
+            </Typography>
+            <Button
+              component={Link}
+              to="/contact"
+              variant="contained"
+              sx={{
+                background: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)',
+                color: 'white',
+                px: 6,
+                py: 2,
+                borderRadius: 3,
+                fontSize: '1.125rem',
+                fontWeight: 'bold',
+                boxShadow: '0 10px 30px rgba(220, 38, 38, 0.3)',
+                '&:hover': {
+                  transform: 'translateY(-4px)',
+                  boxShadow: '0 15px 40px rgba(220, 38, 38, 0.4)',
+                  background: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
+              Get Started Today
+            </Button>
+          </MotionBox>
         </Container>
       </Box>
 

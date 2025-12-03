@@ -194,7 +194,7 @@ export default function ServiceSideBar() {
         { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
       ]
     },
-    { label: 'Kitchen Sink', key: 'kitchen-sink', versions: [] }
+    { label: 'Kitchen Sink', url: '/services/kitchen-sink' , key: 'kitchen-sink', versions: [] }
   ]
 
   /* Sidebar content */
