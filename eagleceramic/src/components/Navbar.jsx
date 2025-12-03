@@ -99,16 +99,7 @@ const Navbar = () => {
             >
               Products
             </Button>
-{/* 
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 600 }}
-              component={motion.button}
-              whileHover={{ scale: 1.04 }}
-              onClick={() => navigate("/blog")}
-            >
-              BLOG
-            </Button> */}
+
 
             <Button
               color="inherit"
