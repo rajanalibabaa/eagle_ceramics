@@ -1,358 +1,296 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'
 import {
   Box,
   Typography,
   Divider,
   Collapse,
   Checkbox,
-  FormControlLabel
-} from '@mui/material';
+  FormControlLabel,
+  useMediaQuery,
+  SwipeableDrawer,
+  Fab
+} from '@mui/material'
 import {
   ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon
-} from '@mui/icons-material';
-import { styled } from '@mui/material/styles';
-import { useNavigate, useLocation } from 'react-router-dom';
+  ExpandLess as ExpandLessIcon,
+  FilterList as FilterListIcon,
+  Close as CloseIcon
+} from '@mui/icons-material'
+import { styled, useTheme } from '@mui/material/styles'
+import { useNavigate, useLocation } from 'react-router-dom'
 
+/* Styled components */
 const StyledSidebar = styled(Box)(({ theme }) => ({
-  width: { xs: '100%', sm: '280px', md: '320px', lg: '360px' },
-  padding: { xs: '16px', sm: '20px', md: '24px' },
-  position: 'sticky',
-  top: 80,
-  // Remove fixed height and use auto with max-height
-  height: 'auto',
-  maxHeight: 'calc(100vh - 80px)', // Maximum height but can be less
-  overflowY: 'auto', // Scroll only when content exceeds max-height
-  overflowX: 'hidden',
-  borderRight: { xs: 'none', md: '1px solid rgba(255,255,255,0.2)' },
+  padding: { xs: 0, sm: '16px', md: '24px' },
+  position: 'relative',
+  width: '100%',
+  height: '100%',
+  overflowY: 'auto',
   background: `
     linear-gradient(135deg,
       rgba(248,249,250,0.95) 0%,
       rgba(255,255,255,0.98) 50%,
       rgba(240,242,245,0.95) 100%)`,
-  boxShadow: {
-    xs: '0 4px 20px rgba(0,0,0,0.08)',
-    md: 'inset -2px 0 15px rgba(0,0,0,0.03)'
-  },
-  borderRadius: { xs: '0 0 16px 16px', md: 0 },
+  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
   fontFamily: "'Inter','Roboto','Arial',sans-serif",
-  backdropFilter: 'blur(5px)',
-
-  // Custom scrollbar styling
-  '&::-webkit-scrollbar': {
-    width: '6px',
-  },
-  '&::-webkit-scrollbar-track': {
-    background: 'rgba(0,0,0,0.05)',
-    borderRadius: '10px',
-  },
+  '&::-webkit-scrollbar': { width: '6px' },
   '&::-webkit-scrollbar-thumb': {
     background: 'rgba(0,0,0,0.2)',
-    borderRadius: '10px',
-  },
-  '&::-webkit-scrollbar-thumb:hover': {
-    background: 'rgba(0,0,0,0.3)',
-  },
-}));
+    borderRadius: '10px'
+  }
+}))
 
 const SectionHeader = styled(Box)({
   display: 'flex',
   alignItems: 'center',
+  justifyContent: 'space-between',
   cursor: 'pointer',
   padding: '12px 16px',
   borderRadius: 12,
-  transition: 'all .3s cubic-bezier(.4,0,.2,1)',
   background: 'linear-gradient(135deg,rgba(255,255,255,.9) 0%,rgba(248,249,250,.9) 100%)',
   border: '1px solid rgba(255,255,255,0.8)',
   marginBottom: '8px'
-});
+})
 
 const CollectionItem = styled(FormControlLabel)(({ selected }) => ({
   display: 'flex',
-  flexDirection: 'row',
   alignItems: 'center',
-  marginLeft: 0,
-  marginBottom: '4px',
+  margin: 0,
   padding: '8px 12px',
   borderRadius: 10,
-  transition: 'all .3s cubic-bezier(.4,0,.2,1)',
+  transition: 'all .3s',
+  background: selected ? 'rgba(41,128,185,0.1)' : 'transparent',
   '& .MuiTypography-root': {
-    fontSize: { xs: 14, sm: 15 },
-    fontFamily: "'Inter',sans-serif",
+    flex: 1,
     fontWeight: selected ? 600 : 500,
-    color: 'black',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis',
-    flex: 1
+    textOverflow: 'ellipsis'
   },
   '& .MuiCheckbox-root': {
-    color: '#7f8c8d',
-    marginRight: 8,
-    '&.Mui-checked': { color: '#2980b9' }
+    color: selected ? '#2980b9' : '#7f8c8d'
   }
-}));
+}))
 
 const VersionItem = styled(FormControlLabel)(({ selected }) => ({
   display: 'flex',
   alignItems: 'center',
-  marginLeft: 0,
-  marginBottom: '2px',
+  margin: 0,
   padding: '6px 12px 6px 24px',
   borderRadius: 8,
-  transition: 'all .3s cubic-bezier(.4,0,.2,1)',
+  transition: 'all .3s',
+  background: selected ? 'rgba(41,128,185,0.1)' : 'transparent',
   '& .MuiTypography-root': {
-    fontSize: { xs: 13, sm: 14 },
-    fontFamily: "'Inter',sans-serif",
-    fontWeight: selected ? 600 : 400,
-    color: 'black'
+    flex: 1,
+    fontWeight: selected ? 600 : 400
   },
   '& .MuiCheckbox-root': {
-    color: '#7f8c8d',
-    padding: '4px',
-    '&.Mui-checked': { color: '#2980b9' }
+    color: selected ? '#2980b9' : '#7f8c8d'
   }
-}));
+}))
 
 const ClearAllButton = styled(Typography)({
-  fontSize: { xs: 13, sm: 14 },
+  fontSize: 14,
   color: '#e74c3c',
   cursor: 'pointer',
   fontWeight: 600,
   padding: '8px 12px',
   borderRadius: 8,
-  transition: 'all .3s cubic-bezier(.4,0,.2,1)',
-  fontFamily: "'Inter',sans-serif",
   background: 'linear-gradient(135deg,rgba(255,255,255,.9) 0%,rgba(248,249,250,.9) 100%)',
   border: '1px solid rgba(231,76,60,.2)',
-  boxShadow: '0 2px 8px rgba(0,0,0,.05)',
   '&:hover': {
-    background: 'linear-gradient(135deg,rgba(231,76,60,.1) 0%,rgba(255,255,255,.95) 100%)',
-    color: '#c0392b',
-    boxShadow: '0 4px 15px rgba(231,76,60,.2)',
-    transform: 'translateY(-1px)'
+    background: 'rgba(231,76,60,0.1)',
+    color: '#c0392b'
   }
-});
+})
 
 const SidebarWrapper = styled(Box)(({ theme }) => ({
-  width: { xs: '100%', sm: '280px', md: '320px', lg: '360px' },
+  width: '320px',
   flexShrink: 0,
-}));
+  position: 'sticky',
+  top: '80px',
+  alignSelf: 'flex-start',
+  height: 'calc(100vh - 80px)'
+}))
 
+/* Main Component */
 export default function ServiceSideBar() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const [, , collection, maybeVersion] = pathname.split('/');
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
+  const [, , collectionKey, maybeVersion] = pathname.split('/')
+  const [openCollections, setOpenCollections] = useState(true)
+  const [openSubVersions, setOpenSubVersions] = useState({})
+  const [openSub, setOpenSub] = useState({})
+  const [drawerOpen, setDrawerOpen] = useState(false)
 
-  const [openCollections, setOpenCollections] = useState(true);
-  const [openSubVersions, setOpenSubVersions] = useState({});
-  const [openSub, setOpenSub] = useState({});
+  const go = url => () => {
+    setDrawerOpen(false)
+    navigate(url)
+  }
+  const clearAll = () => {
+    setDrawerOpen(false)
+    navigate('/services')
+  }
 
-  const go = url => () => navigate(url);
-  const clearAll = () => navigate('/services');
+  useEffect(() => {
+    setOpenSub(prev => ({
+      ...prev,
+      [collectionKey]: prev[collectionKey] ?? !!maybeVersion
+    }))
+  }, [collectionKey, maybeVersion])
 
+  /* Data */
   const collections = [
     {
       label: 'Wall Tiles',
       key: 'walltiles',
-      versions: [
-        { label: '300 X 450', url: '/services/walltiles', path: '' },
-      ]
+      versions: [{ label: '300 X 450', url: '/services/walltiles' }]
     },
     {
       label: 'Elevation Tiles',
       key: 'elevation-tiles-collection',
       versions: [
-        { label: '300 X 450', url: '/services/elevation-tiles-300x450', path: '' },
-        { label: '300 X 600', url: '/services/elevation-tiles-300x600', path: 'v1' },
+        { label: '300 X 450', url: '/services/elevation-tiles-300x450' },
+        { label: '300 X 600', url: '/services/elevation-tiles-300x600' }
       ]
     },
     {
-      label: "Floor Tiles",
-      key: "floortiles",
-      url: "/services/floortiles",
+      label: 'Floor Tiles',
+      key: 'floortiles',
       versions: [
         {
-          label: "600 X 1200",
-          url: "/services/floortiles/600x1200",
+          label: '600 X 1200',
+          url: '/services/floortiles/600x1200',
           subversions: [
-            {
-              label: "Glossy Collection",
-              url: "/services/floortiles/600x1200/glossy"
-            },
-            {
-              label: "Matt Collection",
-              url: "/services/floortiles/600x1200/matt"
-            }
+            { label: 'Glossy', url: '/services/floortiles/600x1200/glossy' },
+            { label: 'Matt', url: '/services/floortiles/600x1200/matt' }
           ]
         },
-        {
-          label: "600 X 600 DC",
-          url: "/services/floortiles/600x600dc"
-        }
+        { label: '600 X 600 DC', url: '/services/floortiles/600x600dc' }
       ]
     },
-
     {
-      label: 'Parking Tiles', key: 'parkingtiles', url: "/services/parkingtiles",
+      label: 'Parking Tiles',
+      key: 'parkingtiles',
       versions: [
         { label: '300 X 300', url: '/services/parkingtiles/collection1' },
-        { label: '400 X 400', url: '/services/parkingtiles/collection2' },
+        { label: '400 X 400', url: '/services/parkingtiles/collection2' }
       ]
     },
-
     {
-      label: 'CoolRoof Tiles', key: 'cool-roof-tiles-9mm'
-      , versions: [
+      label: 'CoolRoof Tiles',
+      key: 'cool-roof-tiles-9mm',
+      versions: [
         {
-          label: '300 X 300', path: ''
-          , subversions: [
-            { label: '9MM', url: '/services/cool-roof-tiles-9mm', path: '' },
-            { label: '10MM', url: '/services/cool-roof-tiles-10mm', path: 'v1' },
+          label: '300 X 300',
+          url: '/services/cool-roof-tiles-9mm',
+          subversions: [
+            { label: '9MM', url: '/services/cool-roof-tiles-9mm' },
+            { label: '10MM', url: '/services/cool-roof-tiles-10mm' }
           ]
         },
-        { label: '600 X 600', url: '/services/cool-roof-tiles-600x600', path: 'v1' },
+        { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
       ]
     },
+    { label: 'Kitchen Sink', key: 'kitchen-sink', versions: [] }
+  ]
 
-    { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink' },
+  /* Sidebar content */
+  const sidebarRef = useRef(null)
 
-  ];
-
-  useEffect(() => {
-    setOpenSub(prev => ({
-      ...prev,
-      [collection]: prev[collection] ?? !!maybeVersion
-    }));
-  }, [collection, maybeVersion]);
-
-  return (
-    <SidebarWrapper>
-      <StyledSidebar>
-        <Box sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          p: 2,
-          mb: 2,
-          gap: 1,
-          boxShadow: '0 2px 12px rgba(0,0,0,0.06)'
-        }}>
-          <Typography
-            sx={{
-              fontSize: { xs: 18, sm: 20, md: 22 },
-              fontWeight: 700,
-              fontFamily: "'Poppins',sans-serif",
-              background: 'linear-gradient(45deg,#2c3e50 0%,#3498db 50%,#2980b9 100%)',
-              backgroundClip: 'text',
-              WebkitBackgroundClip: 'text',
-              color: 'transparent',
-              textShadow: '0 2px 4px rgba(255,255,255,0.5)'
-            }}
-          >
-            Shop By Products
-          </Typography>
-
-          <ClearAllButton onClick={clearAll}>Clear All</ClearAllButton>
-        </Box>
-
-        <Divider sx={{
-          mb: 2,
-          borderColor: 'rgba(255,255,255,0.5)',
-          borderWidth: 1,
-          background: 'linear-gradient(90deg,transparent 0%,rgba(52,152,219,.3) 50%,transparent 100%)',
-          height: 2
-        }} />
-
-        <SectionHeader
-          sx={{ justifyContent: 'space-between' }}
-          onClick={() => setOpenCollections(o => !o)}
+  const SidebarContent = (
+    <StyledSidebar ref={sidebarRef}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+        <Typography
+          sx={{
+            fontSize: 20,
+            fontWeight: 700,
+            background: 'linear-gradient(45deg,#2c3e50 0%,#2980b9 100%)',
+            WebkitBackgroundClip: 'text',
+            color: 'transparent'
+          }}
         >
-          <Typography
-            sx={{
-              fontSize: { xs: 17, sm: 19, md: 21 },
-              fontWeight: 700,
-              fontFamily: "'Poppins',sans-serif",
-              background: 'linear-gradient(45deg,#34495e 0%,#2c3e50 100%)',
-              WebkitBackgroundClip: 'text',
-              color: 'black'
-            }}
-          >
-            Products
-          </Typography>
-          {openCollections ? (
-            <ExpandLessIcon sx={{ fontSize: { xs: 18, sm: 20, md: 22 }, color: 'black' }} />
-          ) : (
-            <ExpandMoreIcon sx={{ fontSize: { xs: 18, sm: 20, md: 22 }, color: 'black' }} />
-          )}
-        </SectionHeader>
+          Shop By Products
+        </Typography>
+        {isMobile ? (
+          <Fab size="small" onClick={() => setDrawerOpen(false)} sx={{ boxShadow: 'none' }}>
+            <CloseIcon />
+          </Fab>
+        ) : (
+          <ClearAllButton onClick={clearAll}>Clear All</ClearAllButton>
+        )}
+      </Box>
 
-        <Divider sx={{ my: 1, borderColor: 'rgba(255,255,255,0.4)' }} />
+      <Divider sx={{ mb: 2, borderColor: 'rgba(0,0,0,0.1)' }} />
 
-        <Collapse in={openCollections}>
-          <Box sx={{ pb: 1 }}>
-            {collections.map(item => {
-              const isSelected = collection === item.key;
-              const hasVersions = Array.isArray(item.versions);
+      <SectionHeader onClick={() => setOpenCollections(o => !o)}>
+        <Typography sx={{ fontSize: 18, fontWeight: 700 }}>Products</Typography>
+        {openCollections ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+      </SectionHeader>
+      <Divider sx={{ mb: 1, borderColor: 'rgba(0,0,0,0.1)' }} />
 
-              if (!hasVersions) {
-                return (
-                  <CollectionItem
-                    key={item.key}
-                    control={
-                      <Checkbox
-                        size="small"
-                        checked={isSelected}
-                        onChange={go(item.url)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    }
-                    label={item.label}
-                    selected={isSelected}
-                  />
-                );
-              }
+      <Collapse in={openCollections}>
+        <Box>
+          {collections.map(item => {
+            const hasVersions = item.versions?.length > 0
 
-              const isSubOpen = !!openSub[item.key];
-              return (
-                <Box key={item.key} sx={{ mb: 0.5 }}>
-                  <CollectionItem
-                    selected={isSelected}
-                    control={
-                      <Checkbox
-                        size="small"
-                        checked={isSelected}
-                        onChange={go(item.versions[0].url)} // Go to "All Versions"
-                        onClick={e => e.stopPropagation()}
-                      />
-                    }
-                    label={
+            // NEW: derive checked & indeterminate states
+            const childMatches = hasVersions &&
+              item.versions.some(v => pathname.startsWith(v.url))
+
+            const allChildMatches = hasVersions &&
+              item.versions.every(v => pathname.startsWith(v.url))
+
+            const isSelected = !hasVersions
+              ? (collectionKey === item.key)
+              : childMatches
+
+            return (
+              <Box key={item.key} sx={{ mb: 1 }}>
+                <CollectionItem
+                  selected={isSelected}
+                  control={
+                    <Checkbox
+                      size="small"
+                      checked={isSelected}
+                      indeterminate={hasVersions && childMatches && !allChildMatches}
+                      onChange={go(
+                        hasVersions
+                          ? item.versions[0].url
+                          : item.url || '/services'
+                      )}
+                      onClick={e => e.stopPropagation()}
+                    />
+                  }
+                  label={
+                    hasVersions ? (
                       <Box
                         onClick={() =>
                           setOpenSub(prev => ({ ...prev, [item.key]: !prev[item.key] }))
                         }
-                        style={{ display: "flex", alignItems: "center", width: "100%" }}
+                        sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
                       >
                         <Typography sx={{ flexGrow: 1 }}>{item.label}</Typography>
-                        {isSubOpen ? (
-                          <ExpandLessIcon sx={{ ml: 1, fontSize: 20 }} />
-                        ) : (
-                          <ExpandMoreIcon sx={{ ml: 1, fontSize: 20 }} />
-                        )}
+                        {openSub[item.key] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                       </Box>
-                    }
-                  />
-                  <Collapse in={isSubOpen}>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, pl: 1 }}>
+                    ) : (
+                      item.label
+                    )
+                  }
+                />
+
+                {hasVersions && (
+                  <Collapse in={!!openSub[item.key]}>
+                    <Box sx={{ pl: 2 }}>
                       {item.versions.map(v => {
-                        const thisChecked = pathname.startsWith(v.url);
-
-
-                        const hasSubVersions = Array.isArray(v.subversions);
-                        const openThisSub = openSubVersions[v.label];
+                        const thisChecked = pathname.startsWith(v.url)
+                        const hasSub = Array.isArray(v.subversions)
+                        const openThisSub = openSubVersions[v.label]
 
                         return (
-                          <Box key={v.label}>
+                          <Box key={v.label} sx={{ mb: 0.5 }}>
                             <VersionItem
                               selected={thisChecked}
                               control={
@@ -360,37 +298,32 @@ export default function ServiceSideBar() {
                                   size="small"
                                   checked={thisChecked}
                                   onChange={go(v.url)}
-                                  onClick={(e) => e.stopPropagation()}
+                                  onClick={e => e.stopPropagation()}
                                 />
                               }
                               label={
-                                <Box
-                                  onClick={() => {
-                                    if (hasSubVersions) {
+                                hasSub ? (
+                                  <Box
+                                    onClick={() =>
                                       setOpenSubVersions(prev => ({
                                         ...prev,
-                                        [v.label]: !prev[v.label],
-                                      }));
+                                        [v.label]: !prev[v.label]
+                                      }))
                                     }
-                                  }}
-                                  style={{ display: "flex", alignItems: "center", width: "100%" }}
-                                >
-                                  <Typography sx={{ flexGrow: 1 }}>{v.label}</Typography>
-
-                                  {hasSubVersions &&
-                                    (openThisSub ? (
-                                      <ExpandLessIcon sx={{ ml: 1, fontSize: 18 }} />
-                                    ) : (
-                                      <ExpandMoreIcon sx={{ ml: 1, fontSize: 18 }} />
-                                    ))}
-                                </Box>
+                                    sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                                  >
+                                    <Typography sx={{ flexGrow: 1 }}>{v.label}</Typography>
+                                    {openThisSub ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                  </Box>
+                                ) : (
+                                  v.label
+                                )
                               }
                             />
 
-                            {/* ▼▼ SubVersions Collapse ▼▼ */}
-                            {hasSubVersions && (
+                            {hasSub && (
                               <Collapse in={openThisSub}>
-                                <Box sx={{ pl: 4, pt: 0.5 }}>
+                                <Box sx={{ pl: 3 }}>
                                   {v.subversions.map(sv => (
                                     <VersionItem
                                       key={sv.label}
@@ -408,17 +341,84 @@ export default function ServiceSideBar() {
                               </Collapse>
                             )}
                           </Box>
-                        );
+                        )
                       })}
-
                     </Box>
                   </Collapse>
-                </Box>
-              );
-            })}
-          </Box>
-        </Collapse>
-      </StyledSidebar>
-    </SidebarWrapper>
-  );
+                )}
+              </Box>
+            )
+          })}
+        </Box>
+      </Collapse>
+    </StyledSidebar>
+  )
+
+  /* Render */
+  if (!isMobile) {
+    return <SidebarWrapper>{SidebarContent}</SidebarWrapper>
+  }
+  const [sidebarVisible, setSidebarVisible] = useState(true)
+  const [footerVisible, setFooterVisible] = useState(false)
+
+  useEffect(() => {
+    if (!sidebarRef.current) return
+    const el = sidebarRef.current
+    const obs = new IntersectionObserver(
+      entries => {
+        setSidebarVisible(!!entries[0].isIntersecting)
+      },
+      { threshold: 0.01 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [sidebarRef])
+
+  useEffect(() => {
+    const footer = document.querySelector('footer')
+    if (!footer) return
+    const obs = new IntersectionObserver(
+      entries => {
+        setFooterVisible(!!entries[0].isIntersecting)
+      },
+      { threshold: 0.05 }
+    )
+    obs.observe(footer)
+    return () => obs.disconnect()
+  }, [])
+
+  const showFab = sidebarVisible && !footerVisible
+
+  return (
+    <>
+      {showFab && !drawerOpen && (
+        <Fab
+          variant="extended"
+          color="primary"
+          onClick={() => setDrawerOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 16,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: theme.zIndex.modal + 1
+          }}
+        >
+          <FilterListIcon sx={{ mr: 1 }} /> Filters
+        </Fab>
+      )}
+
+      <SwipeableDrawer
+        anchor="bottom"
+        open={drawerOpen}
+        onOpen={() => setDrawerOpen(true)}
+        onClose={() => setDrawerOpen(false)}
+        PaperProps={{
+          sx: { height: '90vh', borderRadius: '16px 16px 0 0' }
+        }}
+      >
+        {SidebarContent}
+      </SwipeableDrawer>
+    </>
+  )
 }

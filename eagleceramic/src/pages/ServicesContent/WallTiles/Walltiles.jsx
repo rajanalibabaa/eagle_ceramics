@@ -10,7 +10,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
-  import("../ServicesCollectionCard ")
+  import("../ServicesCollectionCard")
 );
 
 import pdf1 from "../../../assets/pdf/FISH & POSTER.pdf";
