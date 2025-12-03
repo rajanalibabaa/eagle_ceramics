@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
+import { useNavigate } from 'react-router-dom';
 
 import Facebook from '@mui/icons-material/Facebook';
 import Twitter from '@mui/icons-material/Twitter';
@@ -15,7 +16,6 @@ import Instagram from '@mui/icons-material/Instagram';
 import LinkedIn from '@mui/icons-material/LinkedIn';
 
 import React, { useState } from 'react';
-import cholaLogo from '../assets/cholaautomation_PoweredLogo.jpeg';
 
 // Define colors (you can adjust these as needed)
 const colors = {
@@ -30,6 +30,7 @@ const legalLinks = [
 ];
 
 function Footer() {
+  const navigate = useNavigate();
   // Mock isMobile state - you can replace this with actual responsive logic
   const isMobile = false;
 
@@ -80,7 +81,6 @@ function Footer() {
       console.error('Error submitting form:', error);
     });
 
-    // Clear the input field
     setEmail('');
   };
 
@@ -91,293 +91,473 @@ function Footer() {
         borderTop: '1px solid',
         borderColor: 'divider',
         marginTop: '5%',
-        maxWidth:'100%'
+        maxWidth: '100%'
       }}
       component="footer"
     >
       <Container 
-      maxWidth={false} sx={{
-        backgroundColor: '#222626ff',
-        color: 'white',
-        padding: '18px',
-      }}>
-
-        {/* Quick Links - Top Center */}
-        <Box sx={{ textAlign: 'center', mb: 1 , maxwidth:"1200px"}}>
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, fontFamily: "'Pacifico', cursive", mb:4}}>
-            Quick Links
-          </Typography>
-          <Box sx={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 6,
-            flexWrap: 'wrap',
-            mb:5,
-          }}>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline'}}}>
-              Home
-            </Link>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline'} }}>
-              About
-            </Link>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline' }}}>
-              Services
-            </Link>
-            <Link href="#" variant="body2" sx={{ color: 'white', textDecoration: "none", '&:hover': { textDecoration: 'underline'}}}>
-              Contact
-            </Link>
-          </Box>
-        </Box>
-
-        {/* Newsletter Section - Center */}
-        <Box sx={{ textAlign: 'center', mb: 1 }}>
-          <Typography variant="h5" gutterBottom sx={{ fontWeight: 600, mb: 2, fontFamily: "'Pacifico', cursive" }}>
-            Newsletter
-          </Typography>
-          <Typography variant="body2" sx={{ color: 'white', opacity: 0.9, mb: 3, fontFamily: "'Pacifico', cursive" }}>
-            Subscribe our newsletter & get latest updations
-          </Typography>
-          <Box
-            component="form"
-            id="newsletter-form"
-            onSubmit={handleSubmit}
-            sx={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 1,
-              maxWidth: '400px',
-              margin: '0 auto'
+        maxWidth={false} 
+        sx={{
+          backgroundColor: '#222626ff',
+          color: 'white',
+          padding: '18px',
+        }}
+      >
+        {/* Main Title - Centered */}
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 800,
+              color: '#c41f25',
+              fontSize: { xs: '1.75rem', md: '2rem' }
             }}
           >
-            <TextField
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              variant="outlined"
-              size="small"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              sx={{
-                flexGrow: 1,
-                '& .MuiOutlinedInput-root': {
-                  color: 'white',
-                  '& fieldset': { borderColor: 'white' },
-                  '&:hover fieldset': { borderColor: 'white' },
-                  '&.Mui-focused fieldset': { borderColor: 'white' },
-                },
-                backgroundColor: 'rgba(255,255,255,0.1)',
-                borderRadius: 1,
-                '& .MuiInputBase-input': {
-                  fontFamily: "'Pacifico', cursive",
-                  '&::placeholder': {
-                    color: 'rgba(255,255,255,0.7)',
-                    opacity: 1,
-                  },
-                },
-              }}
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{
-                backgroundColor: 'white',
-                color: '#c71e26',
-                fontWeight: 'bold',
-                '&:hover': { backgroundColor: 'rgba(255,255,255,0.9)' },
-                px: 3,
-                fontFamily: "'Pacifico', cursive",
-                minWidth: '120px'
-              }}
-            >
-              Subscribe
-            </Button>
-          </Box>
-
-          {/* Popup Component */}
-          {showPopup && (
-            <Box
-              sx={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundColor: 'rgba(0,0,0,0.5)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                zIndex: 9999,
-              }}
-              onClick={() => setShowPopup(false)}
-            >
-              <Box
-                sx={{
-                  backgroundColor: 'white',
-                  padding: 4,
-                  borderRadius: 2,
-                  textAlign: 'center',
-                  maxWidth: '400px',
-                  margin: 2,
-                  boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <Typography variant="h6" sx={{ mb: 2, fontFamily: "'Pacifico', cursive", color: '#016B61' }}>
-                  Thank You! 🎉
-                </Typography>
-                <Typography variant="body1" sx={{ mb: 3, fontFamily: "'Pacifico', cursive", color: 'black' }}>
-                  Thank you for subscribing to our newsletter! We're excited to have you on board.
-                </Typography>
-                <Typography variant="body2" sx={{ mb: 3, opacity: 0.8, fontFamily: "'Pacifico', cursive", color: 'black' }}>
-                  You'll be the first to know about our latest updates and exclusive offers.
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => setShowPopup(false)}
-                  sx={{
-                    backgroundColor: '#016B61',
-                    color: 'white',
-                    fontFamily: "'Pacifico', cursive",
-                    '&:hover': {
-                      backgroundColor: '#015951',
-                    }
-                  }}
-                >
-                  Close
-                </Button>
-              </Box>
-            </Box>
-          )}
+            Eagle Ceramics
+          </Typography>
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              color: 'white', 
+              opacity: 0.9,
+              maxWidth: '800px',
+              margin: '0 auto',
+              mt: 2,
+              fontSize: { xs: '0.9rem', md: '1rem' }
+            }}
+          >
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          </Typography>
         </Box>
 
-        {/* Company Info and Contact Info - Side by Side */}
-        <Grid container spacing={4} sx={{ mb: 1, justifyContent: 'space-around' }}>
-          {/* Company Info - Left Side */}
-          <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ color: 'white', opacity: 0.9, fontFamily: "'Pacifico', cursive", }}>
-              Eagle Ceramics
+        <Grid 
+          container 
+          spacing={4} 
+          sx={{ 
+            mb: 4,
+            justifyContent: 'space-around',
+            textAlign: 'center'
+          }}
+        >
+          <Grid item xs={12} md={4}>
+            <Typography 
+              variant="h5" 
+              gutterBottom 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                fontSize: { xs: '1.25rem', md: '1.5rem' },
+                color: '#a7a9a9'
+              }}
+            >
+              Quick Links
             </Typography>
-            <Typography variant="body2" sx={{ fontFamily: "'Pacifico', cursive", color: 'white', opacity: 0.9 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Typography>
+            <Box 
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1.5,
+                alignItems: 'center',
+              }}
+            >
+              <Link 
+                href="#" 
+                variant="body2" 
+                sx={{ 
+                  color: 'white', 
+                  textDecoration: "none",
+                  cursor: 'pointer',
+                  '&:hover': { 
+                    color: '#c41f25'
+                  },
+                  fontSize: { xs: '0.875rem', md: '1rem' }
+                }}
+              >
+                Home
+              </Link>
+              <Link 
+               onClick={() => navigate('/about')}
+                variant="body2" 
+                sx={{ 
+                  color: 'white', 
+                  textDecoration: "none",
+                  cursor: 'pointer',
+                  '&:hover': { 
+                    color: '#c41f25'
+                  },
+                  fontSize: { xs: '0.875rem', md: '1rem' }
+                }}
+              >
+                About
+              </Link>
+              <Link 
+              onClick={() => navigate('/services')}
+                variant="body2" 
+                sx={{ 
+                  color: 'white', 
+                  textDecoration: "none",
+                  cursor: 'pointer',
+                  '&:hover': { 
+                    color: '#c41f25'
+                  },
+                  fontSize: { xs: '0.875rem', md: '1rem' }
+                }}
+              >
+                Services
+              </Link>
+              <Link 
+              onClick={() => navigate('/contact')}
+                variant="body2" 
+                sx={{ 
+                  color: 'white', 
+                  textDecoration: "none",
+                  cursor: 'pointer',
+                  '&:hover': { 
+                    color: '#c41f25'
+                  },
+                  fontSize: { xs: '0.875rem', md: '1rem' }
+                }}
+              >
+                Contact
+              </Link>
+            </Box>
           </Grid>
 
-          {/* Contact Info - Right Side */}
-          <Grid item xs={12} md={6}>
-            <Typography variant="h6" gutterBottom sx={{ fontFamily: "'Pacifico', cursive", color: 'white', opacity: 0.9 }}>
+          {/* Newsletter - Center Column */}
+          <Grid item xs={12} md={4}>
+            <Typography 
+              variant="h5" 
+              gutterBottom 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                fontSize: { xs: '1.25rem', md: '1.5rem' },
+                color: '#a7a9a9'
+              }}
+            >
+              Newsletter
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'white', 
+                opacity: 0.9, 
+                mb: 3,
+                fontSize: { xs: '0.875rem', md: '1rem' }
+              }}
+            >
+              Subscribe our newsletter & get latest updates
+            </Typography>
+            <Box
+              component="form"
+              id="newsletter-form"
+              onSubmit={handleSubmit}
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', sm: 'row' },
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 2,
+                maxWidth: '400px',
+                margin: '0 auto'
+              }}
+            >
+              <TextField
+                type="email"
+                name="email"
+                placeholder="Enter your email"
+                variant="outlined"
+                size="small"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{
+                  flexGrow: 1,
+                  width: '100%',
+                  '& .MuiOutlinedInput-root': {
+                    color: 'white',
+                    '& fieldset': { borderColor: 'white' },
+                    '&:hover fieldset': { borderColor: '#a7a7a8' },
+                    '&.Mui-focused fieldset': { borderColor: '#c41f25' },
+                  },
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                  borderRadius: 1,
+                  '& .MuiInputBase-input': {
+                    '&::placeholder': {
+                      color: 'rgba(255,255,255,0.7)',
+                      opacity: 1,
+                    },
+                  },
+                }}
+              />
+              <Button
+                type="submit"
+                variant="contained"
+                sx={{
+                  backgroundColor: '#a7a7a8',
+                  color: '#222626ff',
+                  fontWeight: 'bold',
+                  '&:hover': { 
+                    backgroundColor: '#c21f24',
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+                  },
+                  px: 3,
+                  minWidth: '120px',
+                  width: { xs: '100%', sm: 'auto' }
+                }}
+              >
+                Subscribe
+              </Button>
+            </Box>
+
+            {/* Popup Component */}
+            {showPopup && (
+              <Box
+                sx={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: 9999,
+                }}
+                onClick={() => setShowPopup(false)}
+              >
+                <Box
+                  sx={{
+                    backgroundColor: 'white',
+                    padding: 4,
+                    borderRadius: 2,
+                    textAlign: 'center',
+                    maxWidth: '400px',
+                    margin: 2,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)',
+                  }}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Typography variant="h6" sx={{ mb: 2, color: '#016B61' }}>
+                    Thank You! 🎉
+                  </Typography>
+                  <Typography variant="body1" sx={{ mb: 3, color: 'black' }}>
+                    Thank you for subscribing to our newsletter! We're excited to have you on board.
+                  </Typography>
+                  <Typography variant="body2" sx={{ mb: 3, opacity: 0.8, color: 'black' }}>
+                    You'll be the first to know about our latest updates and exclusive offers.
+                  </Typography>
+                  <Button
+                    variant="contained"
+                    onClick={() => setShowPopup(false)}
+                    sx={{
+                      backgroundColor: '#016B61',
+                      color: 'white',
+                      '&:hover': {
+                        backgroundColor: '#015951',
+                      }
+                    }}
+                  >
+                    Close
+                  </Button>
+                </Box>
+              </Box>
+            )}
+          </Grid>
+
+          {/* Contact Us - Center Column */}
+          <Grid item xs={12} md={4}>
+            <Typography 
+              variant="h5" 
+              gutterBottom 
+              sx={{ 
+                fontWeight: 600, 
+                mb: 3,
+                fontSize: { xs: '1.25rem', md: '1.5rem' },
+                color: '#a7a9a9'
+              }}
+            >
               Contact Us
             </Typography>
-            <Typography variant="body2" sx={{ color: 'white', opacity: 0.9, mb: 1, fontFamily: "'Pacifico', cursive", }}>
-              Email: info@eagleceramics.com
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'white', opacity: 0.9, mb: 1, fontFamily: "'Pacifico', cursive", }}>
-              Phone: +1 (555) 123-4567
-            </Typography>
-            <Typography variant="body2" sx={{ color: 'white', opacity: 0.9, mb: 1, fontFamily: "'Pacifico', cursive", }}>
-              Address: 123 Main St, City, State
-            </Typography>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1.5,
+                alignItems: 'center',
+              }}
+            >
+              <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>
+                Email: info@eagleceramics.com
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>
+                Phone: +1 (555) 123-4567
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>
+                Address: 123 Main St, City, State
+              </Typography>
+            </Box>
           </Grid>
         </Grid>
 
-        {/* Social Media - Center */}
-        <Box sx={{ textAlign: 'center', mb: 0.2 }}>
+        {/* Social Media - Centered */}
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
           <Box sx={{
             display: 'flex',
             flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
-            gap: 1
+            gap: 2
           }}>
-            <IconButton aria-label="Facebook" sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
+            <IconButton 
+              aria-label="Facebook" 
+              sx={{ 
+                color: 'white', 
+                '&:hover': { 
+                  backgroundColor: 'rgba(255,215,0,0.1)',
+                  color: '#FFD700',
+                  transform: 'scale(1.1)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
               <Facebook />
             </IconButton>
-            <IconButton aria-label="Twitter" sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
+            <IconButton 
+              aria-label="Twitter" 
+              sx={{ 
+                color: 'white', 
+                '&:hover': { 
+                  backgroundColor: 'rgba(255,215,0,0.1)',
+                  color: '#FFD700',
+                  transform: 'scale(1.1)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
               <Twitter />
             </IconButton>
-            <IconButton aria-label="Instagram" sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
+            <IconButton 
+              aria-label="Instagram" 
+              sx={{ 
+                color: 'white', 
+                '&:hover': { 
+                  backgroundColor: 'rgba(255,215,0,0.1)',
+                  color: '#FFD700',
+                  transform: 'scale(1.1)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
               <Instagram />
             </IconButton>
-            <IconButton aria-label="LinkedIn" sx={{ color: 'white', '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' } }}>
+            <IconButton 
+              aria-label="LinkedIn" 
+              sx={{ 
+                color: 'white', 
+                '&:hover': { 
+                  backgroundColor: 'rgba(255,215,0,0.1)',
+                  color: '#FFD700',
+                  transform: 'scale(1.1)'
+                },
+                transition: 'all 0.3s ease'
+              }}
+            >
               <LinkedIn />
             </IconButton>
           </Box>
         </Box>
 
-        {/* Updated Copyright Section */}
-        <Box sx={{ mt: 0.5, pt: 2 }}>
+        {/* Divider Line - Centered */}
+        <Divider 
+          sx={{ 
+            my: 4, 
+            borderColor: "rgba(255, 255, 255, 0.2)",
+            maxWidth: '800px',
+            margin: '0 auto'
+          }} 
+        />
+
+        {/* Copyright and Powered By Section - Centered */}
+        <Box sx={{ textAlign: 'center' }}>
           <Typography
             variant="body2"
-            mt={2}
-            textAlign="center"
-            sx={{ color: "rgba(255, 255, 255, 1)", fontFamily: "'Pacifico', cursive" }}
+            sx={{ 
+              color: "rgba(255, 255, 255, 1)", 
+              mb: 2,
+              fontSize: { xs: '0.875rem', md: '1rem' }
+            }}
           >
             © {new Date().getFullYear()}{" "}
-            <Typography component="span" color={colors.primary} fontWeight={700} sx={{ fontFamily: "'Pacifico', cursive" }}>
+            <Typography 
+              component="span" 
+              sx={{ 
+                color: '#c41f25', 
+                fontWeight: 700,
+                fontSize: 'inherit'
+              }}
+            >
               Eagle Ceramics
             </Typography>
             . All Rights Reserved | Built with ❤️ in India
           </Typography>
-
+          
           <Typography
             variant="body2"
-            textAlign="center"
-            sx={{ color: "rgba(255, 255, 255, 1)", fontFamily: "'Pacifico', cursive", mt: 1 }}
+            sx={{ 
+              color: "rgba(255, 255, 255, 1)",
+              fontSize: { xs: '0.875rem', md: '1rem' }
+            }}
           >
             Powered by :{" "}
-            <a href="https://cholabiz.com/" style={{ textDecoration: 'none' }}>
-              {" "}
-              <span style={{ color: colors.primary, fontWeight: 'bold', fontFamily: "'Pacifico', cursive" }}>
-                {/* Add logo image here */}
-                <img
-                  src={cholaLogo}
-                  alt="CHOLA BIZ Logo"
-                  style={{
-                    marginLeft: '8px',
-                    verticalAlign: 'middle',
-                    width: '50px',
-                    height: 'auto'
-                  }}
-                />
-              </span>
+            <a 
+              href="https://cholabiz.com/" 
+              style={{ 
+                textDecoration: 'none',
+                color: '#c21f24',
+                fontWeight: 700,
+                fontSize: 'inherit'
+              }}
+            >
+              CholaBiz.com
             </a>
           </Typography>
 
-          <Divider sx={{ my: 1, borderColor: "rgba(255, 255, 255, 1)" }} />
-
-          <Stack
-            direction="row"
-            justifyContent="center"
-            spacing={isMobile ? 2 : 1}
-            flexWrap="wrap"
-            mb={0.5}
-          >
-            {legalLinks.map((link, index) => (
-              <React.Fragment key={link.text}>
-                <Link
-                  onClick={() => handleNavigate(link.path)}
-                  sx={{
-                    color: "rgba(255, 255, 255, 1)",
-                    textDecoration: "none",
-                    fontSize: "0.9rem",
-                    "&:hover": { color: colors.primary },
-                    cursor: "pointer",
-                    fontFamily: "'Pacifico', cursive",
-                  }}
-                >
-                  {link.text}
-                </Link>
-                {index < legalLinks.length - 1 && !isMobile && (
-                  <Typography color="rgba(255, 255, 255, 1)" sx={{ fontFamily: "'Pacifico', cursive" }}>|</Typography>
-                )}
-              </React.Fragment>
-            ))}
-          </Stack>
+          {/* Optional: Legal Links (commented out as per original) */}
+          {/* 
+          <Box sx={{ mt: 3 }}>
+            <Stack
+              direction="row"
+              justifyContent="center"
+              spacing={isMobile ? 2 : 1}
+              flexWrap="wrap"
+              mb={0.5}
+            >
+              {legalLinks.map((link, index) => (
+                <React.Fragment key={link.text}>
+                  <Link
+                    onClick={() => handleNavigate(link.path)}
+                    sx={{
+                      color: "rgba(255, 255, 255, 1)",
+                      textDecoration: "none",
+                      fontSize: "0.9rem",
+                      "&:hover": { color: colors.primary },
+                      cursor: "pointer",
+                    }}
+                  >
+                    {link.text}
+                  </Link>
+                  {index < legalLinks.length - 1 && !isMobile && (
+                    <Typography color="rgba(255, 255, 255, 1)">|</Typography>
+                  )}
+                </React.Fragment>
+              ))}
+            </Stack>
+          </Box>
+          */}
         </Box>
       </Container>
     </Box>

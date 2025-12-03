@@ -1,18 +1,15 @@
-import React, { useMemo, useCallback } from "react";
+import React, { useMemo } from "react";
 import {
   Box,
   Typography,
   Avatar,
-  IconButton,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
-import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { Pagination, Mousewheel } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-import "swiper/css/navigation";
 
 const testimonials = [
   {
@@ -60,25 +57,23 @@ const TestimonialCard = React.memo(({ item, isMobile }) => (
       borderRadius: "20px",
       boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
       p: isMobile ? 3 : 4,
-      position: "relative",
-      minHeight: isMobile ? "280px" : "320px",
+      minHeight: isMobile ? 280 : 320,
       display: "flex",
       flexDirection: "column",
-      transition: "transform 0.3s ease, box-shadow 0.3s ease",
+      transition: "transform .3s, box-shadow .3s",
       "&:hover": {
-        transform: isMobile ? "translateY(-4px)" : "translateY(-8px)",
+        transform: "translateY(-6px)",
         boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
       },
     }}
   >
     <Typography
       variant="subtitle1"
-      fontWeight="600"
+      fontWeight={600}
       mb={2}
       sx={{
         textAlign: "center",
         color: "#d11f25",
-        display: "inline-block",
         px: 2,
         py: 0.5,
         borderRadius: "20px",
@@ -91,13 +86,9 @@ const TestimonialCard = React.memo(({ item, isMobile }) => (
     <Typography
       color="text.secondary"
       mb={3}
-      sx={{
-        lineHeight: 1.7,
-        fontSize: isMobile ? "0.9rem" : "1rem",
-        flexGrow: 1,
-      }}
+      sx={{ lineHeight: 1.7, fontSize: isMobile ? "0.9rem" : "1rem", flexGrow: 1 }}
     >
-      "{item.text}"
+      &ldquo;{item.text}&rdquo;
     </Typography>
 
     <Box
@@ -114,12 +105,11 @@ const TestimonialCard = React.memo(({ item, isMobile }) => (
         sx={{
           width: isMobile ? 48 : 56,
           height: isMobile ? 48 : 56,
-          border: "3px solid",
-          borderColor: "rgba(209, 31, 37, 0.2)",
+          border: "3px solid rgba(209,31,37,0.2)",
         }}
       />
       <Box>
-        <Typography fontWeight="700" fontSize={isMobile ? "1rem" : "1.1rem"}>
+        <Typography fontWeight={700} fontSize={isMobile ? "1rem" : "1.1rem"}>
           {item.author}
         </Typography>
         <Typography fontSize={isMobile ? 13 : 14} color="text.secondary">
@@ -129,40 +119,18 @@ const TestimonialCard = React.memo(({ item, isMobile }) => (
     </Box>
   </Box>
 ));
-
 TestimonialCard.displayName = "TestimonialCard";
 
 const Testimonials = () => {
-  const swiperRef = React.useRef(null);
-  const [isBeginning, setIsBeginning] = React.useState(true);
-  const [isEnd, setIsEnd] = React.useState(false);
-
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
-  const handleSlideChange = useCallback((swiper) => {
-    setIsBeginning(swiper.isBeginning);
-    setIsEnd(swiper.isEnd);
-  }, []);
-
-  const handleSwiperInit = useCallback((swiper) => {
-    swiperRef.current = swiper;
-    setIsBeginning(swiper.isBeginning);
-    setIsEnd(swiper.isEnd);
-  }, []);
-
-  const handlePrevClick = useCallback(() => {
-    if (!isBeginning) swiperRef.current.slidePrev();
-  }, [isBeginning]);
-
-  const handleNextClick = useCallback(() => {
-    if (!isEnd) swiperRef.current.slideNext();
-  }, [isEnd]);
-
   const swiperParams = useMemo(
     () => ({
-      modules: [Navigation, Pagination],
+      modules: [Pagination, Mousewheel],
+      grabCursor: true,
+      mousewheel: { forceToAxis: true, sensitivity: 0.4 },
       pagination: {
         clickable: true,
         dynamicBullets: true,
@@ -170,99 +138,53 @@ const Testimonials = () => {
       },
       spaceBetween: isMobile ? 16 : isTablet ? 20 : 30,
       slidesPerView: isMobile ? 1 : isTablet ? 2 : 3,
-      onSwiper: handleSwiperInit,
-      onSlideChange: handleSlideChange,
-      style: {
-        padding: isMobile ? "15px 5px 40px" : "20px 10px 60px",
-      },
+      style: { padding: isMobile ? "15px 5px 40px" : "20px 10px 60px" },
     }),
-    [isMobile, isTablet, handleSwiperInit, handleSlideChange]
+    [isMobile, isTablet]
   );
 
   return (
     <Box
       sx={{
-        py: isMobile ? 4 : isTablet ? 6 : 8,
-        px: isMobile ? 2 : isTablet ? 3 : 4,
-        maxWidth: "1400px",
+        py: { xs: 4, sm: 6, md: 8 },
+        px: { xs: 2, sm: 3, md: 4 },
+        maxWidth: 1400,
         mx: "auto",
-        position: "relative",
+
+        // ⭐ SWIPER DOT COLOR OVERRIDE
+        "& .swiper-pagination-bullet": {
+          backgroundColor: "#c41f25",
+          opacity: 0.4,
+        },
+        "& .swiper-pagination-bullet-active": {
+          backgroundColor: "#c41f25",
+          opacity: 1,
+        },
       }}
     >
-       <Typography
-                    variant="h2"
-                    sx={{
-                      fontWeight: 900,
-                      mb: 2,
-                      background:"black",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                      fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
-                      lineHeight: 1.2,
-                      textAlign: "center",
-                    }}
-                  >
+      <Typography
+        variant="h2"
+        sx={{
+          fontWeight: 900,
+          mb: 2,
+          background: "black",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+          lineHeight: 1.2,
+          textAlign: "center",
+        }}
+      >
         What Our Clients Say
       </Typography>
 
-      {/* MAIN CONTAINER */}
-      <Box sx={{ position: "relative" }}>
-
-        {/* ✅ ARROWS FOR ALL DEVICES */}
-        <Box
-          sx={{
-            position: "absolute",
-            top: "50%",
-            left: -23,
-            right: -23,
-            transform: "translateY(-50%)",
-            display: "flex",
-            justifyContent: "space-between",
-            px: 1,
-            zIndex: 10,
-            pointerEvents: "none",
-          }}
-        >
-          <IconButton
-            onClick={handlePrevClick}
-            disabled={isBeginning}
-            sx={{
-              width: 45,
-              height: 45,
-              backgroundColor: "white",
-              color: "black",
-              boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
-              pointerEvents: "auto",
-            }}
-          >
-            <ChevronLeft />
-          </IconButton>
-
-          <IconButton
-            onClick={handleNextClick}
-            disabled={isEnd}
-            sx={{
-              width: 45,
-              height: 45,
-              backgroundColor: "white",
-              color: "black",
-              boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
-              pointerEvents: "auto",
-            }}
-          >
-            <ChevronRight />
-          </IconButton>
-        </Box>
-
-        {/* SWIPER */}
-        <Swiper {...swiperParams}>
-          {testimonials.map((item, i) => (
-            <SwiperSlide key={i}>
-              <TestimonialCard item={item} isMobile={isMobile} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </Box>
+      <Swiper {...swiperParams}>
+        {testimonials.map((item, i) => (
+          <SwiperSlide key={i}>
+            <TestimonialCard item={item} isMobile={isMobile} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
     </Box>
   );
 };
