@@ -158,16 +158,28 @@ const AboutUs = () => {
 
       <Box sx={{ width: { xs: "100%", md: "50%" } ,ml:{md:5}}}>
         <Typography
-          sx={{
-            fontSize: { xs: 20, sm: 35, md: 34 },
-            fontWeight: 700,
-            mb: { xs: 1.5, sm: 2 },
-            lineHeight: 1.3,
-            textAlign: { xs: "center", md: "left" },
-          }}
-        >
-          About Eagle Ceramics: The Leading Tiles Company in India
-        </Typography>
+  sx={{
+    fontSize: { xs: 20, sm: 35, md: 34 },
+    fontWeight: 700,
+    mb: { xs: 1.5, sm: 2 },
+    lineHeight: 1.3,
+    textAlign: { xs: "center", md: "left" },
+  }}
+>
+  <Box
+    component="span"
+    sx={{
+      background: "black",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      fontWeight: 900,
+    }}
+  >
+    About Eagle Ceramics
+  </Box>
+  : The Leading Tiles Company in India
+</Typography>
+
 
         <Typography
           sx={{
