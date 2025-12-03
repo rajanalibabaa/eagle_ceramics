@@ -27,7 +27,7 @@ const ServicesCollectionCard = ({
   const getResponsiveValues = () => {
     if (isMobile) {
       return {
-        containerWidth: "100%", // Full width on mobile
+        containerWidth: "100%", 
         containerPadding: 0,
         height: "280px",
         titleFontSize: "18px",
@@ -132,7 +132,7 @@ const ServicesCollectionCard = ({
         width: "100%",
         display: "flex",
         justifyContent: "center",
-        px: { xs: 2, sm: 3, md: 4 }, // Responsive horizontal padding
+        px: { xs: 2, sm: 3, md: 4 }, 
         mb: { xs: 2.5, sm: 3, md: 4, lg: 5 }, // Responsive bottom margin
       }}
     >
@@ -295,17 +295,17 @@ const ServicesCollectionCard = ({
                   xs: "95%", 
                   sm: "90%", 
                   md: "85%", 
-                  lg: "80%" 
+                  lg: "100%" 
                 },
-                mb: { xs: 2, sm: 2.5, md: 3 },
+                mb: { xs: 2, sm: 2.5, md: 2 },
                 background: "rgba(255,255,255,0.15)",
                 backdropFilter: isMobile ? "blur(8px)" : "blur(12px)",
                 borderRadius: { xs: "8px", sm: "10px", md: "12px" },
                 padding: responsive.paragraphPadding,
                 border: "1px solid rgba(255,255,255,0.25)",
-                WebkitBackdropFilter: isMobile ? "blur(8px)" : "blur(12px)", // Safari support
+                WebkitBackdropFilter: isMobile ? "blur(8px)" : "blur(12px)", 
                 overflowY: "auto", // Scrollable on small screens
-                maxHeight: isMobile ? "150px" : isTablet ? "180px" : "200px",
+                maxHeight: isMobile ? "150px" : isTablet ? "180px" : "280px",
               }}
             >
               <Typography

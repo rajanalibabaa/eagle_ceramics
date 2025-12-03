@@ -167,16 +167,12 @@ const MainPopUp = () => {
     py: isMobile ? 1.5 : 1.8,
     fontSize: isMobile ? "15px" : "17px",
     fontWeight: 700,
-    backgroundColor: "#a8d8d3",
+    backgroundColor: "#c41f25",
     color: "black",
+   
     borderRadius: "10px",
     textTransform: "none",
-    boxShadow: "0 4px 15px rgba(168,216,211,0.4)",
-    "&:hover": { 
-      backgroundColor: "#98c8c3",
-      transform: "translateY(-2px)",
-      boxShadow: "0 8px 20px rgba(168,216,211,0.5)",
-    },
+    
     transition: "all 0.3s ease-in-out",
     letterSpacing: "0.5px",
     minHeight: isMobile ? "48px" : "52px",
@@ -185,7 +181,7 @@ const MainPopUp = () => {
   // Memoized checkbox styles
   const checkboxStyles = useMemo(() => ({
     color: "white", 
-    "&.Mui-checked": { color: "#a8d8d3" },
+    "&.Mui-checked": { color: "#c41f25" },
     "&:hover": { backgroundColor: "rgba(255,255,255,0.1)" }
   }), []);
 
@@ -255,7 +251,7 @@ const MainPopUp = () => {
               top: 12,
               right: 12,
               color: "white",
-              backgroundColor: "rgba(255,255,255,0.1)",
+              backgroundColor: "#c41f25",
               backdropFilter: "blur(10px)",
               "&:hover": {
                 backgroundColor: "rgba(255,255,255,0.2)",

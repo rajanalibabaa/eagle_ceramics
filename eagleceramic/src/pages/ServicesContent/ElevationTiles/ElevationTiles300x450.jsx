@@ -137,77 +137,61 @@ const ElevationTiles300x450 = () => {
             <Box className="bg-blob blob3" />
             <Container maxWidth="lg" sx={{ py: 4, position: "relative", zIndex: 10 }}>
                 {/* HERO HEADER - Premium Design for Team Lead */}
-                <Box
-                    sx={{
-                        position: "relative",
-                        textAlign: "center",
-                        mb: 8,
-                        pt: 4,
-                        pb: 4 ,
-                        background: `
-                            linear-gradient(135deg, rgba(15,32,39,0.95) 0%, rgba(32,58,67,0.9) 50%, rgba(44,83,100,0.95) 100%),
-                            linear-gradient(135deg, rgba(255,215,0,0.2) 0%, rgba(1,107,97,0.2) 100%)
-                        `,
-                        backgroundImage: `url(${BackgroundImage})`,
-                        backgroundBlendMode: "overlay",
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        borderImage: "linear-gradient(45deg, #FFD700, #016B61, #FFD700) 1",
-                        borderRadius: "25px",
-                        // boxShadow: `
-                        //     0 25px 50px rgba(0,0,0,0.5),
-                        //     0 0 0 1px rgba(255,215,0,0.3),
-                        //     inset 0 1px 0 rgba(255,255,255,0.2)
-                        // `,
-                        overflow: "hidden",
-                        "::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: -2,
-                            left: -2,
-                            right: -2,
-                            bottom: -2,
-                            background: "linear-gradient(45deg, transparent, rgba(255,215,0,0.1), transparent)",
-                            zIndex: -1,
-                            animation: "glowBorder 3s ease-in-out infinite alternate",
-                        },
-                        animation: "floatHeader 6s ease-in-out infinite",
-                    }}
-                >
-                    <Typography
-                        variant="h2"
-                        sx={{
-                            color: "#ffffffff",
-                            fontWeight: 900,
-                            textTransform: "uppercase",
-                            letterSpacing: 6,
-                            lineHeight: 1.1,
-                            mb: 2,
-                            fontSize: { xs: "2.5rem", md: "4rem", lg: "5rem" },
-                            textShadow: `
-                                0 0 10px rgba(255,215,0,0.8),
-                                0 2px 4px rgba(0,0,0,0.8)
-                            `,
-                            fontFamily: "'Montserrat', 'Roboto', sans-serif",
-                        }}
-                    >
+              <Box
+               sx={{
+                position: "relative",
+                textAlign: "center",
+                mb: {xs: 0, sm: 4},
+                pt: 1,
+                pb: {xs: 0, sm: 4},
+              
+                backgroundImage: {
+                  xs: "none",               
+                  sm: `url(${BackgroundImage})`, 
+                },
+                backgroundBlendMode: "overlay",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                borderRadius: "25px",
+              
+                overflow: "hidden",
+                "::before": {
+                  content: '""',
+                  position: "absolute",
+                  top: -2,
+                  left: -2,
+                  right: -2,
+                  bottom: -2,
+                  background: {xs: "none", sm:"linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.84))"},
+                  zIndex: -1,
+                  animation: "glowBorder 3s ease-in-out infinite alternate",
+                },
+                animation: "floatHeader 6s ease-in-out infinite",
+              }}
+              
+              >
+                       <Typography
+                            variant="h1"
+                            sx={{
+                              fontWeight: 700,
+                              fontSize: { xs: "2.8rem", sm: "3.5rem" },
+                              color: { xs: "black", sm: "white" },
+                            }}
+                          >
                         ELEVATION TILES
                     </Typography>
                     <Typography
-                        variant="h5"
-                        sx={{
-                            color: "#E8F4F8",
-                            fontWeight: 400,
-                            mb: 4,
-                            px: 4,
-                            fontSize: { xs: "1rem", md: "1.25rem" },
-                            textShadow: "0 2px 4px rgba(0,0,0,0.8)",
-                            fontFamily: "'Roboto', sans-serif",
-                        }}
-                    >
+                         variant="body1"
+                         sx={{
+                           mt: 1,
+                           mb:3,
+                           fontSize: { xs: "0.95rem", sm: "1.2rem" },
+                           color: { xs: "black", sm: "white" }, 
+                         }}
+                       >
                         Premium 300 x 450 mm | High-Depth 3D Elevation Series
                     </Typography>
-                    <Box
+                    {/* <Box
                         sx={{
                             height: 4,
                             background: "linear-gradient(90deg, #FFD700, #016B61, #FFD700)",
@@ -215,7 +199,7 @@ const ElevationTiles300x450 = () => {
                             animation: "shineLine 2s ease-in-out infinite",
                             boxShadow: "0 0 10px rgba(255,215,0,0.6)",
                         }}
-                    />
+                    /> */}
                 </Box>
 
                 {/* COLLECTION CARDS - Enhanced Background */}
