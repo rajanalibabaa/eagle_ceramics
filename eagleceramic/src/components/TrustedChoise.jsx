@@ -1,8 +1,8 @@
-"use client";
-import React, { memo, useCallback, useMemo } from "react";
+import React, { memo, useCallback, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import Box  from "@mui/material/Box";
-import  Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import {
@@ -12,93 +12,78 @@ import {
   LocalShipping,
   Apartment,
 } from "@mui/icons-material";
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
+import { motion, useInView } from "framer-motion";
+
+import expertiseBg from "../assets/ParkingTiles/PlainCollection1.jpg"; 
+import brandsBg from "../assets/ElevationTiles300x450/Eagle003image.png";
+import supplyChainBg from "../assets/FloorTiles/Glossyendlessv2.png";
+import commercialBg from "../assets/ElevationTiles300x600/Eagle003x600image.PNG";
+import deliveryBg from "../assets/FloorTiles/Random.png";
 
 const uspData = [
   {
-    icon: <Verified sx={{ fontSize: 40 }} />,
     title: "35+ Years of Industry Expertise",
     desc: "Trusted by leading builders for quality and reliability.",
-    gradient: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    image: expertiseBg,
+    overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))",
   },
   {
-    icon: <Business sx={{ fontSize: 40 }} />,
     title: "Two Industry-Leading Brands",
     desc: "Eagle Ceramics & Gaurada Ceramics serving diverse style and budget needs.",
-    gradient: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    image: brandsBg,
+    overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))",
   },
   {
-    icon: <Inventory sx={{ fontSize: 40 }} />,
     title: "End-to-End B2B Supply Chain",
     desc: "Large inventories, bulk supply, and commercial fulfilment.",
-    gradient: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    image: supplyChainBg,
+    overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))",
   },
   {
-    icon: <Apartment sx={{ fontSize: 40 }} />,
     title: "Specialized for Builders & Commercial Projects",
     desc: "Tiles for residential complexes, malls, hospitals, IT parks, retail, and more.",
-    gradient: "linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)",
+    image: commercialBg,
+    overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))",
   },
   {
-    icon: <LocalShipping sx={{ fontSize: 40 }} />,
     title: "On-Time Delivery Assurance",
     desc: "Strong logistics network for uninterrupted project execution.",
-    gradient: "linear-gradient(135deg, #fa709a 0%, #fee140 100%)",
+    image: deliveryBg,
+    overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))",
   },
 ];
 
-// Memoized animation variants
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.2
-    }
-  }
+// Animation variants
+const containerVariants = { 
+  hidden: { opacity: 0 }, 
+  visible: { 
+    opacity: 1, 
+    transition: { staggerChildren: 0.2 } 
+  } 
 };
 
-const cardVariants = {
+const cardVariants = { 
   hidden: { 
     opacity: 0, 
-    y: 60,
-    scale: 0.9
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 15
-    }
-  }
+    y: 60, 
+    scale: 0.9 
+  }, 
+  visible: { 
+    opacity: 1, 
+    y: 0, 
+    scale: 1, 
+    transition: { 
+      type: "spring", 
+      stiffness: 100, 
+      damping: 15 
+    } 
+  } 
 };
 
-const iconVariants = {
-  hidden: { scale: 0, rotate: -180 },
-  visible: {
-    scale: 1,
-    rotate: 0,
-    transition: {
-      type: "spring",
-      stiffness: 200,
-      delay: 0.2
-    }
-  }
-};
-
-// Memoized Card Component to prevent unnecessary re-renders
-const USPCard = memo(({ item, index, onNavigate }) => {
+const USPCard = memo(({ item, onNavigate }) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
-
-  const handleClick = useCallback(() => {
-    onNavigate('/services');
-  }, [onNavigate]);
+  const handleClick = useCallback(() => onNavigate('/services'), [onNavigate]);
 
   return (
     <motion.div
@@ -106,86 +91,109 @@ const USPCard = memo(({ item, index, onNavigate }) => {
       variants={cardVariants}
       initial="hidden"
       animate={isInView ? "visible" : "hidden"}
-      whileHover={{ scale: 1.05, y: -8 }}
-      transition={{ type: "spring", stiffness: 200 }}
+      whileHover={{ 
+        // scale: 1, 
+        // y: -2,
+        transition: { type: "spring", stiffness: 400, damping: 25 }
+      }}
+      transition={{ type: "spring", stiffness: 500 }}
+      style={{ flexShrink: 0 }}
     >
       <Card
+        onClick={handleClick}
         sx={{
-          width: { xs: "100%", sm: 350, md: 380 },
-          height: 300,
+          width: { xs: 300, sm: 350, md: 380 },
+          height: { xs: 280, sm: 270 },
           borderRadius: 5,
           color: "white",
-          transition: "0.3s",
-          boxShadow: "0 8px 25px rgba(0,0,0,0.45)",
           cursor: "pointer",
-          background: "linear-gradient(135deg, #263447, #1a2533)",
+          transition: "all 0.4s ease",
+          position: "relative",
+          overflow: "hidden",
           "&:hover": {
-            background: "linear-gradient(135deg, #87BAC3, #3b548eff)",
-            boxShadow: "0 12px 35px rgba(0,0,0,0.6)",
+            transform: "translateY(-2px)",
+            "& .card-overlay": {
+              opacity: 0.2,
+            },
+            "& .card-content": {
+              transform: "translateY(0)",
+            },
+            "& .card-icon": {
+              transform: "scale(1.2)",
+            }
           },
         }}
-        onClick={handleClick}
       >
-        <CardContent
+        {/* Background Image */}
+        <Box
           sx={{
-            textAlign: "center",
-            px: 3,
-            py: 5,
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `url(${item.image})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            transition: "transform 0.6s ease",
+            "&:hover": {
+              transform: "scale(1.1)",
+            }
+          }}
+        />
+        
+        {/* Overlay with gradient */}
+        <Box
+          className="card-overlay"
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: item.overlay,
+            transition: "opacity 0.4s ease",
+            opacity: 0.9,
+          }}
+        />
+
+        {/* Card Content */}
+        <CardContent 
+          className="card-content"
+          sx={{ 
+            position: "relative",
+            zIndex: 2,
+            textAlign: "center", 
+            p: 3, 
+            display: "flex", 
+            flexDirection: "column", 
             flexGrow: 1,
-            display: "flex",
-            flexDirection: "column",
+            height: "100%",
+            justifyContent: "center",
+            transition: "transform 0.4s ease",
           }}
         >
-          <motion.div
-            variants={{
-              rest: { scale: 1 },
-              hover: { scale: 1.15, rotate: 8 },
-            }}
-            transition={{ type: "spring", stiffness: 400, damping: 15 }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                mb: 3,
-                "& .MuiSvgIcon-root": {
-                  fontSize: "3rem",
-                  background: item.gradient,
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  filter: "brightness(1.4)",
-                },
-              }}
-            >
-              {item.icon}
-            </Box>
-          </motion.div>
-
-          <Typography
-            variant="h6"
-            sx={{
-              fontWeight: 700,
-              mb: 2,
-              color: "#a7a8a7", 
-              textShadow: "0 0 4px rgba(0,0,0,0.4)",
-              fontSize: { xs: "1rem", md: "1.1rem" },
-              lineHeight: 1.3,
-              flexGrow: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+          
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontWeight: 700, 
+              mb: 1.5, 
+              color: "#ffffff",
+              textShadow: "0 2px 4px rgba(0,0,0,0.5)",
+              fontSize: { xs: "1.1rem", sm: "1.2rem" }
             }}
           >
             {item.title}
           </Typography>
-
-          <Typography
-            variant="body1"
-            sx={{
-              color: "#cbd5e1",
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              color: "rgba(255,255,255,0.9)", 
+              fontSize: { xs: "0.85rem", sm: "0.9rem" }, 
               lineHeight: 1.6,
-              fontSize: { xs: "0.9rem", md: "1rem" },
+              textShadow: "0 1px 2px rgba(0,0,0,0.5)",
             }}
           >
             {item.desc}
@@ -196,87 +204,79 @@ const USPCard = memo(({ item, index, onNavigate }) => {
   );
 });
 
-USPCard.displayName = 'USPCard';
+USPCard.displayName = "USPCard";
 
-// Memoized Button Component
+const MotionButton = motion(Button);
+
 const CTAButton = memo(({ onClick, children, variant = "primary" }) => {
-  const buttonStyles = useMemo(() => {
-    const baseStyles = {
-      padding: "14px 40px",
-      borderRadius: "40px",
-      fontWeight: 700,
-      cursor: "pointer",
-      fontSize: "1rem",
-      border: "none",
-    };
-
-    if (variant === "primary") {
-      return {
-        ...baseStyles,
-        border: "1px solid rgba(255,255,255,0.3)",
-        background: "#d11f25",
-        color: "white",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
-      };
-    } else {
-      return {
-        ...baseStyles,
-        background: "linear-gradient(135deg, #111, #333)",
-        color: "white",
-        boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
-      };
-    }
-  }, [variant]);
+  const sxStyles = useMemo(() => ({
+    px: { xs: 3, sm: 4, md: 6 },
+    py: { xs: 1.2, sm: 1.4, md: 1.6 },
+    borderRadius: "40px",
+    fontWeight: 700,
+    cursor: "pointer",
+    fontSize: { xs: "0.95rem", sm: "1.05rem", md: "1.15rem" },
+    border: "none",
+    background: variant === "primary" 
+      ? "linear-gradient(135deg, #d11f25 0%, #b0181d 100%)"
+      : "linear-gradient(135deg, #07080a 0%, #07080a 100%)",
+    color: "white",
+    boxShadow: "0 6px 20px rgba(0,0,0,0.22)",
+    transition: "all 0.3s ease",
+    '&:hover': {
+      transform: "translateY(-2px)",
+      boxShadow: "0 12px 30px rgba(0,0,0,0.26)",
+    },
+    width: { xs: '100%', sm: 'auto' },
+    display: 'inline-flex',
+    justifyContent: 'center',
+  }), [variant]);
 
   return (
-    <motion.button
+    <MotionButton
       onClick={onClick}
-      whileHover={{ scale: 1.08 }}
-      whileTap={{ scale: 0.96 }}
-      style={buttonStyles}
+      whileHover={{ scale: 1.06 }}
+      whileTap={{ scale: 0.98 }}
+      sx={sxStyles}
     >
       {children}
-    </motion.button>
+    </MotionButton>
   );
 });
 
-CTAButton.displayName = 'CTAButton';
+CTAButton.displayName = "CTAButton";
 
-// Memoized Heading Component
 const SectionHeading = memo(({ isInView }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 50 }}
-    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-    transition={{ duration: 0.8, ease: "easeOut" }}
+  <motion.div 
+    initial={{ opacity: 0, y: 50 }} 
+    animate={isInView ? { opacity: 1, y: 0 } : {}} 
+    transition={{ duration: 0.8 }}
   >
     <Typography
-      variant="h2"
-      sx={{
-        textAlign: "center",
-        fontWeight: 800,
-        mb: 2,
-        backgroundColor: "#333333",
-        backgroundClip: "text",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        fontSize: { xs: "2.5rem", md: "3.5rem" },
-      }}
-    >
+              variant="h2"
+              sx={{
+                fontWeight: 900,
+                mb: 2,
+                background:"black",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                lineHeight: 1.2,
+                textAlign: "center",
+              }}
+            >
       Why Builders Choose Us
     </Typography>
-    
-    <Typography
-      variant="h6"
-      sx={{
-        textAlign: "center",
-        fontWeight: 400,
+    <Typography 
+      variant="h6" 
+      sx={{ 
+        textAlign: "center", 
+        color: "#4a5568", 
+        maxWidth: "600px", 
+        mx: "auto", 
         mb: 8,
-        color: "#666",
-        maxWidth: "600px",
-        mx: "auto",
-        px: 2,
+        fontSize: { xs: "1rem", sm: "1.1rem" },
+        px: 2
       }}
     >
       Trusted by leading construction companies across South India for unmatched quality and service
@@ -284,93 +284,74 @@ const SectionHeading = memo(({ isInView }) => (
   </motion.div>
 ));
 
-SectionHeading.displayName = 'SectionHeading';
+SectionHeading.displayName = "SectionHeading";
 
-// Main Component
 const TrustedChoice = () => {
   const navigate = useNavigate();
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  // Memoized navigation handlers
-  const handleExploreClick = useCallback(() => {
-    navigate('/services');
-  }, [navigate]);
-
-  const handleQuoteClick = useCallback(() => {
-    navigate('/contact');
-  }, [navigate]);
-
-  const handleCardNavigate = useCallback((path) => {
-    navigate(path);
-  }, [navigate]);
-
-  // Memoized background style
-  const backgroundStyle = useMemo(() => ({
-    py: 6,
-    px: 2,
-    position: "relative",
-    overflow: "hidden",
-  }), []);
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
   return (
     <Box
-      ref={ref}
-      sx={backgroundStyle}
+      ref={containerRef}
+      sx={{
+        py: { xs: 6, sm: 8, md: 10 },
+        position: "relative",
+        overflow: "hidden",
+      }}
     >
+      {/* Optional decorative background elements */}
+    
+      
       <SectionHeading isInView={isInView} />
 
-      {/* USP Grid */}
-      <motion.div
-        variants={containerVariants}
-        initial="hidden"
+      <motion.div 
+        variants={containerVariants} 
+        initial="hidden" 
         animate={isInView ? "visible" : "hidden"}
       >
         <Box
           sx={{
             display: "flex",
-            flexWrap: "wrap",
-            justifyContent: "center",
-            gap: 4,
-            maxWidth: "1300px",
+            flexWrap: { xs: "nowrap", sm: "wrap" },
+            justifyContent: { xs: "flex-start", sm: "center" },
+            gap: { xs: 3, sm: 4, md: 4 },
+            maxWidth: "1400px",
             mx: "auto",
+            px: { xs: 3, sm: 4, md: 6 },
+            overflowX: { xs: "auto", sm: "hidden" },
+            overflowY: "hidden",
+            pb: 3,
+            scrollbarWidth: "none",
+            "&::-webkit-scrollbar": { display: "none" },
+            "&::-webkit-scrollbar-track": { display: "none" },
+            "&::-webkit-scrollbar-thumb": { display: "none" },
           }}
         >
-          {uspData.map((item, index) => (
-            <USPCard 
-              key={index} 
-              item={item} 
-              index={index}
-              onNavigate={handleCardNavigate}
-            />
+          {uspData.map((item, i) => (
+            <USPCard key={i} item={item} onNavigate={navigate} />
           ))}
         </Box>
       </motion.div>
 
-      {/* CTA Buttons */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.7, delay: 0.3 }}
+      <Box 
+        sx={{ 
+          mt: { xs: 6, sm: 8 }, 
+          display: "flex", 
+          justifyContent: "center", 
+          gap: { xs: 2, sm: 3 },
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: "center",
+          px: 2
+        }}
       >
-        <Box
-          sx={{
-            mt: 8,
-            display: "flex",
-            justifyContent: "center",
-            gap: 3,
-            flexWrap: "wrap",
-          }}
-        >
-          <CTAButton onClick={handleExploreClick} variant="primary">
-            Explore Our Products
-          </CTAButton>
-          
-          <CTAButton onClick={handleQuoteClick} variant="secondary">
-            Get a B2B Quote
-          </CTAButton>
-        </Box>
-      </motion.div>
+        <CTAButton onClick={() => navigate("/services")} variant="primary">
+          Explore Our Products
+        </CTAButton>
+        <CTAButton onClick={() => navigate("/contact")} variant="secondary">
+          Get a B2B Quote
+        </CTAButton>
+      </Box>
     </Box>
   );
 };

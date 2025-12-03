@@ -29,12 +29,16 @@ const Navbar = () => {
   return (
     <AppBar
       sx={{
-        backgroundColor: "#016b60",
+        backgroundColor: "transparent",
         boxShadow: "none",
         py: 1.5,
         position: "sticky",
         top: 0,
         zIndex: 1000,
+        // Ensure toolbar content is visible over images
+        color: "#fff",
+        // Optional: add a subtle backdrop blur for readability
+        backdropFilter: "blur(4px)",
       }}
     >
       <motion.div {...fadeDown}>
@@ -63,6 +67,7 @@ const Navbar = () => {
               display: { xs: "none", md: "flex" },
               alignItems: "center",
               gap: 3,
+              color: "black",
             }}
           >
             <Button
@@ -94,16 +99,7 @@ const Navbar = () => {
             >
               Products
             </Button>
-{/* 
-            <Button
-              color="inherit"
-              sx={{ fontWeight: 600 }}
-              component={motion.button}
-              whileHover={{ scale: 1.04 }}
-              onClick={() => navigate("/blog")}
-            >
-              BLOG
-            </Button> */}
+
 
             <Button
               color="inherit"
@@ -118,7 +114,7 @@ const Navbar = () => {
 
           {/* MOBILE MENU ICON */}
           <IconButton
-            sx={{ display: { xs: "flex", md: "none" }, color: "white" }}
+            sx={{ display: { xs: "flex", md: "none" }, color: "black" }}
             onClick={() => setOpen(true)}
           >
             <MenuIcon sx={{ fontSize: 30 }} />
@@ -155,7 +151,7 @@ const Navbar = () => {
 </ListItemButton>
 
 <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/services"); setOpen(false); }}>
-  <Typography sx={{ fontWeight: 600 }}>SERVICES</Typography>
+  <Typography sx={{ fontWeight: 600 }}>PRODUCTS</Typography>
 </ListItemButton>
 
 {/* <ListItemButton sx={{ py: 2 }} onClick={() => { navigate("/blog"); setOpen(false); }}>

@@ -8,9 +8,10 @@
 body {
 margin: 0;
   padding: 0;
-  background-color: var(--light-color);
-  color: var(--text-color);
+  /* background-color: var(--light-color); */
+  /* color: var(--text-color); */
   scroll-behavior: smooth;
+  background: #ffffff;
 }
 /* 🌈 Global Color Palette */
 :root {

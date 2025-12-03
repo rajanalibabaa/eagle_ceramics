@@ -1,32 +1,18 @@
 import React, { useRef, useState, useMemo, useCallback, memo } from 'react';
-
-// MUI Components
 import {
   Container,
   Typography,
   Box,
   Avatar,
   Paper,
-  IconButton,
   Grid
 } from '@mui/material';
-
-import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-
-// Framer Motion - Import only what you need
 import { motion } from 'framer-motion';
-
-// Swiper - Use dynamic import for production or keep static if necessary
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCoverflow, Navigation, Autoplay } from 'swiper/modules';
+import { EffectCoverflow, Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-coverflow';
-import 'swiper/css/navigation';
 
-// === Client Images ===
-// Consider using Next.js Image or similar for production
-// For React, use dynamic imports or ensure proper image optimization
 import resident from '../assets/ResidentialBuilders.jpg';
 import commercial from '../assets/comercialdevelopers.jpeg';
 import architect from "../assets/Architects.jpg";
@@ -37,14 +23,11 @@ import school from "../assets/school.jpeg";
 import job from "../assets/job.jpg";
 import manufacture from"../assets/manufacture.jpeg";
 import hotel from "../assets/hotel.jpg";
-
-// === Highlighted Project Images ===
 import build from "../assets/CommercialBuildings.jpeg";
 import mall from "../assets/malls.jpg";
 import government from "../assets/government.jpg";
 import flooring from "../assets/flooring.jpeg";
 
-// Memoize static data to prevent re-creation on every render
 const clients = [
   { name: 'Residential Builders', image: resident },
   { name: 'Commercial Developers', image: commercial },
@@ -67,210 +50,192 @@ const highlightedProjects = [
 ];
 
 // --- Animation Variants ---
-// Memoize animation variants
-const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
-};
+const fadeUp = { hidden: { opacity: 0, y: 40 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } };
+const staggerWrapper = { visible: { transition: { staggerChildren: 0.2 } } };
 
-const staggerWrapper = {
-  visible: {
-    transition: { staggerChildren: 0.2 }
-  }
-};
-
-// Create a memoized component for each slide to prevent unnecessary re-renders
-const ClientSlide = memo(({ client, isActive, index }) => (
+// === ClientSlide Component ===
+const ClientSlide = memo(({ client, isActive }) => (
   <motion.div
-    whileHover={{ scale: 1.08 }}
+    animate={{ scale: isActive ? 1.05 : 0.9, opacity: isActive ? 1 : 0.6 }}
     transition={{ duration: 0.4 }}
-    animate={{
-      scale: isActive ? 1.1 : 0.9,
-      opacity: isActive ? 1 : 0.6,
-    }}
-    style={{ height: '100%', display: 'flex', alignItems: 'center' }}
+    style={{ height: '100%', display: 'flex', alignItems: 'center', padding: '20px 0' }}
   >
-    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', p: 3}}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       <Avatar
         src={client.image}
-        sx={{
-          width: 100,
-          height: 100,
-          border: "3px solid white",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
-          marginBottom: "-50px",
-          zIndex: 1,
+        sx={{ 
+          width: 100, 
+          height: 100, 
+          border: "3px solid white", 
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)", 
+          mb: "-50px", 
+          zIndex: 1 
         }}
-        // Add alt text for accessibility and better performance
         alt={client.name}
       />
-
-      <Paper
-        elevation={3}
-        sx={{
-          width: "100%",
-          textAlign: "center",
-          pt: "70px",
-          pb: 2,
-          px: 2,
-          height: "150px",
+      <Paper 
+        elevation={3} 
+        sx={{ 
+          width: "90%", 
+          textAlign: "center", 
+          pt: "60px", 
+          pb: 2, 
+          px: 2, 
+          minHeight: "140px", 
           borderRadius: "16px",
-          transition: "0.3s",
+          background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)"
         }}
       >
-        <Typography variant="subtitle1" fontWeight="bold">
+        <Typography variant="subtitle1" fontWeight="bold" color="text.primary">
           {client.name}
         </Typography>
       </Paper>
     </Box>
   </motion.div>
 ));
-
 ClientSlide.displayName = 'ClientSlide';
 
-// Memoized Project Card component
 const ProjectCard = memo(({ item }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const cardVariants = { rest: {}, hover: {} };
+  const imageVariants = { rest: { scale: 1 }, hover: { scale: 1.1 } };
+  const overlayVariants = { rest: { opacity: 0, y: 20 }, hover: { opacity: 1, y: 0 } };
 
   return (
-    <motion.div whileHover={{ scale: 1.04 }} transition={{ duration: 0.3 }}>
-      <Box
-        sx={{
-          position: "relative",
-          width: "100%",
-          maxWidth: "450px",
-          height: 280,
-          borderRadius: "20px",
-          overflow: "hidden",
-          cursor: "pointer",
-          boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+    <motion.div
+      variants={cardVariants}
+      initial="rest"
+      whileHover="hover"
+      transition={{ duration: 0.4 }}
+      style={{ 
+        position: "relative", 
+        width: "100%", 
+        height: 280, 
+        borderRadius: "20px", 
+        overflow: "hidden", 
+        cursor: "pointer" 
+      }}
+    >
+      <motion.img
+        variants={imageVariants}
+        src={item.image}
+        alt={item.title}
+        style={{ 
+          width: "100%", 
+          height: "100%", 
+          objectFit: "cover", 
+          filter: imageLoaded ? 'none' : 'blur(10px)', 
+          transition: 'filter 0.3s ease-out' 
+        }}
+        loading="lazy"
+        onLoad={() => setImageLoaded(true)}
+      />
+      <Box 
+        sx={{ 
+          position: "absolute", 
+          inset: 0,  
+          display: "flex", 
+          alignItems: "flex-end", 
+          justifyContent: "center", 
+          color: "white", 
+          p: 2,
+          background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)"
         }}
       >
-        {/* Optimized Image with loading state */}
-        <img
-          src={item.image}
-          alt={item.title}
-          style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            // Add blur-up effect for better UX
-            filter: imageLoaded ? 'none' : 'blur(10px)',
-            transition: 'filter 0.3s ease-out',
-          }}
-          loading="lazy" // Lazy load images
-          onLoad={() => setImageLoaded(true)}
-        />
-
-        {/* OVERLAY TITLE - Only render if needed */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileHover={{ opacity: 1 }}
-          style={{ pointerEvents: 'none' }}
-        >
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              background: "rgba(0,0,0,0.55)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontSize: "22px",
-              fontWeight: "bold",
-              textAlign: "center",
-              px: 2,
-            }}
-          >
+        <motion.div variants={overlayVariants}>
+          <Typography variant="h6" fontWeight="bold" textAlign="center">
             {item.title}
-          </Box>
+          </Typography>
         </motion.div>
       </Box>
     </motion.div>
   );
 });
-
 ProjectCard.displayName = 'ProjectCard';
 
+// === Main OurClients Component ===
 const OurClients = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const swiperRef = useRef(null);
 
-  // Memoize callbacks to prevent re-renders
-  const handleSlidePrev = useCallback(() => {
-    swiperRef.current?.slidePrev();
-  }, []);
+  const handleSlideChange = useCallback((swiper) => setActiveIndex(swiper.realIndex), []);
 
-  const handleSlideNext = useCallback(() => {
-    swiperRef.current?.slideNext();
-  }, []);
-
-  const handleSlideChange = useCallback((swiper) => {
-    setActiveIndex(swiper.realIndex);
-  }, []);
-
-  // Memoize swiper configuration
   const swiperConfig = useMemo(() => ({
-    spaceBetween: 40,
-    autoplay: {
-      delay: 2000,
-      disableOnInteraction: false,
-      pauseOnMouseEnter: true,
-    },
-    effect: "coverflow",
-    centeredSlides: true,
-    loop: true,
+    effect: "coverflow", 
+    centeredSlides: true, 
+    loop: true, 
     grabCursor: true,
-    slidesPerView: 5,
-    breakpoints: {
-      320: { slidesPerView: 1 },
-      600: { slidesPerView: 2 },
-      900: { slidesPerView: 3 },
-      1200: { slidesPerView: 3 },
+    autoplay: { 
+      delay: 2500, 
+      disableOnInteraction: false, 
+      pauseOnMouseEnter: true 
     },
-    coverflowEffect: {
-      rotate: 0,
-      stretch: 0,
-      depth: 100,
-      modifier: 2.5,
-      slideShadows: false,
+    slidesPerView: 'auto',
+    spaceBetween: 20,
+    breakpoints: {
+      600: { slidesPerView: 2, spaceBetween: 30 },
+      900: { slidesPerView: 3, spaceBetween: 40 },
+      1200: { slidesPerView: 3, spaceBetween: 50 },
+    },
+    coverflowEffect: { 
+      rotate: 0, 
+      stretch: 0, 
+      depth: 100, 
+      modifier: 2.5, 
+      slideShadows: false 
     },
     onSlideChange: handleSlideChange,
-    modules: [EffectCoverflow, Navigation, Autoplay],
+    modules: [EffectCoverflow, Autoplay],
   }), [handleSlideChange]);
-
-  // Memoize the entire projects grid to prevent re-renders
+  
   const projectsGrid = useMemo(() => (
-    <Grid
-      container
-      spacing={4}
-      justifyContent="center"
-      alignItems="center"
-      sx={{ mt: 4 }}
-      component={motion.div}
-      variants={staggerWrapper}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-100px' }} // Adjust margin for earlier trigger
+    <Box 
+      sx={{ mt: 4 }} 
+      component={motion.div} 
+      variants={staggerWrapper} 
+      initial="hidden" 
+      whileInView="visible" 
+      viewport={{ once: true, margin: '-100px' }}
     >
-      {highlightedProjects.map((item, i) => (
-        <Grid
-          item
-          xs={12}
-          sm={10}
-          md={6}
-          lg={4}
-          key={i}
-          display="flex"
-          justifyContent="center"
-          component={motion.div}
-          variants={fadeUp}
-        >
-          <ProjectCard item={item} />
-        </Grid>
-      ))}
-    </Grid>
+      <Box sx={{ 
+        display: { xs: 'flex', md: 'none' }, 
+        overflowX: 'auto', 
+        gap: 2, 
+        py: 2, 
+        px: { xs: 2, sm: 3 }, 
+        '&::-webkit-scrollbar': { display: 'none' }, 
+        scrollbarWidth: 'none' 
+      }}>
+        {highlightedProjects.map((item, i) => (
+          <Box key={i} sx={{ width: '80%', flexShrink: 0 }} component={motion.div} variants={fadeUp}>
+            <ProjectCard item={item} />
+          </Box>
+        ))}
+      </Box>
+      <Grid 
+        container 
+        spacing={4} 
+        justifyContent="center" 
+        sx={{ display: { xs: 'none', md: 'flex' } }}
+      >
+        {highlightedProjects.map((item, i) => (
+          <Grid 
+            item 
+            xs={12} 
+            sm={10} 
+            md={6} 
+            lg={4} 
+            key={i} 
+            display="flex" 
+            justifyContent="center" 
+            component={motion.div} 
+            variants={fadeUp}
+          >
+            <ProjectCard item={item} />
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
   ), []);
 
   return (
@@ -278,121 +243,95 @@ const OurClients = () => {
       maxWidth={false} 
       sx={{ 
         textAlign: 'center', 
-        py: 6,
-        overflow: 'hidden' // Prevent layout shifts
+        py: { xs: 4, md: 6 }, 
+        overflowX: 'hidden',
+        background: 'linear-gradient(180deg, #ffffff 0%, #f8fafc 100%)'
       }}
-      component={motion.div}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.1 }} // Reduced trigger amount for performance
+      component={motion.div} 
+      initial="hidden" 
+      whileInView="visible" 
+      viewport={{ once: true, amount: 0.1 }} 
       variants={fadeUp}
     >
-
-      {/* MAIN TITLE - Memoized section */}
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 3 }}>
+           <Typography
+                        variant="h2"
+                        sx={{
+                          fontWeight: 900,
+                          mb: 2,
+                          background:"black",
+                          WebkitBackgroundClip: "text",
+                          WebkitTextFillColor: "transparent",
+                          fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                          lineHeight: 1.2,
+                        }}
+                      >
             Trusted by Leading Builders & Businesses
           </Typography>
-
-          <Typography
-            variant="body1"
-            color="text.secondary"
-            sx={{ mb: 4, maxWidth: '750px', mx: 'auto' }}
+          <Typography 
+            variant="body1" 
+            color="text.secondary" 
+            sx={{ 
+              mb: 4, 
+              maxWidth: '750px', 
+              mx: 'auto',
+              fontSize: { xs: '1rem', sm: '1.1rem' }
+            }}
           >
-            Over the past 35 years, we have supplied tiles and ceramic products
-            to hundreds of construction and commercial projects.
+            Over the past 35 years, we have supplied tiles and ceramic products to hundreds of construction and commercial projects.
           </Typography>
         </motion.div>
       ), [])}
 
-      {/* SUBTITLE */}
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography variant="h4" sx={{ mt: 6, mb: 2, fontWeight: 600 }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              mt: 6, 
+              mb: 2, 
+              fontWeight: 600, 
+              fontSize: { xs: '1.8rem', md: '2.2rem' },
+              color: '#1e293b'
+            }}
+          >
             Our Clients Include
           </Typography>
         </motion.div>
       ), [])}
-
-      {/* === SWIPER CAROUSEL === */}
+      
       <Box
         component={motion.div}
         variants={fadeUp}
         sx={{ 
           position: 'relative', 
-          px: { xs: 0, md: 1 }, 
-          width: '80%', 
+          width: { xs: '100%', md: '90%' },
           mx: 'auto',
-          // Prevent layout shifts
-          minHeight: '380px'
+          py: 4
         }}
       >
-        <Swiper 
-          {...swiperConfig}
-          onSwiper={(swiper) => (swiperRef.current = swiper)}
-        >
+        <Swiper {...swiperConfig} onSwiper={(swiper) => (swiperRef.current = swiper)}>
           {clients.map((client, index) => (
-            <SwiperSlide 
-              key={client.name} 
-              style={{ 
-                width: '280px', 
-                height: '280px',
-                // Improve paint performance
-                willChange: 'transform'
-              }}
-            >
-              <ClientSlide 
-                client={client} 
-                isActive={index === activeIndex} 
-                index={index}
-              />
+            <SwiperSlide key={client.name} style={{ width: '280px' }}>
+              <ClientSlide client={client} isActive={index === activeIndex} />
             </SwiperSlide>
           ))}
         </Swiper>
-
-        {/* ARROWS - Memoized handlers */}
-        <IconButton
-          onClick={handleSlidePrev}
-          sx={{
-            position: 'absolute',
-            left: { xs: 0, md: -20 },
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 2,
-            bgcolor: 'rgba(255,255,255,0.7)',
-            '&:hover': {
-              bgcolor: 'rgba(255,255,255,0.9)',
-            }
-          }}
-          aria-label="Previous slide"
-        >
-          <ArrowBackIosNewIcon />
-        </IconButton>
-
-        <IconButton
-          onClick={handleSlideNext}
-          sx={{
-            position: 'absolute',
-            right: { xs: 0, md: -20 },
-            top: '50%',
-            transform: 'translateY(-50%)',
-            zIndex: 2,
-            bgcolor: 'rgba(255,255,255,0.7)',
-            '&:hover': {
-              bgcolor: 'rgba(255,255,255,0.9)',
-            }
-          }}
-          aria-label="Next slide"
-        >
-          <ArrowForwardIosIcon />
-        </IconButton>
       </Box>
 
-      {/* PROJECTS TITLE */}
       {useMemo(() => (
         <motion.div variants={fadeUp}>
-          <Typography variant="h4" sx={{ mt: 10, fontWeight: 'bold', mb: 4 }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              mt: 10, 
+              mb: 4, 
+              fontWeight: 'bold', 
+              fontSize: { xs: '1.8rem', md: '2.2rem' },
+              color: '#1e293b'
+            }}
+          >
             Our Projects
           </Typography>
         </motion.div>

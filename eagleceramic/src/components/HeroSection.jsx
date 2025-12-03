@@ -354,7 +354,6 @@ const HeroSection = () => {
                   backgroundClip: "text",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  textShadow: "0 4px 20px rgba(0,0,0,0.5)",
                   position: "relative",
                   '&::after': {
                     content: '""',
@@ -422,19 +421,7 @@ const HeroSection = () => {
         repeat: Infinity,
         ease: "easeInOut"
       }}
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: "linear-gradient(135deg, #FF6B35, #FF8E53, #4CAF50, #FF6B35)",
-        backgroundSize: "400% 400%",
-        borderRadius: 12,
-        filter: "blur(10px)",
-        opacity: 0.5,
-        zIndex: 0,
-      }}
+    
     />
     
     <Button
@@ -448,11 +435,7 @@ const HeroSection = () => {
         fontSize: "1.1rem",
         fontWeight: 700,
         background: "#d11f25",
-        boxShadow: `
-          0 4px 20px rgba(255, 107, 53, 0.5),
-          0 0 30px rgba(255, 107, 53, 0.3),
-          inset 0 1px 0 rgba(255, 255, 255, 0.3)
-        `,
+      
         textTransform: "uppercase",
         letterSpacing: "0.5px",
         overflow: "hidden",
@@ -464,25 +447,9 @@ const HeroSection = () => {
           left: "-100%",
           width: "100%",
           height: "100%",
-          background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)",
           transition: "left 0.6s ease",
         },
-        "&:hover": {
-          background: "linear-gradient(135deg, #E55A2B 0%, #E57C3B 100%)",
-          boxShadow: `
-            0 5px 15px rgba(255, 107, 53, 0.7),
-            0 0 30px rgba(255, 107, 53, 0.5),
-            inset 0 1px 0 rgba(255, 255, 255, 0.3)
-          `,
-          transform: "translateY(-2px)",
-          "&::before": {
-            left: "100%",
-          }
-        },
-        "&:active": {
-          transform: "translateY(0)",
-          boxShadow: "0 2px 15px rgba(255, 107, 53, 0.4)",
-        }
+        
       }}
       
     >
@@ -525,15 +492,6 @@ const HeroSection = () => {
           background: "linear-gradient(135deg, rgba(76, 175, 80, 0.2), rgba(255, 107, 53, 0.2))",
           transition: "height 0.3s ease",
           zIndex: -1,
-        },
-        "&:hover": {
-          background: "rgba(255, 255, 255, 0.1)",
-          color: "#FF8E53",
-          transform: "translateY(-2px)",
-          boxShadow: "0 10px 25px rgba(0, 0, 0, 0.2)",
-          "&::before": {
-            height: "100%",
-          }
         },
         "&:active": {
           transform: "translateY(0)",
@@ -580,7 +538,6 @@ const HeroSection = () => {
           </motion.div>
         </Box>
 
-        {/* Enhanced Modern Form with Staggered Fields */}
         <motion.div
           variants={formVariants}
           initial="hidden"
@@ -660,17 +617,7 @@ const HeroSection = () => {
                     size="medium"
                     multiline={field.multiline}
                     rows={field.rows}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: 2,
-                        backgroundColor: "rgba(255,255,255,0.8)",
-                        "&:hover fieldset": { borderColor: "#FF6B35" },
-                        "&.Mui-focused fieldset": { 
-                          borderColor: "#4CAF50",
-                          boxShadow: "0 0 0 2px rgba(76, 175, 80, 0.1)" 
-                        }
-                      }
-                    }}
+                   
                   />
                 </motion.div>
               ))}
@@ -693,10 +640,7 @@ const HeroSection = () => {
                     fontWeight: 700,
                     fontSize: "1.1rem",
                     background: "#d11f25",
-                    boxShadow: "0 4px 15px rgba(255,107,53,0.4)",
-                    "&:hover": {
-                      background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
-                    }
+                    
                   }}
                 >
                   Get Free Quote
@@ -753,7 +697,7 @@ const HeroSection = () => {
                   height: 12,
                   borderRadius: "6px",
                   background: i === index 
-                    ? "linear-gradient(135deg, #FF6B35, #FF8E53)" 
+                    ? "#d11f25" 
                     : "rgba(255,255,255,0.4)",
                   transition: "all 0.3s ease",
                   boxShadow: i === index ? "0 2px 8px rgba(255, 107, 53, 0.5)" : "none",

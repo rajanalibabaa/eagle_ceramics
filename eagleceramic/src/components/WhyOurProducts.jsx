@@ -148,10 +148,10 @@ const WhyOurProducts = () => {
       {/* LEFT SECTION */}
       <Box
         sx={{
-          width: { xs: "100%", md: "50%" },
+          width: { xs: "100%", sm: "100%", md: "50%" },
           background: "#a7a8a7",
-          borderTopRightRadius: { xs: 0, md: "1100px" },
-          borderBottomRightRadius: { xs: 0, md: "1100px" },
+          borderTopRightRadius: { xs: 0,sm:0, md: "1100px" },
+          borderBottomRightRadius: { xs: 0,sm:0, md: "1100px" },
           textAlign: "center",
           display: "flex",
           flexDirection: "column",
@@ -161,14 +161,17 @@ const WhyOurProducts = () => {
         }}
       >
         <Typography
-          sx={{
-            fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem" },
-            fontWeight: 800,
-            color: "#222",
-            mb: { xs: 4, md: 6 },
-            lineHeight: 1.2,
-          }}
-        >
+                     variant="h2"
+                     sx={{
+                       fontWeight: 900,
+                       mb: 2,
+                       background:"black",
+                       WebkitBackgroundClip: "text",
+                       WebkitTextFillColor: "transparent",
+                       fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                       lineHeight: 1.2,
+                     }}
+                   >
           What We Do
         </Typography>
 
@@ -196,7 +199,7 @@ const WhyOurProducts = () => {
   sx={{
     width: { xs: "100%", md: "50%" },
     height: { xs: "350px", sm: "450px", md: "650px", lg: "700px" },
-    display: { xs: "none", sm: "flex" }, 
+    display: { xs: "none", sm: "none", md: "flex" }, 
     justifyContent: "center",
     alignItems: "center",
     position: "relative",

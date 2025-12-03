@@ -97,14 +97,14 @@ function Footer() {
     >
       <Container 
       maxWidth={false} sx={{
-        backgroundColor: '#016B61',
+        backgroundColor: '#222626ff',
         color: 'white',
         padding: '18px',
       }}>
 
         {/* Quick Links - Top Center */}
         <Box sx={{ textAlign: 'center', mb: 1 , maxwidth:"1200px"}}>
-          <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, mb: 1, fontFamily: "'Pacifico', cursive", }}>
+          <Typography variant="h4" gutterBottom sx={{ fontWeight: 800, fontFamily: "'Pacifico', cursive", mb:4}}>
             Quick Links
           </Typography>
           <Box sx={{
@@ -186,7 +186,7 @@ function Footer() {
               variant="contained"
               sx={{
                 backgroundColor: 'white',
-                color: '#016B61',
+                color: '#c71e26',
                 fontWeight: 'bold',
                 '&:hover': { backgroundColor: 'rgba(255,255,255,0.9)' },
                 px: 3,
