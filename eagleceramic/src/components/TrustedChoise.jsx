@@ -219,7 +219,7 @@ const CTAButton = memo(({ onClick, children, variant = "primary" }) => {
     border: "none",
     background: variant === "primary" 
       ? "linear-gradient(135deg, #d11f25 0%, #b0181d 100%)"
-      : "linear-gradient(135deg, #2a3b5a 0%, #1a2533 100%)",
+      : "linear-gradient(135deg, #07080a 0%, #07080a 100%)",
     color: "white",
     boxShadow: "0 6px 20px rgba(0,0,0,0.22)",
     transition: "all 0.3s ease",
@@ -252,20 +252,19 @@ const SectionHeading = memo(({ isInView }) => (
     animate={isInView ? { opacity: 1, y: 0 } : {}} 
     transition={{ duration: 0.8 }}
   >
-    <Typography 
-      variant="h2" 
-      sx={{ 
-        textAlign: "center", 
-        fontWeight: 800, 
-        mb: 2, 
-        color: "#1a202c",
-        fontSize: { xs: "2rem", sm: "2.8rem", md: "3.5rem" },
-        background: "linear-gradient(135deg, #2d3748 0%, #4a5568 100%)",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-        backgroundClip: "text",
-      }}
-    >
+    <Typography
+              variant="h2"
+              sx={{
+                fontWeight: 900,
+                mb: 2,
+                background:"black",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                lineHeight: 1.2,
+                textAlign: "center",
+              }}
+            >
       Why Builders Choose Us
     </Typography>
     <Typography 

@@ -161,14 +161,17 @@ const WhyOurProducts = () => {
         }}
       >
         <Typography
-          sx={{
-            fontSize: { xs: "1.8rem", sm: "2.2rem", md: "2.8rem" },
-            fontWeight: 800,
-            color: "#222",
-            mb: { xs: 4, md: 6 },
-            lineHeight: 1.2,
-          }}
-        >
+                     variant="h2"
+                     sx={{
+                       fontWeight: 900,
+                       mb: 2,
+                       background:"black",
+                       WebkitBackgroundClip: "text",
+                       WebkitTextFillColor: "transparent",
+                       fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                       lineHeight: 1.2,
+                     }}
+                   >
           What We Do
         </Typography>
 
