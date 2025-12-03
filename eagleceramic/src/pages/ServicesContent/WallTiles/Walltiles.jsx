@@ -158,7 +158,6 @@ const Walltiles = () => {
   position: "relative",
   textAlign: "center",
   mb: {xs: 0, sm: 4},
-  pt: 1,
   pb: {xs: 0, sm: 4},
 
   backgroundImage: {

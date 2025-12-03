@@ -90,7 +90,7 @@ const ElevationTiles300x600 = () => {
         <Box sx={{ 
             minHeight: "100vh"
         }}>
-            <Container maxWidth="lg" sx={{ py: 4, position: "relative", zIndex: 10 }}>
+            <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
                 {/* HERO HEADER - Premium Design for Team Lead */}
                <Box
                              sx={{
