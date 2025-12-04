@@ -397,7 +397,13 @@ function Footer() {
                 Phone: +1 (555) 123-4567
               </Typography>
               <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>
-                Address: 123 Main St, City, State
+                Address: Shop No 13,Second
+Floor,Survey No 63
+Paiki1/paiki2, Plot No 1 Paiki
+Prabhat Chamber,Halvad Road,
+Mahendranagar,Morbi
+MORBI-363641
+GUJRAT-INDIA
               </Typography>
             </Box>
           </Grid>

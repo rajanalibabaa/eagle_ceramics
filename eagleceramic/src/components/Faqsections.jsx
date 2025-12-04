@@ -113,6 +113,7 @@ export default function FAQSection() {
           </Accordion>
         ))}
       </Box>
+      
     </Container>
   );
 }
