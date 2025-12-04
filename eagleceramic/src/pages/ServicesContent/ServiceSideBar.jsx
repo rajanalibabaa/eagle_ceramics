@@ -236,7 +236,7 @@ export default function ServiceSideBar() {
 
       <SectionHeader onClick={() => setOpenCollections(o => !o)}>
         <Typography sx={{ fontSize: 18, fontWeight: 700 }}>Products</Typography>
-        {openCollections ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        {openCollections ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
       </SectionHeader>
       <Divider sx={{ mb: 1, borderColor: 'rgba(0,0,0,0.1)' }} />
 
@@ -268,7 +268,7 @@ export default function ServiceSideBar() {
                       sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
                     >
                       <Typography className="labelText">{item.label}</Typography>
-                      {openSub[item.key] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                      {openSub[item.key] ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
                     </Box>
                   ) : (
                     <Typography className="labelText">{item.label}</Typography>
@@ -302,7 +302,7 @@ export default function ServiceSideBar() {
                                   sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
                                 >
                                   <Typography className="labelText">{v.label}</Typography>
-                                  {openThisSub ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                                  {openThisSub ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
                                 </Box>
                               ) : (
                                 <Typography className="labelText">{v.label}</Typography>

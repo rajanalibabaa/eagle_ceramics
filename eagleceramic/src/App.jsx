@@ -113,9 +113,8 @@ const SmartScrollButton = () => {
         position: "fixed",
         bottom: { xs: 90, sm: 360, md: 25 },
         right: { xs: 5, sm: 15, md: 25 },
-        background: `#0097b1`,
+        background: `#c21f24`,
         color: "#fff",
-        boxShadow: `0 4px 25px ${colors.primary}55`,
         "&:hover": {
           transform: "translateY(-4px)",
           background: `linear-gradient(135deg, ${colors.secondary}, ${colors.primary})`,
@@ -189,8 +188,6 @@ function App() {
               <Route path="three-dimension-collection" element={<ThreeDimensionCollection />} />
               <Route path="double-charge-collection" element={<DoubleChargeCollection />} />
               <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
-
-            
 
               <Route path="moroccan-collection" element={<MoroccanCollection />} />
               <Route path="plain-collection" element={<PlainCollection />} />

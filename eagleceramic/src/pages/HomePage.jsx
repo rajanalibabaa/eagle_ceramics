@@ -1,3 +1,4 @@
+import FAQSection from '../components/Faqsections'
 import HeroSection from '../components/HeroSection'
 import OurClients from '../components/OurClients'
 import Testimonials from '../components/Testimonials'
@@ -16,6 +17,7 @@ const HomePage = () => {
             <TrustedChoise/>
   <OurClients/>
   <Testimonials/>
+  <FAQSection/>
     
     </>
   )
