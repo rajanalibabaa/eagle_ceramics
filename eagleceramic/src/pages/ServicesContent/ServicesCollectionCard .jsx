@@ -197,7 +197,6 @@ const ServicesCollectionCard = ({
           }}
           className={isMobile ? "" : undefined}
         >
-          {/* Background Image */}
           <Box
             component="img"
             src={mainImage}
@@ -210,7 +209,6 @@ const ServicesCollectionCard = ({
               "&:hover": {
                 transform: isMobile ? "none" : "scale(1.05)",
               },
-              // Optimize for mobile performance
               [theme.breakpoints.down('sm')]: {
                 transition: "transform 0.4s ease",
               }

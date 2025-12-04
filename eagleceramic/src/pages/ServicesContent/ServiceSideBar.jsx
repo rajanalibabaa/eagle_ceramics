@@ -19,7 +19,6 @@ import {
 import { styled, useTheme } from '@mui/material/styles'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-/* Styled components */
 const StyledSidebar = styled(Box)(({ theme }) => ({
   padding: { xs: 0, sm: '16px', md: '24px' },
   position: 'relative',
@@ -52,14 +51,15 @@ const SectionHeader = styled(Box)({
   marginBottom: '8px'
 })
 
-const CollectionItem = styled(FormControlLabel)(({ selected }) => ({
+const CollectionItem = styled(Box)(({ selected }) => ({
   display: 'flex',
   alignItems: 'center',
   margin: 0,
   padding: '8px 12px',
   borderRadius: 10,
   transition: 'all .3s',
-  '& .MuiTypography-root': {
+  gap: 1,
+  '& .labelText': {
     flex: 1,
     fontWeight: selected ? 600 : 500,
     whiteSpace: 'nowrap',
@@ -71,14 +71,15 @@ const CollectionItem = styled(FormControlLabel)(({ selected }) => ({
   }
 }))
 
-const VersionItem = styled(FormControlLabel)(({ selected }) => ({
+const VersionItem = styled(Box)(({ selected }) => ({
   display: 'flex',
   alignItems: 'center',
   margin: 0,
   padding: '6px 12px 6px 24px',
   borderRadius: 8,
   transition: 'all .3s',
-  '& .MuiTypography-root': {
+  gap: 1,
+  '& .labelText': {
     flex: 1,
     fontWeight: selected ? 600 : 400
   },
@@ -111,7 +112,6 @@ const SidebarWrapper = styled(Box)(({ theme }) => ({
   height: 'calc(100vh - 80px)'
 }))
 
-/* Main Component */
 export default function ServiceSideBar() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -119,14 +119,15 @@ export default function ServiceSideBar() {
   const { pathname } = useLocation()
   const [, , collectionKey, maybeVersion] = pathname.split('/')
   const [openCollections, setOpenCollections] = useState(true)
-  const [openSubVersions, setOpenSubVersions] = useState({})
   const [openSub, setOpenSub] = useState({})
+  const [openSubVersions, setOpenSubVersions] = useState({})
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const go = url => () => {
     setDrawerOpen(false)
     navigate(url)
   }
+
   const clearAll = () => {
     setDrawerOpen(false)
     navigate('/services')
@@ -191,15 +192,26 @@ export default function ServiceSideBar() {
         { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
       ]
     },
-    { label: 'Kitchen Sink',url: '/services/kitchen-sink', key: 'kitchen-sink', versions: [] }
+    {
+      label: 'Kitchen Sink',
+      key: 'kitchen-sink',
+      url: '/services/kitchen-sink',
+      versions: []
+    }
   ]
 
-  /* Sidebar content */
   const sidebarRef = useRef(null)
 
   const SidebarContent = (
     <StyledSidebar ref={sidebarRef}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          p: 2
+        }}
+      >
         <Typography
           sx={{
             fontSize: 20,
@@ -224,61 +236,44 @@ export default function ServiceSideBar() {
 
       <SectionHeader onClick={() => setOpenCollections(o => !o)}>
         <Typography sx={{ fontSize: 18, fontWeight: 700 }}>Products</Typography>
-        {openCollections ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        {openCollections ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
       </SectionHeader>
       <Divider sx={{ mb: 1, borderColor: 'rgba(0,0,0,0.1)' }} />
 
       <Collapse in={openCollections}>
         <Box>
           {collections.map(item => {
-            const hasVersions = item.versions?.length > 0
-
-            // NEW: derive checked & indeterminate states
-            const childMatches = hasVersions &&
-              item.versions.some(v => pathname.startsWith(v.url))
-
-            const allChildMatches = hasVersions &&
-              item.versions.every(v => pathname.startsWith(v.url))
-
+            const hasVersions = item.versions.length > 0
+            const childMatches = hasVersions && item.versions.some(v => pathname.startsWith(v.url))
             const isSelected = !hasVersions
-              ? (collectionKey === item.key)
+              ? collectionKey === item.key
               : childMatches
 
             return (
               <Box key={item.key} sx={{ mb: 1 }}>
-                <CollectionItem
-                  selected={isSelected}
-                  control={
-                   <Checkbox
-  size="small"
-  checked={isSelected}  
-  indeterminate={false}
-  sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
-  onChange={go(
-    hasVersions
-      ? item.versions[0].url
-      : item.url || '/services'
-  )}
-  onClick={e => e.stopPropagation()}
-/>
-
-                  }
-                  label={
-                    hasVersions ? (
-                      <Box
-                        onClick={() =>
-                          setOpenSub(prev => ({ ...prev, [item.key]: !prev[item.key] }))
-                        }
-                        sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
-                      >
-                        <Typography sx={{ flexGrow: 1 }}>{item.label}</Typography>
-                        {openSub[item.key] ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                      </Box>
-                    ) : (
-                      item.label
-                    )
-                  }
-                />
+                <CollectionItem selected={isSelected} onClick={e => e.stopPropagation()}>
+                  <Checkbox
+                    size="small"
+                    checked={isSelected}
+                    sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
+                    onChange={go(hasVersions ? item.versions[0].url : item.url || '/services')}
+                    onClick={e => e.stopPropagation()}
+                  />
+                  {hasVersions ? (
+                    <Box
+                      onClick={e => {
+                        e.stopPropagation()
+                        setOpenSub(prev => ({ ...prev, [item.key]: !prev[item.key] }))
+                      }}
+                      sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                    >
+                      <Typography className="labelText">{item.label}</Typography>
+                      {openSub[item.key] ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
+                    </Box>
+                  ) : (
+                    <Typography className="labelText">{item.label}</Typography>
+                  )}
+                </CollectionItem>
 
                 {hasVersions && (
                   <Collapse in={!!openSub[item.key]}>
@@ -286,57 +281,48 @@ export default function ServiceSideBar() {
                       {item.versions.map(v => {
                         const thisChecked = pathname.startsWith(v.url)
                         const hasSub = Array.isArray(v.subversions)
-                        const openThisSub = openSubVersions[v.label]
+                        const openThisSub = openSubVersions[v.label] || false
 
                         return (
                           <Box key={v.label} sx={{ mb: 0.5 }}>
-                            <VersionItem
-                              selected={thisChecked}
-                              control={
-                                <Checkbox
-                                  size="small"
-                                  checked={thisChecked}
-                                  sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
-                                  onChange={go(v.url)}
-                                  onClick={e => e.stopPropagation()}
-                                />
-                              }
-                              label={
-                                hasSub ? (
-                                  <Box
-                                    onClick={() =>
-                                      setOpenSubVersions(prev => ({
-                                        ...prev,
-                                        [v.label]: !prev[v.label]
-                                      }))
-                                    }
-                                    sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
-                                  >
-                                    <Typography sx={{ flexGrow: 1 }}>{v.label}</Typography>
-                                    {openThisSub ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-                                  </Box>
-                                ) : (
-                                  v.label
-                                )
-                              }
-                            />
+                            <VersionItem selected={thisChecked} onClick={e => e.stopPropagation()}>
+                              <Checkbox
+                                size="small"
+                                checked={thisChecked}
+                                sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
+                                onChange={go(v.url)}
+                                onClick={e => e.stopPropagation()}
+                              />
+                              {hasSub ? (
+                                <Box
+                                  onClick={e => {
+                                    e.stopPropagation()
+                                    setOpenSubVersions(prev => ({ ...prev, [v.label]: !prev[v.label] }))
+                                  }}
+                                  sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+                                >
+                                  <Typography className="labelText">{v.label}</Typography>
+                                  {openThisSub ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
+                                </Box>
+                              ) : (
+                                <Typography className="labelText">{v.label}</Typography>
+                              )}
+                            </VersionItem>
 
                             {hasSub && (
                               <Collapse in={openThisSub}>
                                 <Box sx={{ pl: 3 }}>
                                   {v.subversions.map(sv => (
-                                    <VersionItem
-                                      key={sv.label}
-                                      control={
-                                        <Checkbox
-                                          size="small"
-                                          checked={pathname === sv.url}
-                                          sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
-                                          onChange={go(sv.url)}
-                                        />
-                                      }
-                                      label={sv.label}
-                                    />
+                                    <VersionItem key={sv.label}>
+                                      <Checkbox
+                                        size="small"
+                                        checked={pathname === sv.url}
+                                        sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
+                                        onChange={go(sv.url)}
+                                        onClick={e => e.stopPropagation()}
+                                      />
+                                      <Typography className="labelText">{sv.label}</Typography>
+                                    </VersionItem>
                                   ))}
                                 </Box>
                               </Collapse>
@@ -355,33 +341,28 @@ export default function ServiceSideBar() {
     </StyledSidebar>
   )
 
-  /* Render */
   if (!isMobile) {
     return <SidebarWrapper>{SidebarContent}</SidebarWrapper>
   }
+
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const [footerVisible, setFooterVisible] = useState(false)
 
   useEffect(() => {
     if (!sidebarRef.current) return
-    const el = sidebarRef.current
     const obs = new IntersectionObserver(
-      entries => {
-        setSidebarVisible(!!entries[0].isIntersecting)
-      },
+      entries => setSidebarVisible(entries[0].isIntersecting),
       { threshold: 0.01 }
     )
-    obs.observe(el)
+    obs.observe(sidebarRef.current)
     return () => obs.disconnect()
-  }, [sidebarRef])
+  }, [])
 
   useEffect(() => {
     const footer = document.querySelector('footer')
     if (!footer) return
     const obs = new IntersectionObserver(
-      entries => {
-        setFooterVisible(!!entries[0].isIntersecting)
-      },
+      entries => setFooterVisible(entries[0].isIntersecting),
       { threshold: 0.05 }
     )
     obs.observe(footer)
@@ -391,29 +372,28 @@ export default function ServiceSideBar() {
   const showFab = sidebarVisible && !footerVisible
 
   return (
-    <>
-      {showFab && !drawerOpen && (
-  <Fab
-    variant="extended"
-    onClick={() => setDrawerOpen(true)}
-    sx={{
-      position: 'fixed',
-      bottom: 16,
-      left: '50%',
-      transform: 'translateX(-50%)',
-      zIndex: theme.zIndex.modal + 1,
-      color: '#c41f25',               
-      backgroundColor: '#fff',         
-      border: '1px solid #c41f25',     
-      '&:hover': {
-        backgroundColor: '#ffe5e6'     
-      }
-    }}
-  >
-    <FilterListIcon sx={{ mr: 1 }} /> Filters
-  </Fab>
-)}
-
+      <>
+        {showFab && !drawerOpen && (
+          <Fab
+            variant="extended"
+            onClick={() => setDrawerOpen(true)}
+            sx={{
+              position: 'fixed',
+              bottom: 16,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              zIndex: theme.zIndex.modal + 1,
+              color: '#c41f25',
+              backgroundColor: '#fff',
+              border: '1px solid #c41f25',
+              '&:hover': {
+                backgroundColor: '#ffe5e6'
+              }
+            }}
+          >
+            <FilterListIcon sx={{ mr: 1 }} /> Filters
+          </Fab>
+        )}
 
       <SwipeableDrawer
         anchor="bottom"

@@ -45,57 +45,51 @@ const DoubleCharge = () => {
       minHeight: "100vh",
       position: 'relative',
       overflow: 'hidden',
-      py: { xs: 4, md: 6 }
     }}>
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
         {/* Enhanced HERO HEADER */}
-         <Box
-                        sx={{
-                          position: "relative",
-                          textAlign: "center",
-                          mb: 8,
-                          pt: 4,
-                          pb: 4,
-                         
-                          backgroundImage: `url(${BackgroundImage})`,
-                          backgroundBlendMode: "overlay",
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                          borderRadius: "25px",
-                          
-                          overflow: "hidden",
-                          "::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: -2,
-                            left: -2,
-                            right: -2,
-                            bottom: -2,
-                            background: "linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.84))",
-                            zIndex: -1,
-                            animation: "glowBorder 3s ease-in-out infinite alternate",
-                          },
-                          animation: "floatHeader 6s ease-in-out infinite",
-                        }}
-                      >
-                        <Typography
-                          variant="h2"
-                          sx={{
-                            color: "#ffffffff",
-                            fontWeight: 800,
-                            textTransform: "uppercase",
-                            letterSpacing: 1,
-                            lineHeight: 1,
-                            mb: 2,
-                            whiteSpace: "nowrap",
-                            fontSize: { xs: "2rem", sm: "3rem", md: "3.7rem", lg: "4.5rem" },
-                            // textShadow: `
-                            //   0 0 10px rgba(255,215,0,0.8),
-                            //   0 2px 4px rgba(0,0,0,0.8)
-                            // `,
-                            fontFamily: "'Montserrat', 'Roboto', sans-serif",
-                          }}
-                        >
+        <Box
+                                   sx={{
+                                    position: "relative",
+                                    textAlign: "center",
+                                    mb: {xs: 0, sm: 4},
+                                    pt: 1,
+                                    pb: {xs: 0, sm: 4},
+                                  
+                                    backgroundImage: {
+                                      xs: "none",               
+                                      sm: `url(${BackgroundImage})`, 
+                                    },
+                                    backgroundBlendMode: "overlay",
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    borderRadius: "25px",
+                                  
+                                    overflow: "hidden",
+                                    "::before": {
+                                      content: '""',
+                                      position: "absolute",
+                                      top: -2,
+                                      left: -2,
+                                      right: -2,
+                                      bottom: -2,
+                                      background: {xs: "none", sm:"linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.84))"},
+                                      zIndex: -1,
+                                      animation: "glowBorder 3s ease-in-out infinite alternate",
+                                    },
+                                    animation: "floatHeader 6s ease-in-out infinite",
+                                  }}
+                                  
+                                  >
+                                           <Typography
+                                                variant="h3"
+                                                sx={{
+                                                 mt:{xs: 0, sm: 2},
+                                                  fontWeight: 700,
+                                                  fontSize: { xs: "2.8rem", sm: "3.5rem" },
+                                                  color: { xs: "black", sm: "white" },
+                                                }}
+                                              >
             DOUBLE CHARGE TILES
           </Typography>
           <Typography
@@ -103,7 +97,7 @@ const DoubleCharge = () => {
             sx={{
               color: "#E8F4F8",
               fontWeight: 400,
-              mb: 2,
+              mb: 1,
               px: 2,
               fontSize: { xs: "0.875rem", sm: "1rem", md: "1.25rem" },
               textShadow: "0 2px 4px rgba(0,0,0,0.8)",

@@ -128,6 +128,8 @@ const ElevationTiles300x600 = () => {
                                      <Typography
                                           variant="h1"
                                           sx={{
+                                                    mt:{xs:0, sm:2},
+
                                             fontWeight: 700,
                                             fontSize: { xs: "2.8rem", sm: "3.5rem" },
                                             color: { xs: "black", sm: "white" },
@@ -139,7 +141,7 @@ const ElevationTiles300x600 = () => {
                                              variant="body1"
                                              sx={{
                                                mt: 1,
-                                               mb:3,
+                                               mb:1,
                                                fontSize: { xs: "0.95rem", sm: "1.2rem" },
                                                color: { xs: "black", sm: "white" }, 
                                              }}

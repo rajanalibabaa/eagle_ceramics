@@ -49,51 +49,51 @@ const CoolRoofTiles600x600 = () => {
             minHeight: "100vh",
             position: 'relative',
             overflow: 'hidden',
-            py: { xs: 4, md: 6 }
         }}>
             <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
                 {/* Enhanced HERO HEADER */}
                   <Box
-                                                                  sx={{
-                                                                   position: "relative",
-                                                                   textAlign: "center",
-                                                                   mb: {xs: 0, sm: 4},
-                                                                   pt: 3,
-                                                                   pb: {xs: 0, sm: 4},
-                                                                 
-                                                                   backgroundImage: {
-                                                                     xs: "none",               
-                                                                     sm: `url(${BackgroundImage})`, 
-                                                                   },
-                                                                   backgroundBlendMode: "overlay",
-                                                                   backgroundSize: "cover",
-                                                                   backgroundPosition: "center",
-                                                                   borderRadius: "25px",
-                                                                 
-                                                                   overflow: "hidden",
-                                                                   "::before": {
-                                                                     content: '""',
-                                                                     position: "absolute",
-                                                                     top: -2,
-                                                                     left: -2,
-                                                                     right: -2,
-                                                                     bottom: -2,
-                                                                     background: {xs: "none", sm:"linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.84))"},
-                                                                     zIndex: -1,
-                                                                     animation: "glowBorder 3s ease-in-out infinite alternate",
-                                                                   },
-                                                                   animation: "floatHeader 6s ease-in-out infinite",
-                                                                 }}
-                                                                 
-                                                                 >
-                                                                          <Typography
-                                                                               variant="h3"
-                                                                               sx={{
-                                                                                 fontWeight: 700,
-                                                                                 fontSize: { xs: "2.8rem", sm: "3.5rem" },
-                                                                                 color: { xs: "black", sm: "white" },
-                                                                               }}
-                                                                             >
+                                   sx={{
+                                    position: "relative",
+                                    textAlign: "center",
+                                    mb: {xs: 0, sm: 4},
+                                    pt: 1,
+                                    pb: {xs: 0, sm: 4},
+                                  
+                                    backgroundImage: {
+                                      xs: "none",               
+                                      sm: `url(${BackgroundImage})`, 
+                                    },
+                                    backgroundBlendMode: "overlay",
+                                    backgroundSize: "cover",
+                                    backgroundPosition: "center",
+                                    borderRadius: "25px",
+                                  
+                                    overflow: "hidden",
+                                    "::before": {
+                                      content: '""',
+                                      position: "absolute",
+                                      top: -2,
+                                      left: -2,
+                                      right: -2,
+                                      bottom: -2,
+                                      background: {xs: "none", sm:"linear-gradient(45deg, transparent, rgba(0, 0, 0, 0.84))"},
+                                      zIndex: -1,
+                                      animation: "glowBorder 3s ease-in-out infinite alternate",
+                                    },
+                                    animation: "floatHeader 6s ease-in-out infinite",
+                                  }}
+                                  
+                                  >
+                                           <Typography
+                                                variant="h3"
+                                                sx={{
+                                                 mt:{xs: 0, sm: 2},
+                                                  fontWeight: 700,
+                                                  fontSize: { xs: "2.8rem", sm: "3.5rem" },
+                                                  color: { xs: "black", sm: "white" },
+                                                }}
+                                              >
                         COOL ROOF TILES 600X600
                     </Typography>
                     {/* <Box

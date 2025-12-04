@@ -53,7 +53,6 @@ const MattCollection = () => {
       minHeight: "100vh",
       position: 'relative',
       overflow: 'hidden',
-      py: { xs: 4, md: 6 }
     }}>
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
         {/* Enhanced HERO HEADER */}
@@ -93,6 +92,7 @@ const MattCollection = () => {
                                     <Typography
                                          variant="h3"
                                          sx={{
+                                          mt:{xs: 0, sm: 2},
                                            fontWeight: 700,
                                            fontSize: { xs: "2.8rem", sm: "3.5rem" },
                                            color: { xs: "black", sm: "white" },
