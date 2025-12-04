@@ -107,7 +107,6 @@ const GlossyCollection = () => {
       minHeight: "100vh",
       position: 'relative',
       overflow: 'hidden',
-      py: { xs: 4, md: 6 }
     }}>
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
         {/* Enhanced HERO HEADER */}
@@ -148,6 +147,7 @@ const GlossyCollection = () => {
                                  variant="h3"
                                  sx={{
                                    fontWeight: 700,
+                                   mt:{xs: 0, sm: 2},
                                    fontSize: { xs: "2.8rem", sm: "3.5rem" },
                                    color: { xs: "black", sm: "white" },
                                  }}

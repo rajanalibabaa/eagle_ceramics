@@ -1,8 +1,14 @@
 import React, { Suspense } from "react";
 import "./App.css";
+import { useState, useEffect } from 'react';
+import { Fab } from "@mui/material";
 import ScrollToTop from "./ScrollToTop";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+
+import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
+import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
+
 import ElevationTiles300x450 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x450.jsx";
 import ElevationTiles300x600 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x600.jsx";
 import CoolRoofTiles9MM from './pages/ServicesContent/CoolRoofTiles/CoolRoofTiles9MM.jsx'
@@ -62,6 +68,73 @@ const theme = createTheme({
     fontFamily: "Arial, Helvetica, sans-serif;",
   },
 });
+
+const colors = {
+  primary: "#c21f24",
+  secondary: "#c21f24",
+};
+
+const SmartScrollButton = () => {
+  const [scrollDirection, setScrollDirection] = useState("up");
+
+ useEffect(() => {
+  const handleScroll = () => {
+    const scrollY = window.scrollY;
+    const windowHeight = window.innerHeight;
+    const fullHeight = document.documentElement.scrollHeight;
+
+    const isAtTop = scrollY <= 50;
+    const isAtBottom = scrollY + windowHeight >= fullHeight - 50;
+
+    if (isAtBottom) setScrollDirection("up");     
+    else if (isAtTop) setScrollDirection("down");
+    else setScrollDirection("up");                
+  };
+
+  window.addEventListener("scroll", handleScroll);
+  handleScroll();
+  return () => window.removeEventListener("scroll", handleScroll);
+}, []);
+
+
+  const handleScrollClick = () => {
+    if (scrollDirection === "up") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+  };
+   return (
+    <Fab
+      onClick={handleScrollClick}
+      size="medium"
+      aria-label="Scroll button"
+      sx={{
+        position: "fixed",
+        bottom: { xs: 90, sm: 360, md: 25 },
+        right: { xs: 5, sm: 15, md: 25 },
+        background: `#0097b1`,
+        color: "#fff",
+        boxShadow: `0 4px 25px ${colors.primary}55`,
+        "&:hover": {
+          transform: "translateY(-4px)",
+          background: `linear-gradient(135deg, ${colors.secondary}, ${colors.primary})`,
+        },
+        transition: "all 0.3s ease",
+        zIndex: 9999,
+        width: { xs: 54, sm: 58, md: 52 },
+        height: { xs: 54, sm: 58, md: 52 },
+      }}
+    >
+      {scrollDirection === "up" ? (
+        <KeyboardDoubleArrowUpIcon sx={{ fontSize: { xs: 20, sm: 22, md: 24 } }} />
+      ) : (
+        <KeyboardDoubleArrowDownIcon sx={{ fontSize: { xs: 20, sm: 22, md: 24 } }} />
+      )}
+    </Fab>
+  );
+};
+
 
 function App() {
   return (
@@ -129,6 +202,7 @@ function App() {
           <Footer />
         </Suspense>
       </Router>
+        <SmartScrollButton />
     </ThemeProvider>
   );
 }

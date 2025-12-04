@@ -190,6 +190,7 @@ const Walltiles = () => {
     <Typography
       variant="h1"
       sx={{
+        mt:{xs:0, sm:3},
         fontWeight: 700,
         fontSize: { xs: "2.8rem", sm: "3.5rem" },
         color: { xs: "black", sm: "white" },
