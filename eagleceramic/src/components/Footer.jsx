@@ -396,7 +396,7 @@ function Footer() {
               <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>
                 Phone: +1 (555) 123-4567
               </Typography>
-              <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>
+              <Typography variant="body2" sx={{ color: 'white', opacity: 0.9 }}>  
                 Address: Shop No 13,Second
 Floor,Survey No 63
 Paiki1/paiki2, Plot No 1 Paiki
