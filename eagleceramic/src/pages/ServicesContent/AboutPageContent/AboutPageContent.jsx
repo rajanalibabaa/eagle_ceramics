@@ -34,7 +34,18 @@ const AboutPageContent = () => {
     <Box sx={{ background: '#ffffff', color: '#0f172a', overflow: 'hidden' }}>
 
       {/* STATS BAR - Premium Horizontal */}
-      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 1, md: 3, sm: 4 }, px: { sm: 6 }, position: 'absolute', marginTop: { xs: 67, sm: 98, md: 65 }, marginLeft: { sm: 13 }, zIndex: 3, mx: { xs: 3, md: "14%" }, borderRadius: 5 }}>
+      <Box sx={{
+        bgcolor: '#ffffffff',
+        py: { xs: 1, md: 3, sm: 4  },
+        px: { sm: 6 },
+        position: 'absolute',
+        marginTop: { xs: 67, sm: 98, md: 73,lg:65 },
+        zIndex: 3,
+        left: '50%', // Move to the center horizontally
+        transform: 'translateX(-50%)', // Adjust back by half of its width
+        width: { xs: 'calc(100% - 24px)', md: '72%' }, // Control the width
+        borderRadius: 5
+      }}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 12 }} justifyContent='center' alignItems='center' textAlign="center">
             {[
@@ -52,7 +63,7 @@ const AboutPageContent = () => {
                   <Typography variant="h3" sx={{
                     color: 'black',
                     fontWeight: 800,
-                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '2rem' },
                     // mt:5,
                     pb: { xs: 0, md: 3 }
                   }}>
@@ -98,7 +109,7 @@ const AboutPageContent = () => {
                 sx={{ textAlign: 'center', px: { xs: 2, sm: 3, md: 0 } }}
               >
                 <Typography variant="h1" sx={{
-                  fontSize: { xs: '2rem', sm: '3.5rem', md: '4rem', lg: '5rem' },
+                  fontSize: { xs: '2rem', sm: '3.5rem', md: '4rem', lg: '4rem' },
                   fontWeight: 900,
                   lineHeight: 1.2,
                   color: '#ffffff',
@@ -107,11 +118,11 @@ const AboutPageContent = () => {
                   textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
                   whiteSpace: { xs: 'normal', md: 'nowrap' }
                 }}>
-                  Eagle & Gaurada <Box component="span" sx={{ color: '#2ab81aff', display: 'inline' }}>Ceramics</Box>
+                  Eagle & Gaurada Ceramics
                 </Typography>
 
                 <Typography variant="h6" sx={{
-                  color: '#2ab81aff',
+                  color: '#a5b1a4ff',
                   fontWeight: 700,
                   letterSpacing: { xs: '0.1em', md: '0.2em' },
                   mb: { xs: 3, md: 4 },
@@ -234,7 +245,7 @@ const AboutPageContent = () => {
                 <Typography variant="h2" sx={{
                   fontWeight: 800,
                   mb: { xs: 3, md: 4 },
-                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.1rem' },
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.1rem', lg: '2.7rem' },
                   lineHeight: 1.2,
                   whiteSpace: { xs: 'normal', md: 'nowrap' }
                 }}>
@@ -469,7 +480,7 @@ const AboutPageContent = () => {
               variant="h3"
               fontWeight="bold"
               sx={{
-                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.5rem', lg: '4rem' },
+                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.2rem', lg: '3.5rem' },
                 color: '#0f172a',
                 maxWidth: '900px',
                 mx: 'auto',
@@ -492,7 +503,8 @@ const AboutPageContent = () => {
                 mx: 'auto',
                 fontSize: { xs: '1rem', md: '1.25rem' },
                 fontWeight: 400,
-                lineHeight: 1.6
+                lineHeight: 1.6,
+                mt: '2%'
               }}
             >
               Building lasting relationships through excellence, reliability, and innovation
@@ -520,13 +532,14 @@ const AboutPageContent = () => {
             }
           }}>
             <Grid container
-              spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}
+              spacing={{ xs: 2, sm: 3, md: 4, lg: 8 }}
               justifyContent="center"
               sx={{
                 flexWrap: { xs: 'nowrap', sm: 'wrap' }, // No wrap on mobile for horizontal scroll
                 justifyContent: { xs: 'flex-start', sm: 'center' }, // Start from left on mobile
                 width: { xs: 'max-content', sm: '100%' }, // Make grid wider than container on mobile
                 mx: { xs: 'auto', sm: 0 },
+                my: { lg: -6 },
                 px: { xs: 2, sm: 0 }, // Add padding on mobile for better scroll
               }}
             >
@@ -540,32 +553,36 @@ const AboutPageContent = () => {
                 {
                   title: "On-Time Delivery",
                   image: OnTimeDelivery,
-                  color: '#2563eb',
-                  gradient: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)'
+                  color: '#dc2626',
+                  gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
                 },
                 {
                   title: "Consistent Supply",
                   image: ConsistentSupply,
-                  color: '#059669',
-                  gradient: 'linear-gradient(135deg, #059669 0%, #10b981 100%)'
+                  color: '#dc2626',
+                  gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
+
                 },
                 {
                   title: "Integrity & Transparency",
                   image: IntegrityTransparency,
-                  color: '#7c3aed',
-                  gradient: 'linear-gradient(135deg, #7c3aed 0%, #8b5cf6 100%)'
+                  color: '#dc2626',
+                  gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
+
                 },
                 {
                   title: "Customer-First Approach",
                   image: CustomerFirstApproach,
-                  color: '#d97706',
-                  gradient: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)'
+                  color: '#dc2626',
+                  gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
+
                 },
                 {
                   title: "Timely Fulfilment",
                   image: TimelyFulfilment,
-                  color: '#0d9488',
-                  gradient: 'linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)'
+                  color: '#dc2626',
+                  gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
+
                 }
               ].map((item, i) => (
                 <Grid item
@@ -746,7 +763,7 @@ const AboutPageContent = () => {
                           lg: '20px'    // Desktop (unchanged)
                         },
                         opacity: 0.3
-                      }} />       
+                      }} />
 
                       {/* Icon Container with Enhanced Design */}
                       <Box className="icon-container"
@@ -1049,7 +1066,7 @@ const AboutPageContent = () => {
                 fontWeight: 600,
                 letterSpacing: { xs: '0.05em', md: '0.1em' },
                 textTransform: 'uppercase',
-                fontSize: { xs: '0.875rem', md: '1rem' }
+                fontSize: { xs: '0.875rem', md: '1rem', lg: '1.5rem' }
               }}>
                 Our Purpose
               </Typography>
@@ -1062,7 +1079,7 @@ const AboutPageContent = () => {
             >
               <Typography variant="h2" sx={{
                 fontWeight: 800,
-                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '3.5rem' },
+                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '2.9rem' },
                 lineHeight: 1.2,
                 color: '#0f172a',
                 px: { xs: 1, sm: 0 }
