@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Container, Typography, Box, Grid, Button, Stack, Divider
 } from '@mui/material';
@@ -27,25 +27,43 @@ import IntegrityTransparency from '../../../assets/AboutImages/IntegrityTranspar
 import CustomerFirstApproach from '../../../assets/AboutImages/CustomerFirstApproach.jpg'
 import QualityCommitment from '../../../assets/AboutImages/QualityCommitment.jpeg'
 import TimelyFulfilment from '../../../assets/AboutImages/TimelyFulfilment.jpg'
+import FAQSection from '../../../components/Faqsections';
 
 const AboutPageContent = () => {
+  const cardRefs = useRef([]);
+  const [currentCard, setCurrentCard] = useState(0);
+  const enhancedCardsCount = 6; // number of items in the enhanced cards grid
+  const enhancedGridRef = useRef(null);
+
+  useEffect(() => {
+    if (!cardRefs.current) return;
+    const rootEl = enhancedGridRef.current || null; // use the horizontal scroll container when available
+    const options = { root: rootEl, rootMargin: '0px', threshold: 0.5 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const idx = Number(entry.target.dataset.index);
+          if (!Number.isNaN(idx)) setCurrentCard(idx);
+        }
+      });
+    }, options);
+
+    cardRefs.current.forEach((el) => { if (el) observer.observe(el); });
+    return () => observer.disconnect();
+  }, [enhancedGridRef.current]);
+
+  const scrollToCard = (index) => {
+    const el = cardRefs.current[index];
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setCurrentCard(index);
+  };
 
   return (
+    <>
     <Box sx={{ background: '#ffffff', color: '#0f172a', overflow: 'hidden' }}>
 
       {/* STATS BAR - Premium Horizontal */}
-      <Box sx={{
-        bgcolor: '#ffffffff',
-        py: { xs: 1, md: 3, sm: 4  },
-        px: { sm: 6 },
-        position: 'absolute',
-        marginTop: { xs: 67, sm: 98, md: 73,lg:65 },
-        zIndex: 3,
-        left: '50%', // Move to the center horizontally
-        transform: 'translateX(-50%)', // Adjust back by half of its width
-        width: { xs: 'calc(100% - 24px)', md: '72%' }, // Control the width
-        borderRadius: 5
-      }}>
+      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 1, md: 3, sm: 4 }, px: { sm: 6 }, position: 'absolute', marginTop: { xs: 67, sm: 98, md: 65 }, marginLeft: { sm: 13 }, zIndex: 3, mx: { xs: 3, md: "14%" }, borderRadius: 5 }}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 12 }} justifyContent='center' alignItems='center' textAlign="center">
             {[
@@ -63,7 +81,7 @@ const AboutPageContent = () => {
                   <Typography variant="h3" sx={{
                     color: 'black',
                     fontWeight: 800,
-                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '2rem' },
+                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
                     // mt:5,
                     pb: { xs: 0, md: 3 }
                   }}>
@@ -109,7 +127,7 @@ const AboutPageContent = () => {
                 sx={{ textAlign: 'center', px: { xs: 2, sm: 3, md: 0 } }}
               >
                 <Typography variant="h1" sx={{
-                  fontSize: { xs: '2rem', sm: '3.5rem', md: '4rem', lg: '4rem' },
+                  fontSize: { xs: '2rem', sm: '3.5rem', md: '4rem', lg: '5rem' },
                   fontWeight: 900,
                   lineHeight: 1.2,
                   color: '#ffffff',
@@ -118,11 +136,11 @@ const AboutPageContent = () => {
                   textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
                   whiteSpace: { xs: 'normal', md: 'nowrap' }
                 }}>
-                  Eagle & Gaurada Ceramics
+                  Eagle & Gaurada <Box component="span" sx={{ color: '#2ab81aff', display: 'inline' }}>Ceramics</Box>
                 </Typography>
 
                 <Typography variant="h6" sx={{
-                  color: '#a5b1a4ff',
+                  color: '#2ab81aff',
                   fontWeight: 700,
                   letterSpacing: { xs: '0.1em', md: '0.2em' },
                   mb: { xs: 3, md: 4 },
@@ -245,7 +263,7 @@ const AboutPageContent = () => {
                 <Typography variant="h2" sx={{
                   fontWeight: 800,
                   mb: { xs: 3, md: 4 },
-                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.1rem', lg: '2.7rem' },
+                  fontSize: { xs: '2rem', sm: '2.5rem', md: '3.1rem' },
                   lineHeight: 1.2,
                   whiteSpace: { xs: 'normal', md: 'nowrap' }
                 }}>
@@ -480,7 +498,7 @@ const AboutPageContent = () => {
               variant="h3"
               fontWeight="bold"
               sx={{
-                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.2rem', lg: '3.5rem' },
+                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.5rem', lg: '4rem' },
                 color: '#0f172a',
                 maxWidth: '900px',
                 mx: 'auto',
@@ -503,8 +521,7 @@ const AboutPageContent = () => {
                 mx: 'auto',
                 fontSize: { xs: '1rem', md: '1.25rem' },
                 fontWeight: 400,
-                lineHeight: 1.6,
-                mt: '2%'
+                lineHeight: 1.6
               }}
             >
               Building lasting relationships through excellence, reliability, and innovation
@@ -512,7 +529,7 @@ const AboutPageContent = () => {
           </MotionBox>
 
           {/* Enhanced Cards Grid */}
-          <Box sx={{
+          <Box ref={enhancedGridRef} sx={{
             width: '100%',
             py: { xs: 2, sm: 3, md: 4 },
             overflowX: { xs: 'auto', sm: 'visible' }, // Enable horizontal scroll on mobile
@@ -532,14 +549,13 @@ const AboutPageContent = () => {
             }
           }}>
             <Grid container
-              spacing={{ xs: 2, sm: 3, md: 4, lg: 8 }}
+              spacing={{ xs: 2, sm: 3, md: 4, lg: 5 }}
               justifyContent="center"
               sx={{
                 flexWrap: { xs: 'nowrap', sm: 'wrap' }, // No wrap on mobile for horizontal scroll
                 justifyContent: { xs: 'flex-start', sm: 'center' }, // Start from left on mobile
                 width: { xs: 'max-content', sm: '100%' }, // Make grid wider than container on mobile
                 mx: { xs: 'auto', sm: 0 },
-                my: { lg: -6 },
                 px: { xs: 2, sm: 0 }, // Add padding on mobile for better scroll
               }}
             >
@@ -561,28 +577,24 @@ const AboutPageContent = () => {
                   image: ConsistentSupply,
                   color: '#dc2626',
                   gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
-
                 },
                 {
                   title: "Integrity & Transparency",
                   image: IntegrityTransparency,
                   color: '#dc2626',
                   gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
-
                 },
                 {
                   title: "Customer-First Approach",
                   image: CustomerFirstApproach,
                   color: '#dc2626',
                   gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
-
                 },
                 {
                   title: "Timely Fulfilment",
                   image: TimelyFulfilment,
                   color: '#dc2626',
                   gradient: 'linear-gradient(135deg, #dc2626 0%, #ef4444 100%)'
-
                 }
               ].map((item, i) => (
                 <Grid item
@@ -590,6 +602,8 @@ const AboutPageContent = () => {
                   sm={6}
                   md={4}
                   key={i}
+                  data-index={i}
+                  ref={(el) => (cardRefs.current[i] = el)}
                   sx={{
                     flex: { xs: '0 0 auto', sm: '1 0 auto' }, // Don't shrink on mobile
                     width: { xs: '280px', sm: 'auto' }, // Fixed width on mobile for scrolling
@@ -763,7 +777,7 @@ const AboutPageContent = () => {
                           lg: '20px'    // Desktop (unchanged)
                         },
                         opacity: 0.3
-                      }} />
+                      }} />       
 
                       {/* Icon Container with Enhanced Design */}
                       <Box className="icon-container"
@@ -951,6 +965,29 @@ const AboutPageContent = () => {
             </Grid>
           </Box>
 
+          {/* Mobile dots navigation for Enhanced Cards Grid */}
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, justifyContent: 'center', mt: 3, pb: 1 }}>
+            {Array.from({ length: enhancedCardsCount }).map((_, index) => (
+              <Box
+                key={index}
+                sx={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: '50%',
+                  mx: 1,
+                  bgcolor: index === currentCard ? '#dc2626' : '#ccc',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.2)',
+                    bgcolor: index === currentCard ? '#dc2626' : '#999'
+                  }
+                }}
+                onClick={() => scrollToCard(index)}
+              />
+            ))}
+          </Box>
+
           {/* Call to Action Section */}
           <MotionBox
             initial={{ opacity: 0, y: 30 }}
@@ -972,7 +1009,7 @@ const AboutPageContent = () => {
             <Typography variant="h4" fontWeight="bold" sx={{
               color: '#0f172a',
               mb: 2,
-              background: 'linear-gradient(135deg, #dc2626 0%, #2563eb 100%)',
+              background: '#010000ff',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
             }}>
@@ -1066,7 +1103,7 @@ const AboutPageContent = () => {
                 fontWeight: 600,
                 letterSpacing: { xs: '0.05em', md: '0.1em' },
                 textTransform: 'uppercase',
-                fontSize: { xs: '0.875rem', md: '1rem', lg: '1.5rem' }
+                fontSize: { xs: '0.875rem', md: '1rem' }
               }}>
                 Our Purpose
               </Typography>
@@ -1079,7 +1116,7 @@ const AboutPageContent = () => {
             >
               <Typography variant="h2" sx={{
                 fontWeight: 800,
-                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '2.9rem' },
+                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '3.5rem' },
                 lineHeight: 1.2,
                 color: '#0f172a',
                 px: { xs: 1, sm: 0 }
@@ -1213,6 +1250,10 @@ const AboutPageContent = () => {
         </Container>
       </Box>
     </Box>
+    <>
+    <FAQSection />
+    </>
+    </>
   );
 };
 
