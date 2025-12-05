@@ -245,7 +245,7 @@ const ContactUs = () => {
             mb: 4,
             px: 2
           }}
-         >
+        >
           {/* Scroll Container for Mobile/Tablet */}
           <Box
             ref={scrollContainerRef}
@@ -462,10 +462,10 @@ const ContactUs = () => {
                         }
                       }}
                     >
-                      <span style={{color: '#010000ff' }}>Shop No 13, Second Floor,</span>
-                      <span style={{color: '#010000ff' }}>Survey No 63 Paiki1/paiki2,</span>
-                      <span style={{color: '#010000ff' }}>Plot No 1 Paiki Prabhat Chamber,</span>
-                      <span style={{color: '#010000ff' }}>Halvad Road, Mahendranagar, Morbi,</span>
+                      <span style={{ color: '#010000ff' }}>Shop No 13, Second Floor,</span>
+                      <span style={{ color: '#010000ff' }}>Survey No 63 Paiki1/paiki2,</span>
+                      <span style={{ color: '#010000ff' }}>Plot No 1 Paiki Prabhat Chamber,</span>
+                      <span style={{ color: '#010000ff' }}>Halvad Road, Mahendranagar, Morbi,</span>
                       <span style={{ fontWeight: 600, color: '#dc2626', fontSize: '0.9rem' }}>
                         MORBI-363641, GUJARAT-INDIA
                       </span>
@@ -484,7 +484,7 @@ const ContactUs = () => {
                       {card.content}
                     </Typography>
                   )}
-                </Box>    
+                </Box>
               </Box>
             ))}
           </Box>
@@ -853,7 +853,7 @@ const ContactUs = () => {
                   fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem', lg: '2.75rem' }
                 }}
               >
-                Don't Hesitate To Contact<br />With Us For Any<br/> Kind Of<br />Information
+                Don't Hesitate To Contact<br />With Us For Any<br /> Kind Of<br />Information
               </Typography>
               <Typography
                 variant="body1"
@@ -902,6 +902,21 @@ const ContactUs = () => {
                   component="form"
                   onSubmit={handleSubmit}
                 >
+                  <Typography
+                    variant="h4"
+                    fontWeight={700}
+                    mb={3}
+                    sx={{
+                      background: "#050608",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      textAlign: "center",
+                      fontSize: { xs: "1.5rem", sm: "1.75rem" },
+                    }}
+                  >
+                    Get Expert Consultation
+                  </Typography>
                   <Grid container spacing={2}>
                     <Grid item xs={12} sm={6} sx={{ width: { xs: '100%' } }}>
                       <TextField
@@ -963,10 +978,10 @@ const ContactUs = () => {
                         endIcon={!loading && <Send />}
                         disabled={loading}
                         sx={{
-                          bgcolor: '#00b0ff',
+                          bgcolor: '#dc2626',
                           py: 1.8,
                           fontWeight: 'bold',
-                          '&:hover': { bgcolor: '#0095d8' },
+                          '&:hover': { bgcolor: '#d23636ff' },
                           width: { xs: '100%', md: 'auto' },
                           ml: { xs: 0, md: 0 }
                         }}
