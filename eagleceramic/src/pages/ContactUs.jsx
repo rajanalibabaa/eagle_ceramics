@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -9,8 +9,6 @@ import {
   Card,
   useTheme,
   IconButton,
-  Snackbar,
-  Alert,
 } from '@mui/material';
 import {
   Phone,
@@ -20,10 +18,11 @@ import {
   ChevronLeft,
   ChevronRight,
 } from '@mui/icons-material';
-import HeadingImg from '../assets/ParkingTiles/PunchCollection1.jpg';
+import HeadingImg from '../assets/ContactUsBackground.jpg';
 import OurClients from '../components/OurClients.jsx';
 import Testimonials from '../components/Testimonials.jsx';
 import FAQSection from '../components/Faqsections.jsx';
+import { color } from 'framer-motion';
 
 const ContactUs = () => {
   const theme = useTheme();
@@ -39,6 +38,22 @@ const ContactUs = () => {
   const scrollContainerRef = useRef(null);
   const [currentCard, setCurrentCard] = useState(0);
 
+  // Handle scroll events for mobile cards
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      const scrollLeft = container.scrollLeft;
+      const cardWidth = container.offsetWidth;
+      const newCard = Math.round(scrollLeft / cardWidth);
+      setCurrentCard(newCard);
+    };
+
+    container.addEventListener('scroll', handleScroll);
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -46,7 +61,7 @@ const ContactUs = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     // Validate required fields
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.message) {
       alert('Please fill in all required fields');
@@ -81,29 +96,29 @@ const ContactUs = () => {
       method: 'POST',
       body: submissionData,
     })
-    .then(response => {
-      if (response.ok) {
-        console.log('Contact form submitted successfully');
-        // Reset form
-        setFormData({
-          firstName: '',
-          lastName: '',
-          email: '',
-          subject: '',
-          message: ''
-        });
-      } else {
-        console.error('Form submission failed');
-        alert('Failed to submit form. Please try again or contact us directly.');
-      }
-    })
-    .catch(error => {
-      console.error('Error submitting form:', error);
-      alert('Network error. Please check your connection and try again.');
-    })
-    .finally(() => {
-      setLoading(false);
-    });
+      .then(response => {
+        if (response.ok) {
+          console.log('Contact form submitted successfully');
+          // Reset form
+          setFormData({
+            firstName: '',
+            lastName: '',
+            email: '',
+            subject: '',
+            message: ''
+          });
+        } else {
+          console.error('Form submission failed');
+          alert('Failed to submit form. Please try again or contact us directly.');
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+        alert('Network error. Please check your connection and try again.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
   const closePopup = () => {
@@ -114,8 +129,10 @@ const ContactUs = () => {
     {
       icon: <LocationOn />,
       title: "Address",
-      content: "Shop No 13, Second Floor, Survey No 63 Paiki1/paiki2, Plot No 1 Paiki Prabhat Chamber, Halvad Road, Mahendranagar, Morbi MORBI-363641, GUJARAT-INDIA",
-      bg: "#3f464dff"
+      content: `Shop No 13, Second Floor, Survey No 63 Paiki1/paiki2,
+       Plot No 1 Paiki Prabhat Chamber, Halvad Road, Mahendranagar,
+        Morbi MORBI-363641, GUJARAT-INDIA`,
+      bg: "#9c9a9aff"
     },
     {
       icon: <Phone />,
@@ -124,13 +141,13 @@ const ContactUs = () => {
         { href: "tel:+919586200000", text: "+91 95862 00000" },
         { href: "tel:+919099000000", text: "+91 90990 00000" }
       ],
-      bg: "#30363bff"
+      bg: "#b8b9b6ff",
     },
     {
       icon: <Email />,
       title: "Email",
       content: { href: "mailto:info@eaglesceramics.net", text: "info@eaglesceramics.net" },
-      bg: "#3f464dff"
+      bg: "#9c9a9aff"
     }
   ];
 
@@ -138,7 +155,10 @@ const ContactUs = () => {
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
       const cardWidth = container.offsetWidth;
-      container.scrollLeft -= cardWidth;
+      container.scrollTo({
+        left: container.scrollLeft - cardWidth,
+        behavior: 'smooth'
+      });
       setCurrentCard(prev => Math.max(0, prev - 1));
     }
   };
@@ -147,8 +167,23 @@ const ContactUs = () => {
     if (scrollContainerRef.current) {
       const container = scrollContainerRef.current;
       const cardWidth = container.offsetWidth;
-      container.scrollLeft += cardWidth;
+      container.scrollTo({
+        left: container.scrollLeft + cardWidth,
+        behavior: 'smooth'
+      });
       setCurrentCard(prev => Math.min(cards.length - 1, prev + 1));
+    }
+  };
+
+  const scrollToCard = (index) => {
+    if (scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const cardWidth = container.offsetWidth;
+      container.scrollTo({
+        left: index * cardWidth,
+        behavior: 'smooth'
+      });
+      setCurrentCard(index);
     }
   };
 
@@ -159,11 +194,11 @@ const ContactUs = () => {
         {/* Hero Section */}
         <Box
           sx={{
-            backgroundImage: `linear-gradient(rgba(82, 61, 61, 0.7), rgba(60, 43, 43, 0.75)), url(${HeadingImg})`,
+            backgroundImage: ` linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(${HeadingImg})`,
             backgroundSize: 'cover',
-            backgroundPosition: 'center',
+            backgroundPosition: 'bottom',
             color: 'white',
-            py: { xs: 10, sm: 11, md: 12, lg: 14 },
+            py: { xs: 6, sm: 12, md: 12, lg: 18 },
             textAlign: 'center'
           }}
         >
@@ -174,11 +209,12 @@ const ContactUs = () => {
               sx={{
                 fontWeight: 'bold',
                 fontSize: {
-                  xs: '3rem',
-                  sm: '3.8rem',
+                  xs: '2.5rem',
+                  sm: '3rem',
                   md: '3.5rem',
                   lg: '4.5rem'
-                }
+                },
+                color: 'whitesmoke'
               }}
             >
               Contact Us
@@ -191,7 +227,8 @@ const ContactUs = () => {
                 maxWidth: 700,
                 mx: 'auto',
                 px: { xs: 2, sm: 0 },
-                fontSize: { xs: '1.3rem', sm: '1.5rem', md: '1.05rem' }
+                fontSize: { xs: '1rem', sm: '1.1rem', md: '1.2rem', lg: '1.25rem' },
+                color: 'white'
               }}
             >
               Get in touch with us for inquiries, support, or feedback. Our team is ready to assist you.
@@ -199,13 +236,16 @@ const ContactUs = () => {
           </Container>
         </Box>
 
-        {/* Top 3 Cards - Horizontal Scroll for Mobile/Tablet */}
+        {/* Mobile & Tablet View - Horizontal Scroll */}
         <Box
           sx={{
             position: 'relative',
-            display: { xs: 'block', md: 'none' }
+            display: { xs: 'block', md: 'none' },
+            mt: 4,
+            mb: 4,
+            px: 2
           }}
-        >
+         >
           {/* Scroll Container for Mobile/Tablet */}
           <Box
             ref={scrollContainerRef}
@@ -217,100 +257,234 @@ const ContactUs = () => {
               '&::-webkit-scrollbar': { display: 'none' },
               msOverflowStyle: 'none',
               scrollbarWidth: 'none',
+              gap: 3,
+              pb: 2
             }}
           >
             {cards.map((card, index) => (
               <Box
                 key={index}
                 sx={{
-                  flex: '0 0 100%',
+                  flex: '0 0 calc(100% - 8px)',
                   scrollSnapAlign: 'start',
-                  bgcolor: card.bg,
-                  p: 4,
-                  minHeight: '350px',
+                  backgroundColor: card.bg,
+                  borderRadius: '16px',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  p: 4,
+                  minHeight: '320px',
+                  minWidth: 'calc(100% - 8px)',
+                  mx: 0.5,
+                  '&:hover': {
+                    transform: 'translateY(-3px)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                    '& .mobile-card-icon': {
+                      transform: 'scale(1.1) rotate(5deg)'
+                    }
+                  }
                 }}
               >
-                <Box sx={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: '50%',
-                  bgcolor: '#e65100',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: 'white',
-                  mb: 3,
-                  mx: 'auto'
-                }}>
-                  {React.cloneElement(card.icon, { sx: { fontSize: 32 } })}
+                {/* Icon Container */}
+                <Box
+                  className="mobile-card-icon"
+                  sx={{
+                    width: 60,
+                    height: 60,
+                    borderRadius: '50%',
+                    backgroundColor: '#dc2626',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    mb: 3,
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 15px rgba(230, 81, 0, 0.3)',
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      borderRadius: '50%',
+                      border: '2px solid rgba(255, 255, 255, 0.3)'
+                    }
+                  }}
+                >
+                  {React.cloneElement(card.icon, { sx: { fontSize: 28 } })}
                 </Box>
+
+                {/* Title */}
                 <Typography
                   variant="h6"
                   sx={{
-                    color: '#fff',
+                    color: '#000000ff',
                     fontWeight: 700,
                     textAlign: 'center',
-                    fontSize: '1.3rem'
+                    fontSize: '1.4rem',
+                    mb: 2,
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      bottom: -8,
+                      left: '50%',
+                      transform: 'translateX(-50%)',
+                      width: '40px',
+                      height: '3px',
+                      backgroundColor: '#dc2626',
+                      borderRadius: '2px'
+                    }
                   }}
                 >
                   {card.title}
                 </Typography>
 
-                {card.title === "Phone" ? (
-                  <Box sx={{ textAlign: 'center', mt: 2 }}>
-                    {card.content.map((phone, i) => (
-                      <Typography
-                        key={i}
-                        component="a"
-                        href={phone.href}
+                {/* Content */}
+                <Box sx={{
+                  textAlign: 'center',
+                  mt: 2,
+                  width: '100%'
+                }}>
+                  {card.title === "Phone" ? (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+                      {card.content.map((phone, i) => (
+                        <Typography
+                          key={i}
+                          component="a"
+                          href={phone.href}
+                          sx={{
+                            color: '#000000ff',
+                            textDecoration: 'none',
+                            fontWeight: 500,
+                            fontSize: '1rem',
+                            transition: 'all 0.3s ease',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: 1,
+                            py: 1.2,
+                            px: 2,
+                            borderRadius: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                            '&:hover': {
+                              backgroundColor: 'rgba(255, 30, 0, 0.3)',
+                              transform: 'translateY(-2px)',
+                              boxShadow: '0 4px 12px rgba(255, 81, 0, 0.2)'
+                            }
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 20,
+                              height: 20,
+                              borderRadius: '50%',
+                              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                width: 8,
+                                height: 8,
+                                borderRadius: '50%',
+                                backgroundColor: '#fff'
+                              }}
+                            />
+                          </Box>
+                          {phone.text}
+                        </Typography>
+                      ))}
+                    </Box>
+                  ) : card.title === "Email" ? (
+                    <Typography
+                      component="a"
+                      href={card.content.href}
+                      sx={{
+                        color: '#000000ff',
+                        fontWeight: 500,
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: 1,
+                        py: 1.2,
+                        px: 3,
+                        borderRadius: '8px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        transition: 'all 0.3s ease',
+                        width: '100%',
+                        fontSize: '1rem',
+                        '&:hover': {
+                          backgroundColor: 'rgba(255, 30, 0, 0.3)',
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 12px rgba(230, 81, 0, 0.2)'
+                        }
+                      }}
+                    >
+                      <Box
                         sx={{
-                          display: 'block',
-                          color: '#fff',
-                          textDecoration: 'none',
-                          fontWeight: 500,
-                          fontSize: '1.05rem',
-                          mt: i > 0 ? 1 : 0
+                          width: 20,
+                          height: 20,
+                          borderRadius: '50%',
+                          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '12px'
                         }}
                       >
-                        {phone.text}
-                      </Typography>
-                    ))}
-                  </Box>
-                ) : card.title === "Email" ? (
-                  <Typography
-                    component="a"
-                    href={card.content.href}
-                    sx={{
-                      color: '#fff',
-                      fontWeight: 500,
-                      textDecoration: 'none',
-                      display: 'block',
-                      textAlign: 'center',
-                      mt: 2,
-                      fontSize: '1.05rem'
-                    }}
-                  >
-                    {card.content.text}
-                  </Typography>
-                ) : (
-                  <Typography
-                    variant="body1"
-                    sx={{
-                      color: '#fff',
-                      lineHeight: 1.8,
-                      textAlign: 'center',
-                      mt: 2,
-                      fontSize: '1rem',
-                      px: 2
-                    }}
-                  >
-                    {card.content}
-                  </Typography>
-                )}
+                        ✉️
+                      </Box>
+                      {card.content.text}
+                    </Typography>
+                  ) : card.title === "Address" ? (
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        color: '#fff',
+                        lineHeight: 1.6,
+                        textAlign: 'center',
+                        fontSize: '0.9rem',
+                        px: 1,
+                        whiteSpace: 'pre-line',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 0.5,
+                        '& span': {
+                          display: 'block'
+                        }
+                      }}
+                    >
+                      <span style={{color: '#010000ff' }}>Shop No 13, Second Floor,</span>
+                      <span style={{color: '#010000ff' }}>Survey No 63 Paiki1/paiki2,</span>
+                      <span style={{color: '#010000ff' }}>Plot No 1 Paiki Prabhat Chamber,</span>
+                      <span style={{color: '#010000ff' }}>Halvad Road, Mahendranagar, Morbi,</span>
+                      <span style={{ fontWeight: 600, color: '#dc2626', fontSize: '0.9rem' }}>
+                        MORBI-363641, GUJARAT-INDIA
+                      </span>
+                    </Typography>
+                  ) : (
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        color: '#fff',
+                        lineHeight: 1.7,
+                        textAlign: 'center',
+                        fontSize: '1rem',
+                        px: 2
+                      }}
+                    >
+                      {card.content}
+                    </Typography>
+                  )}
+                </Box>    
               </Box>
             ))}
           </Box>
@@ -320,33 +494,41 @@ const ContactUs = () => {
             onClick={scrollLeft}
             sx={{
               position: 'absolute',
-              left: 10,
-              top: '55%',
+              left: 4,
+              top: '50%',
               transform: 'translateY(-50%)',
-              bgcolor: 'rgba(255,255,255,0.8)',
+              bgcolor: 'rgba(255,255,255,0.9)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
               '&:hover': { bgcolor: 'white' },
-              display: currentCard === 0 ? 'none' : 'flex'
+              display: currentCard === 0 ? 'none' : 'flex',
+              width: 40,
+              height: 40,
+              zIndex: 1
             }}
           >
-            <ChevronLeft />
+            <ChevronLeft sx={{ fontSize: 24 }} />
           </IconButton>
           <IconButton
             onClick={scrollRight}
             sx={{
               position: 'absolute',
-              right: 10,
-              top: '55%',
+              right: 4,
+              top: '50%',
               transform: 'translateY(-50%)',
-              bgcolor: 'rgba(255,255,255,0.8)',
+              bgcolor: 'rgba(255,255,255,0.9)',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
               '&:hover': { bgcolor: 'white' },
-              display: currentCard === cards.length - 1 ? 'none' : 'flex'
+              display: currentCard === cards.length - 1 ? 'none' : 'flex',
+              width: 40,
+              height: 40,
+              zIndex: 1
             }}
           >
-            <ChevronRight />
+            <ChevronRight sx={{ fontSize: 24 }} />
           </IconButton>
 
           {/* Dots Indicator */}
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, pb: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3, pb: 1 }}>
             {cards.map((_, index) => (
               <Box
                 key={index}
@@ -355,121 +537,274 @@ const ContactUs = () => {
                   height: 10,
                   borderRadius: '50%',
                   mx: 1,
-                  bgcolor: index === currentCard ? '#e65100' : '#ccc',
-                  cursor: 'pointer'
-                }}
-                onClick={() => {
-                  if (scrollContainerRef.current) {
-                    const container = scrollContainerRef.current;
-                    container.scrollLeft = index * container.offsetWidth;
-                    setCurrentCard(index);
+                  bgcolor: index === currentCard ? '#dc2626' : '#ccc',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.2)',
+                    bgcolor: index === currentCard ? '#dc2626' : '#999'
                   }
                 }}
+                onClick={() => scrollToCard(index)}
               />
             ))}
           </Box>
         </Box>
 
-        {/* Desktop View - Regular Grid (Hidden on mobile/tablet) */}
-        <Grid
-          container
-          spacing={0}
+        {/* Desktop View - Grid Layout */}
+        <Box
           sx={{
             width: '100%',
-            display: { xs: 'none', md: 'flex' }
+            display: { xs: 'none', md: 'grid' },
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: 4,
+            backgroundColor: 'transparent',
+            position: 'relative',
+            mx: 'auto',
+            maxWidth: '1200px',
+            mt: 6,
+            mb: 4,
+            px: 2
           }}
         >
           {cards.map((card, index) => (
-            <Grid
-              item
+            <Box
               key={index}
-              xs={12}
-              md={4}
               sx={{
-                bgcolor: card.bg,
-                p: 5,
-                width: '33.33%'
-              }}
-            >
-              <Box sx={{
-                width: 80,
-                height: 80,
-                borderRadius: '50%',
-                bgcolor: '#e65100',
+                position: 'relative',
+                backgroundColor: card.bg,
+                borderRadius: '16px',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                color: 'white',
-                mb: 3,
-                mx: 'auto'
-              }}>
-                {React.cloneElement(card.icon, { sx: { fontSize: 32 } })}
-              </Box>
-              <Typography
-                variant="h6"
+                p: 5,
+                minHeight: '350px',
+                height: '100%',
+                '&:hover': {
+                  transform: 'translateY(-5px)',
+                  boxShadow: '0 8px 30px rgba(0, 0, 0, 0.15)',
+                  '& .card-icon': {
+                    transform: 'scale(1.1) rotate(5deg)'
+                  }
+                }
+              }}
+            >
+              {/* Icon Container */}
+              <Box
+                className="card-icon"
                 sx={{
-                  color: '#fff',
+                  width: 60,
+                  height: 60,
+                  borderRadius: '50%',
+                  backgroundColor: '##dc2626',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'white',
+                  mb: 4,
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 4px 15px rgba(230, 0, 0, 0.3)',
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    borderRadius: '50%',
+                    border: '2px solid rgba(255, 255, 255, 0.3)'
+                  }
+                }}
+              >
+                {React.cloneElement(card.icon, { sx: { fontSize: 28 } })}
+              </Box>
+
+              {/* Title */}
+              <Typography
+                variant="h5"
+                sx={{
+                  color: '#060000ff',
                   fontWeight: 700,
                   textAlign: 'center',
-                  fontSize: '1.3rem'
+                  fontSize: '1.5rem',
+                  mb: 2,
+                  position: 'relative',
+                  '&::after': {
+                    content: '""',
+                    position: 'absolute',
+                    bottom: -8,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: '40px',
+                    height: '3px',
+                    backgroundColor: '#dc2626',
+                    borderRadius: '2px'
+                  }
                 }}
               >
                 {card.title}
               </Typography>
 
-              {card.title === "Phone" ? (
-                <Box sx={{ textAlign: 'center', mt: 2 }}>
-                  {card.content.map((phone, i) => (
-                    <Typography
-                      key={i}
-                      component="a"
-                      href={phone.href}
+              {/* Content */}
+              <Box sx={{
+                textAlign: 'center',
+                mt: 2,
+                width: '100%'
+              }}>
+                {card.title === "Phone" ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {card.content.map((phone, i) => (
+                      <Typography
+                        key={i}
+                        component="a"
+                        href={phone.href}
+                        sx={{
+                          color: '#040000ff',
+                          textDecoration: 'none',
+                          fontWeight: 500,
+                          fontSize: '1.1rem',
+                          transition: 'all 0.3s ease',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 1.5,
+                          py: 1.2,
+                          px: 3,
+                          borderRadius: '8px',
+                          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                          '&:hover': {
+                            backgroundColor: 'rgba(255, 26, 1, 0.3)',
+                            transform: 'translateY(-2px)',
+                            boxShadow: '0 4px 12px rgba(255, 26, 1, 0.3)'
+                          }
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            width: 22,
+                            height: 22,
+                            borderRadius: '50%',
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center'
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              width: 9,
+                              height: 9,
+                              borderRadius: '50%',
+                              backgroundColor: '#fff'
+                            }}
+                          />
+                        </Box>
+                        {phone.text}
+                      </Typography>
+                    ))}
+                  </Box>
+                ) : card.title === "Email" ? (
+                  <Typography
+                    component="a"
+                    href={card.content.href}
+                    sx={{
+                      color: '#030000ff',
+                      fontWeight: 500,
+                      textDecoration: 'none',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: 1.5,
+                      py: 1.2,
+                      px: 3,
+                      borderRadius: '8px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      transition: 'all 0.3s ease',
+                      width: '100%',
+                      fontSize: '1.1rem',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 26, 1, 0.3)',
+                        transform: 'translateY(-2px)',
+                        boxShadow: '0 4px 12px rgba(255, 26, 1, 0.3)'
+                      }
+                    }}
+                  >
+                    <Box
                       sx={{
-                        display: 'block',
-                        color: '#fff',
-                        textDecoration: 'none',
-                        fontWeight: 500,
-                        fontSize: '1.05rem',
-                        mt: i > 0 ? 1 : 0
+                        width: 22,
+                        height: 22,
+                        borderRadius: '50%',
+                        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px'
                       }}
                     >
-                      {phone.text}
-                    </Typography>
-                  ))}
-                </Box>
-              ) : card.title === "Email" ? (
-                <Typography
-                  component="a"
-                  href={card.content.href}
-                  sx={{
-                    color: '#fff',
-                    fontWeight: 500,
-                    textDecoration: 'none',
-                    display: 'block',
-                    textAlign: 'center',
-                    mt: 2,
-                    fontSize: '1.05rem'
-                  }}
-                >
-                  {card.content.text}
-                </Typography>
-              ) : (
-                <Typography
-                  variant="body1"
-                  sx={{
-                    color: '#fff',
-                    lineHeight: 1.8,
-                    textAlign: 'center',
-                    mt: 2,
-                    fontSize: '1rem'
-                  }}
-                >
-                  {card.content}
-                </Typography>
-              )}
-            </Grid>
+                      ✉️
+                    </Box>
+                    {card.content.text}
+                  </Typography>
+                ) : card.title === "Address" ? (
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: '#fff',
+                      lineHeight: 1.6,
+                      textAlign: 'center',
+                      fontSize: '0.95rem',
+                      px: 2,
+                      whiteSpace: 'pre-line',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 0.5,
+                      '& span': {
+                        display: 'block'
+                      }
+                    }}
+                  >
+                    <span style={{ color: '#030000ff' }}>Shop No 13, Second Floor,</span>
+                    <span style={{ color: '#030000ff' }}>Survey No 63 Paiki1/paiki2,</span>
+                    <span style={{ color: '#030000ff' }}>Plot No 1 Paiki Prabhat Chamber,</span>
+                    <span style={{ color: '#030000ff' }}>Halvad Road, Mahendranagar, Morbi,</span>
+                    <span style={{ fontWeight: 600, color: '#dc2626', fontSize: '0.95rem' }}>
+                      MORBI-363641, GUJARAT-INDIA
+                    </span>
+                  </Typography>
+                ) : (
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      color: '#fff',
+                      lineHeight: 1.7,
+                      textAlign: 'center',
+                      fontSize: '1rem',
+                      px: 2
+                    }}
+                  >
+                    {card.content}
+                  </Typography>
+                )}
+              </Box>
+
+              {/* Decorative Corner */}
+              <Box
+                sx={{
+                  position: 'absolute',
+                  top: 0,
+                  right: 0,
+                  width: '50px',
+                  height: '50px',
+                  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+                  borderBottomLeftRadius: '50px'
+                }}
+              />
+            </Box>
           ))}
-        </Grid>
+        </Box>
 
         {/* Contact Form Section */}
         <Container
@@ -501,7 +836,7 @@ const ContactUs = () => {
                 component="h2"
                 sx={{
                   fontWeight: 'bold',
-                  color: '#e65100',
+                  color: '#dc2626',
                   mb: 2,
                   fontSize: { xs: '1.5rem', sm: '1.75rem', md: '2rem', lg: '2.125rem' }
                 }}
@@ -518,7 +853,7 @@ const ContactUs = () => {
                   fontSize: { xs: '1.75rem', sm: '2.25rem', md: '2.5rem', lg: '2.75rem' }
                 }}
               >
-                Don't Hesitate To Contact<br />With Us For Any Kind Of<br />Information
+                Don't Hesitate To Contact<br />With Us For Any<br/> Kind Of<br />Information
               </Typography>
               <Typography
                 variant="body1"
@@ -538,7 +873,7 @@ const ContactUs = () => {
                   color: '#000',
                   fontWeight: 'bold',
                   textDecoration: 'none',
-                  '&:hover': { color: '#e65100' },
+                  '&:hover': { color: '#dc2626' },
                   fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' }
                 }}
               >
@@ -563,49 +898,49 @@ const ContactUs = () => {
                   bgcolor: '#fff'
                 }}
               >
-                <Box 
-                  component="form" 
+                <Box
+                  component="form"
                   onSubmit={handleSubmit}
                 >
                   <Grid container spacing={2}>
-                    <Grid item xs={12} sm={6} sx={{ width: { xs: '100%' }}}>
-                      <TextField 
-                        required 
-                        fullWidth 
-                        label="First Name" 
-                        name="firstName" 
-                        value={formData.firstName} 
-                        onChange={handleChange} 
+                    <Grid item xs={12} sm={6} sx={{ width: { xs: '100%' } }}>
+                      <TextField
+                        required
+                        fullWidth
+                        label="First Name"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
                       />
                     </Grid>
                     <Grid item xs={12} sm={6} sx={{ width: { xs: '100%', } }}>
-                      <TextField 
-                        required 
-                        fullWidth 
-                        label="Last Name" 
-                        name="lastName" 
-                        value={formData.lastName} 
-                        onChange={handleChange} 
+                      <TextField
+                        required
+                        fullWidth
+                        label="Last Name"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
                       />
                     </Grid>
                     <Grid item xs={12} sx={{ width: { xs: '100%', } }}>
-                      <TextField 
-                        required 
-                        fullWidth 
-                        label="Your Email" 
-                        name="email" 
-                        type="email" 
-                        value={formData.email} 
-                        onChange={handleChange} 
+                      <TextField
+                        required
+                        fullWidth
+                        label="Your Email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
                       />
                     </Grid>
                     <Grid item xs={12} sx={{ width: { xs: '100%', } }}>
-                      <TextField 
-                        fullWidth 
-                        label="Subject" 
-                        name="subject" 
-                        value={formData.subject} 
-                        onChange={handleChange} 
+                      <TextField
+                        fullWidth
+                        label="Subject"
+                        name="subject"
+                        value={formData.subject}
+                        onChange={handleChange}
                       />
                     </Grid>
                     <Grid item xs={12} sx={{ width: { xs: '100%', } }}>

@@ -4,8 +4,6 @@ import {
   Typography,
   Divider,
   Collapse,
-  Checkbox,
-  FormControlLabel,
   useMediaQuery,
   SwipeableDrawer,
   Fab
@@ -55,19 +53,25 @@ const CollectionItem = styled(Box)(({ selected }) => ({
   display: 'flex',
   alignItems: 'center',
   margin: 0,
-  padding: '8px 12px',
-  borderRadius: 10,
+  padding: '12px 5%',  
+  borderTopRightRadius:12,
+  borderBottomRightRadius:12,
   transition: 'all .3s',
-  gap: 1,
-  '& .labelText': {
+  cursor: 'pointer',
+  // backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
+  // border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
+  '&:hover': {
+  //   backgroundColor: 'rgba(196, 31, 37, 0.05)',
+    // border: '1px solid rgba(196, 31, 37, 0.1)'
+  },
+  '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 500,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
-    textOverflow: 'ellipsis'
-  },
-  '& .MuiCheckbox-root': {
-    color: '#c41f25'
+    textOverflow: 'ellipsis',
+    color: selected ? '#c41f25' : 'inherit',
+    paddingLeft: '5%'  
   }
 }))
 
@@ -75,16 +79,45 @@ const VersionItem = styled(Box)(({ selected }) => ({
   display: 'flex',
   alignItems: 'center',
   margin: 0,
-  padding: '6px 12px 6px 24px',
-  borderRadius: 8,
+  padding: '10px 5% 10px 10%',  // 10% left padding for first level indent
+  // borderRadius: 0,
+  borderTopRightRadius:12,
+  borderBottomRightRadius:12,
   transition: 'all .3s',
-  gap: 1,
-  '& .labelText': {
+  cursor: 'pointer',
+  // backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
+  border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
+  // '&:hover': {
+  //   backgroundColor: 'rgba(196, 31, 37, 0.05)',
+  //   border: '1px solid rgba(196, 31, 37, 0.1)'
+  // },
+  '& .MuiTypography-root': {
     flex: 1,
-    fontWeight: selected ? 600 : 400
+    fontWeight: selected ? 600 : 400,
+    color: selected ? '#c41f25' : 'inherit',
+    paddingLeft: '5%'  
+  }
+}))
+
+const SubVersionItem = styled(Box)(({ selected }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  margin: 0,
+  padding: '8px 5% 8px 15%',  // 15% left padding for second level indent
+  borderRadius: 6,
+  transition: 'all .3s',
+  cursor: 'pointer',
+  backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
+  border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
+  '&:hover': {
+    backgroundColor: 'rgba(196, 31, 37, 0.05)',
+    border: '1px solid rgba(196, 31, 37, 0.1)'
   },
-  '& .MuiCheckbox-root': {
-    color: '#c41f25'
+  '& .MuiTypography-root': {
+    flex: 1,
+    fontWeight: selected ? 600 : 400,
+    color: selected ? '#c41f25' : 'inherit',
+    paddingLeft: '5%'
   }
 }))
 
@@ -93,7 +126,7 @@ const ClearAllButton = styled(Typography)({
   color: '#e74c3c',
   cursor: 'pointer',
   fontWeight: 600,
-  padding: '8px 12px',
+  padding: '8px 5%',  // Using percentage here too
   borderRadius: 8,
   background: 'linear-gradient(135deg,rgba(255,255,255,.9) 0%,rgba(248,249,250,.9) 100%)',
   border: '1px solid rgba(231,76,60,.2)',
@@ -133,12 +166,43 @@ export default function ServiceSideBar() {
     navigate('/services')
   }
 
+  // Auto-open the parent when child is selected
   useEffect(() => {
-    setOpenSub(prev => ({
-      ...prev,
-      [collectionKey]: prev[collectionKey] ?? !!maybeVersion
-    }))
-  }, [collectionKey, maybeVersion])
+    if (collectionKey) {
+      setOpenSub(prev => ({
+        ...prev,
+        [collectionKey]: true
+      }))
+    }
+  }, [collectionKey])
+
+  // Close other collections when one is opened
+  const handleCollectionClick = (key) => {
+    setOpenSub(prev => {
+      const newState = {}
+      // Close all other collections
+      Object.keys(prev).forEach(k => {
+        newState[k] = false
+      })
+      // Open the clicked one
+      newState[key] = !prev[key]
+      return newState
+    })
+  }
+
+  // Close other versions when one is opened
+  const handleVersionClick = (label) => {
+    setOpenSubVersions(prev => {
+      const newState = {}
+      // Close all other versions
+      Object.keys(prev).forEach(k => {
+        newState[k] = false
+      })
+      // Open the clicked one
+      newState[label] = !prev[label]
+      return newState
+    })
+  }
 
   const collections = [
     {
@@ -158,15 +222,9 @@ export default function ServiceSideBar() {
       label: 'Floor Tiles',
       key: 'floortiles',
       versions: [
-        {
-          label: '600 X 1200',
-          url: '/services/floortiles/600x1200',
-          subversions: [
-            { label: 'Glossy', url: '/services/floortiles/600x1200/glossy' },
-            { label: 'Matt', url: '/services/floortiles/600x1200/matt' }
-          ]
-        },
-        { label: '600 X 600 DC', url: '/services/floortiles/600x600dc' }
+            { label: '600 X 1200 Glossy', url: '/services/floortiles/600x1200/glossy' },
+            { label: '600 X 1200 Matt', url: '/services/floortiles/600x1200/matt' } ,
+            { label: '600 X 600 DC', url: '/services/floortiles/600x600dc' }
       ]
     },
     {
@@ -181,44 +239,35 @@ export default function ServiceSideBar() {
       label: 'CoolRoof Tiles',
       key: 'cool-roof-tiles-9mm',
       versions: [
-        {
-          label: '300 X 300',
-          url: '/services/cool-roof-tiles-9mm',
-          subversions: [
-            { label: '9MM', url: '/services/cool-roof-tiles-9mm' },
-            { label: '10MM', url: '/services/cool-roof-tiles-10mm' }
-          ]
-        },
-        { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
+            { label: '300 X 300 9MM', url: '/services/cool-roof-tiles-9mm' },
+            { label: '300 X 300 10MM', url: '/services/cool-roof-tiles-10mm' }  ,
+            { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
       ]
     },
-    {
-      label: 'Kitchen Sink',
-      key: 'kitchen-sink',
-      url: '/services/kitchen-sink',
-      versions: []
-    }
+    { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink', versions: [] }
   ]
 
   const sidebarRef = useRef(null)
 
   const SidebarContent = (
     <StyledSidebar ref={sidebarRef}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          p: 2
-        }}
-      >
+      <Box sx={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center', 
+        p: 2,
+        pl: '5%' , // Using percentage in sx prop
+      
+      }}>
         <Typography
           sx={{
             fontSize: 20,
             fontWeight: 700,
-            background: 'black',
+            background: 'linear-gradient(135deg, #c41f25 0%, #e74c3c 100%)',
             WebkitBackgroundClip: 'text',
-            color: 'transparent'
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            pl: '5%'  
           }}
         >
           Shop By Products
@@ -232,101 +281,91 @@ export default function ServiceSideBar() {
         )}
       </Box>
 
-      <Divider sx={{ mb: 2, borderColor: 'rgba(0,0,0,0.1)' }} />
+      <Divider sx={{ 
+        mb: 2, 
+        borderColor: 'rgba(0,0,0,0.1)',
+        ml: '5%',  // Align divider with text
+        mr: '5%'
+      }} />
 
-      <SectionHeader onClick={() => setOpenCollections(o => !o)}>
-        <Typography sx={{ fontSize: 18, fontWeight: 700 }}>Products</Typography>
-        {openCollections ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
+      <SectionHeader sx={{ ml: '5%', mr: '5%' }} onClick={() => setOpenCollections(o => !o)}>
+        <Typography sx={{ 
+          fontSize: 18, 
+          fontWeight: 700,
+          pl: '5%'  // Text padding
+        }}>
+          Products
+        </Typography>
+        {openCollections ? <ExpandLessIcon /> : <ExpandMoreIcon />}
       </SectionHeader>
-      <Divider sx={{ mb: 1, borderColor: 'rgba(0,0,0,0.1)' }} />
+      <Divider sx={{ 
+        mb: 1, 
+        borderColor: 'rgba(0,0,0,0.1)',
+        ml: '5%',
+        mr: '5%'
+      }} />
 
       <Collapse in={openCollections}>
         <Box>
           {collections.map(item => {
-            const hasVersions = item.versions.length > 0
-            const childMatches = hasVersions && item.versions.some(v => pathname.startsWith(v.url))
+            const hasVersions = item.versions?.length > 0
+            
+            // Determine if this item or any of its children is selected
             const isSelected = !hasVersions
-              ? collectionKey === item.key
-              : childMatches
+              ? (collectionKey === item.key)
+              : item.versions.some(v => 
+                  pathname.startsWith(v.url) || 
+                  v.subversions?.some(sv => pathname === sv.url)
+                )
 
             return (
               <Box key={item.key} sx={{ mb: 1 }}>
-                <CollectionItem selected={isSelected} onClick={e => e.stopPropagation()}>
-                  <Checkbox
-                    size="small"
-                    checked={isSelected}
-                    sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
-                    onChange={go(hasVersions ? item.versions[0].url : item.url || '/services')}
-                    onClick={e => e.stopPropagation()}
-                  />
-                  {hasVersions ? (
-                    <Box
-                      onClick={e => {
-                        e.stopPropagation()
-                        setOpenSub(prev => ({ ...prev, [item.key]: !prev[item.key] }))
-                      }}
-                      sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
-                    >
-                      <Typography className="labelText">{item.label}</Typography>
-                      {openSub[item.key] ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
-                    </Box>
-                  ) : (
-                    <Typography className="labelText">{item.label}</Typography>
+                <CollectionItem
+                  selected={isSelected}
+                  onClick={() => {
+                    if (hasVersions) {
+                      handleCollectionClick(item.key)
+                    } else {
+                      go(item.url)()
+                    }
+                  }}
+                >
+                  <Typography sx={{ 
+                    flexGrow: 1,
+                    pl: '5%' ,
+                  }}>
+                    {item.label}
+                  </Typography>
+                  {hasVersions && (
+                    openSub[item.key] ? <ExpandLessIcon /> : <ExpandMoreIcon />
                   )}
                 </CollectionItem>
 
                 {hasVersions && (
                   <Collapse in={!!openSub[item.key]}>
-                    <Box sx={{ pl: 2 }}>
+                    <Box>
                       {item.versions.map(v => {
-                        const thisChecked = pathname.startsWith(v.url)
-                        const hasSub = Array.isArray(v.subversions)
-                        const openThisSub = openSubVersions[v.label] || false
+                        const thisSelected = pathname === v.url || 
+                          (pathname.startsWith(v.url) && !item.versions.some(other => 
+                            other !== v && pathname.startsWith(other.url)
+                          ))
 
                         return (
-                          <Box key={v.label} sx={{ mb: 0.5 }}>
-                            <VersionItem selected={thisChecked} onClick={e => e.stopPropagation()}>
-                              <Checkbox
-                                size="small"
-                                checked={thisChecked}
-                                sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
-                                onChange={go(v.url)}
-                                onClick={e => e.stopPropagation()}
-                              />
-                              {hasSub ? (
-                                <Box
-                                  onClick={e => {
-                                    e.stopPropagation()
-                                    setOpenSubVersions(prev => ({ ...prev, [v.label]: !prev[v.label] }))
-                                  }}
-                                  sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
-                                >
-                                  <Typography className="labelText">{v.label}</Typography>
-                                  {openThisSub ? <ExpandLessIcon sx={{ color: '#c21f24' }} /> : <ExpandMoreIcon sx={{ color: '#c21f24' }} />}
-                                </Box>
-                              ) : (
-                                <Typography className="labelText">{v.label}</Typography>
-                              )}
+                          <Box key={v.label} sx={{ mb: 0.5, mt:'1%', }}>
+                            <VersionItem
+                              selected={thisSelected}
+                              onClick={() => {
+                                go(v.url)()
+                              }}
+                            >
+                              <Typography sx={{ 
+                                flexGrow: 1,
+                               
+                                pl: '5%'
+                              }}>
+                                {v.label}
+                              </Typography>
                             </VersionItem>
-
-                            {hasSub && (
-                              <Collapse in={openThisSub}>
-                                <Box sx={{ pl: 3 }}>
-                                  {v.subversions.map(sv => (
-                                    <VersionItem key={sv.label}>
-                                      <Checkbox
-                                        size="small"
-                                        checked={pathname === sv.url}
-                                        sx={{ color: '#c41f25', '&.Mui-checked': { color: '#c41f25' } }}
-                                        onChange={go(sv.url)}
-                                        onClick={e => e.stopPropagation()}
-                                      />
-                                      <Typography className="labelText">{sv.label}</Typography>
-                                    </VersionItem>
-                                  ))}
-                                </Box>
-                              </Collapse>
-                            )}
                           </Box>
                         )
                       })}
@@ -344,7 +383,7 @@ export default function ServiceSideBar() {
   if (!isMobile) {
     return <SidebarWrapper>{SidebarContent}</SidebarWrapper>
   }
-
+  
   const [sidebarVisible, setSidebarVisible] = useState(true)
   const [footerVisible, setFooterVisible] = useState(false)
 
@@ -372,28 +411,28 @@ export default function ServiceSideBar() {
   const showFab = sidebarVisible && !footerVisible
 
   return (
-      <>
-        {showFab && !drawerOpen && (
-          <Fab
-            variant="extended"
-            onClick={() => setDrawerOpen(true)}
-            sx={{
-              position: 'fixed',
-              bottom: 16,
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: theme.zIndex.modal + 1,
-              color: '#c41f25',
-              backgroundColor: '#fff',
-              border: '1px solid #c41f25',
-              '&:hover': {
-                backgroundColor: '#ffe5e6'
-              }
-            }}
-          >
-            <FilterListIcon sx={{ mr: 1 }} /> Filters
-          </Fab>
-        )}
+    <>
+      {showFab && !drawerOpen && (
+        <Fab
+          variant="extended"
+          onClick={() => setDrawerOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 16,
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: theme.zIndex.modal + 1,
+            color: '#c41f25',
+            backgroundColor: '#fff',
+            border: '1px solid #c41f25',
+            '&:hover': {
+              backgroundColor: '#ffe5e6'
+            }
+          }}
+        >
+          <FilterListIcon sx={{ mr: 1 }} /> Filters
+        </Fab>
+      )}
 
       <SwipeableDrawer
         anchor="bottom"
