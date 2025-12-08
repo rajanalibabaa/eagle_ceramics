@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect } from "react";
 import "./App.css";
-import { Fab } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
+import Fab from "@mui/material/Fab";
 import ScrollToTop from "./ScrollToTop";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -21,13 +22,21 @@ import AboutPageContent from "./pages/ServicesContent/AboutPageContent/AboutPage
 const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
 const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
-const TrustedChoise = React.lazy(() => import("./components/TrustedChoise.jsx"));
-const WhyOurProducts = React.lazy(() => import("./components/WhyOurProducts.jsx"));
+const TrustedChoise = React.lazy(() =>
+  import("./components/TrustedChoise.jsx")
+);
+const WhyOurProducts = React.lazy(() =>
+  import("./components/WhyOurProducts.jsx")
+);
 const Testimonials = React.lazy(() => import("./components/Testimonials.jsx"));
 const OurClients = React.lazy(() => import("./components/OurClients.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
-const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
-const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
+const ServicesLayout = React.lazy(() =>
+  import("./pages/ServicesContent/ServicesLayout.jsx")
+);
+const Walltiles = React.lazy(() =>
+  import("./pages/ServicesContent/WallTiles/Walltiles.jsx")
+);
 const DoubleCharge = React.lazy(() =>
   import("./pages/ServicesContent/FloorTiles/600X600DC/DoubleCharge.jsx")
 );
@@ -46,35 +55,12 @@ const ParkingTilesCollection1 = React.lazy(() =>
 const ParkingTilesCollection2 = React.lazy(() =>
   import("./pages/ServicesContent/ParkingTiles/Collection2.jsx")
 );
-const StatuarioCollection = React.lazy(() =>
-  import("./pages/ServicesContent/StatuarioCollection.jsx")
-);
-const MattCarvingEndlessCollection = React.lazy(() =>
-  import("./pages/ServicesContent/MattCarvingEndlessCollection.jsx")
-);
-const SnpCollection = React.lazy(() =>
-  import("./pages/ServicesContent/SnpCollection.jsx")
-);
-const ThreeDimensionCollection = React.lazy(() =>
-  import("./pages/ServicesContent/ThreeDimensionCollection.jsx")
-);
-const DoubleChargeCollection = React.lazy(() =>
-  import("./pages/ServicesContent/DoubleChargeCollection.jsx")
-);
-const MattCarvingCollection = React.lazy(() =>
-  import("./pages/ServicesContent/MattCarvingCollection.jsx")
-);
-const MoroccanCollection = React.lazy(() =>
-  import("./pages/ServicesContent/MoroccanCollection.jsx")
-);
+
 const PlainCollection = React.lazy(() =>
   import("./pages/ServicesContent/PlainCollection.jsx")
 );
 const SpecialCollection = React.lazy(() =>
   import("./pages/ServicesContent/SpecialCollection.jsx")
-);
-const StepRiserCollection = React.lazy(() =>
-  import("./pages/ServicesContent/StepRiserCollection.jsx")
 );
 const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
@@ -207,9 +193,13 @@ const SmartScrollButton = () => {
       }}
     >
       {scrollDirection === "up" ? (
-        <KeyboardDoubleArrowUpIcon sx={{ fontSize: { xs: 20, sm: 22, md: 24 } }} />
+        <KeyboardDoubleArrowUpIcon
+          sx={{ fontSize: { xs: 20, sm: 22, md: 24 } }}
+        />
       ) : (
-        <KeyboardDoubleArrowDownIcon sx={{ fontSize: { xs: 20, sm: 22, md: 24 } }} />
+        <KeyboardDoubleArrowDownIcon
+          sx={{ fontSize: { xs: 20, sm: 22, md: 24 } }}
+        />
       )}
     </Fab>
   );
@@ -223,7 +213,15 @@ function App() {
     <ThemeProvider theme={theme}>
       <Router>
         <ScrollToTop />
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense
+          fallback={
+            <CircularProgress
+              size={50}
+              color="secondary"
+              sx={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}
+            />
+          }
+        >
           <MainPopUp />
           <Navbar />
           <Routes>
@@ -238,11 +236,26 @@ function App() {
             <Route path="/services" element={<ServicesLayout />}>
               <Route index element={<Walltiles />} />
               <Route path="walltiles" element={<Walltiles />} />
-              <Route path="elevation-tiles-300x450" element={<ElevationTiles300x450 />} />
-              <Route path="elevation-tiles-300x600" element={<ElevationTiles300x600 />} />
-              <Route path="cool-roof-tiles-9mm" element={<CoolRoofTiles9MM />} />
-              <Route path="cool-roof-tiles-10mm" element={<CoolRoofTiles10MM />} />
-              <Route path="cool-roof-tiles-600x600" element={<CoolRoofTiles600x600 />} />
+              <Route
+                path="elevation-tiles-300x450"
+                element={<ElevationTiles300x450 />}
+              />
+              <Route
+                path="elevation-tiles-300x600"
+                element={<ElevationTiles300x600 />}
+              />
+              <Route
+                path="cool-roof-tiles-9mm"
+                element={<CoolRoofTiles9MM />}
+              />
+              <Route
+                path="cool-roof-tiles-10mm"
+                element={<CoolRoofTiles10MM />}
+              />
+              <Route
+                path="cool-roof-tiles-600x600"
+                element={<CoolRoofTiles600x600 />}
+              />
               <Route path="kitchen-sink" element={<KitchenSink />} />
 
               {/* Floor Tiles */}
@@ -257,20 +270,22 @@ function App() {
 
               {/* Parking Tiles */}
               <Route path="parkingtiles" element={<ParkingTiles />} />
-              <Route path="parkingtiles/collection1" element={<ParkingTilesCollection1 />} />
-              <Route path="parkingtiles/collection2" element={<ParkingTilesCollection2 />} />
+              <Route
+                path="parkingtiles/collection1"
+                element={<ParkingTilesCollection1 />}
+              />
+              <Route
+                path="parkingtiles/collection2"
+                element={<ParkingTilesCollection2 />}
+              />
 
-              <Route path="statuario-collection" element={<StatuarioCollection />} />
               <Route path="glossy-collection" element={<GlossyCollection />} />
-              <Route path="matt-carving-endless-collection" element={<MattCarvingEndlessCollection />} />
-              <Route path="snp-collection" element={<SnpCollection />} />
-              <Route path="three-dimension-collection" element={<ThreeDimensionCollection />} />
-              <Route path="double-charge-collection" element={<DoubleChargeCollection />} />
-              <Route path="matt-carving-collection" element={<MattCarvingCollection />} />
-              <Route path="moroccan-collection" element={<MoroccanCollection />} />
+             
               <Route path="plain-collection" element={<PlainCollection />} />
-              <Route path="special-collection" element={<SpecialCollection />} />
-              <Route path="step-riser-collection" element={<StepRiserCollection />} />
+              <Route
+                path="special-collection"
+                element={<SpecialCollection />}
+              />
             </Route>
           </Routes>
           <Footer />

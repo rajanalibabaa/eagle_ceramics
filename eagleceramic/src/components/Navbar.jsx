@@ -60,7 +60,7 @@ const Navbar = () => {
               display: { xs: "none", md: "flex" },
               alignItems: "center",
               gap: 3,
-              color: "black",
+              color: "red",
             }}
           >
             <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/")}>HOME</Button>

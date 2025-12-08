@@ -1,19 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react'
-import {
-  Box,
-  Typography,
-  Divider,
-  Collapse,
-  useMediaQuery,
-  SwipeableDrawer,
-  Fab
-} from '@mui/material'
-import {
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  FilterList as FilterListIcon,
-  Close as CloseIcon
-} from '@mui/icons-material'
+
+import Box from "@mui/material/Box";
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Collapse from '@mui/material/Collapse';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Fab from '@mui/material/Fab';
+
+import  ExpandMoreIcon  from '@mui/icons-material/ExpandMore';
+import  ExpandLessIcon  from '@mui/icons-material/ExpandLess';
+import  FilterListIcon from '@mui/icons-material/FilterList';
+import  CloseIcon  from '@mui/icons-material/Close';
 import { styled, useTheme } from '@mui/material/styles'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -58,12 +56,7 @@ const CollectionItem = styled(Box)(({ selected }) => ({
   borderBottomRightRadius:12,
   transition: 'all .3s',
   cursor: 'pointer',
-  // backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
-  // border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
-  '&:hover': {
-  //   backgroundColor: 'rgba(196, 31, 37, 0.05)',
-    // border: '1px solid rgba(196, 31, 37, 0.1)'
-  },
+ 
   '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 500,
@@ -80,17 +73,12 @@ const VersionItem = styled(Box)(({ selected }) => ({
   alignItems: 'center',
   margin: 0,
   padding: '10px 5% 10px 10%',  // 10% left padding for first level indent
-  // borderRadius: 0,
   borderTopRightRadius:12,
   borderBottomRightRadius:12,
   transition: 'all .3s',
   cursor: 'pointer',
-  // backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
   border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
-  // '&:hover': {
-  //   backgroundColor: 'rgba(196, 31, 37, 0.05)',
-  //   border: '1px solid rgba(196, 31, 37, 0.1)'
-  // },
+  
   '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 400,
@@ -99,46 +87,13 @@ const VersionItem = styled(Box)(({ selected }) => ({
   }
 }))
 
-const SubVersionItem = styled(Box)(({ selected }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  margin: 0,
-  padding: '8px 5% 8px 15%',  // 15% left padding for second level indent
-  borderRadius: 6,
-  transition: 'all .3s',
-  cursor: 'pointer',
-  backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
-  border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
-  '&:hover': {
-    backgroundColor: 'rgba(196, 31, 37, 0.05)',
-    border: '1px solid rgba(196, 31, 37, 0.1)'
-  },
-  '& .MuiTypography-root': {
-    flex: 1,
-    fontWeight: selected ? 600 : 400,
-    color: selected ? '#c41f25' : 'inherit',
-    paddingLeft: '5%'
-  }
-}))
 
-const ClearAllButton = styled(Typography)({
-  fontSize: 14,
-  color: '#e74c3c',
-  cursor: 'pointer',
-  fontWeight: 600,
-  padding: '8px 5%',  // Using percentage here too
-  borderRadius: 8,
-  background: 'linear-gradient(135deg,rgba(255,255,255,.9) 0%,rgba(248,249,250,.9) 100%)',
-  border: '1px solid rgba(231,76,60,.2)',
-  '&:hover': {
-    background: 'rgba(231,76,60,0.1)',
-    color: '#c0392b'
-  }
-})
 
 const SidebarWrapper = styled(Box)(({ theme }) => ({
   width: '320px',
   flexShrink: 0,
+  overflowY: 'auto',
+  backgroundColor: 'red',
   position: 'sticky',
   top: '80px',
   alignSelf: 'flex-start',
@@ -161,10 +116,7 @@ export default function ServiceSideBar() {
     navigate(url)
   }
 
-  const clearAll = () => {
-    setDrawerOpen(false)
-    navigate('/services')
-  }
+
 
   // Auto-open the parent when child is selected
   useEffect(() => {
@@ -190,19 +142,7 @@ export default function ServiceSideBar() {
     })
   }
 
-  // Close other versions when one is opened
-  const handleVersionClick = (label) => {
-    setOpenSubVersions(prev => {
-      const newState = {}
-      // Close all other versions
-      Object.keys(prev).forEach(k => {
-        newState[k] = false
-      })
-      // Open the clicked one
-      newState[label] = !prev[label]
-      return newState
-    })
-  }
+
 
   const collections = [
     {
@@ -277,13 +217,13 @@ export default function ServiceSideBar() {
             <CloseIcon />
           </Fab>
         ) : (
-          <ClearAllButton onClick={clearAll}>Clear All</ClearAllButton>
+          <></>
         )}
       </Box>
 
       <Divider sx={{ 
         mb: 2, 
-        borderColor: 'rgba(0,0,0,0.1)',
+        borderColor: 'rgba(0, 0, 0, 1)',
         ml: '5%',  // Align divider with text
         mr: '5%'
       }} />
@@ -300,13 +240,13 @@ export default function ServiceSideBar() {
       </SectionHeader>
       <Divider sx={{ 
         mb: 1, 
-        borderColor: 'rgba(0,0,0,0.1)',
+        borderColor: 'rgba(0, 0, 0, 1)',
         ml: '5%',
         mr: '5%'
       }} />
 
       <Collapse in={openCollections}>
-        <Box>
+        <Box sx={{ px: 0, mb: 2, ml: '5%', mr: '5%', }}>
           {collections.map(item => {
             const hasVersions = item.versions?.length > 0
             

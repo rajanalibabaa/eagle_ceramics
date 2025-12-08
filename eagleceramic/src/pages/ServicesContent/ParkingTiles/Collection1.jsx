@@ -1,12 +1,11 @@
 import React, { useState, lazy, Suspense } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Modal,
-  IconButton,
-  CircularProgress,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
@@ -142,15 +141,7 @@ const Collection1 = () => {
                                          >
             Anti-skid, weather-resistant tiles for outdoor projects.
           </Typography>
-          {/* <Box
-            sx={{
-              height: 4,
-              background: "linear-gradient(90deg, #FFD700, #016B61, #FFD700)",
-              borderRadius: 2,
-              animation: "shineLine 2s ease-in-out infinite",
-              boxShadow: "0 0 10px rgba(255,215,0,0.6)",
-            }}
-          /> */}
+          
         </Box>
 
         {/* COLLECTION CARDS */}

@@ -1,11 +1,10 @@
 import React, { useMemo } from "react";
-import {
-  Box,
-  Typography,
-  Avatar,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+  import Typography from "@mui/material/Typography";
+  import Avatar from "@mui/material/Avatar";
+  import useMediaQuery from "@mui/material/useMediaQuery";
+  import { useTheme } from "@mui/material/styles";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Mousewheel } from "swiper/modules";
 import "swiper/css";

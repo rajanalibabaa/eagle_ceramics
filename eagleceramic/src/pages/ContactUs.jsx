@@ -1,28 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Box,
-  Container,
-  Grid,
-  Typography,
-  TextField,
-  Button,
-  Card,
-  useTheme,
-  IconButton,
+import {useTheme,
 } from '@mui/material';
-import {
-  Phone,
-  Email,
-  LocationOn,
-  Send,
-  ChevronLeft,
-  ChevronRight,
-} from '@mui/icons-material';
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import Grid from "@mui/material/Grid";
+import IconButton from '@mui/material/IconButton';
+
+import Phone from '@mui/icons-material/Phone';
+import Email from '@mui/icons-material/Email';
+import LocationOn from '@mui/icons-material/LocationOn';
+import Send from '@mui/icons-material/Send';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+
 import HeadingImg from '../assets/ContactUsBackground.jpg';
 import OurClients from '../components/OurClients.jsx';
 import Testimonials from '../components/Testimonials.jsx';
 import FAQSection from '../components/Faqsections.jsx';
-import { color } from 'framer-motion';
 
 const ContactUs = () => {
   const theme = useTheme();
@@ -86,13 +84,13 @@ const ContactUs = () => {
     submissionData.append('email', formData.email);
     submissionData.append('subject', formData.subject);
     submissionData.append('message', formData.message);
-    submissionData.append('_subject', 'New Contact Form Submission from Eagles Ceramics');
+    submissionData.append('_subject', 'New Contact Form Submission from Eagles Ceramic');
     submissionData.append('_captcha', 'false');
     submissionData.append('_template', 'table');
-    submissionData.append('_autoresponse', `Thank you ${formData.firstName} ${formData.lastName} for contacting Eagles Ceramics! We will get back to you shortly.`);
+    submissionData.append('_autoresponse', `Thank you ${formData.firstName} ${formData.lastName} for contacting Eagles Ceramic! We will get back to you shortly.`);
 
     // Submit the form data using FormSubmit.co
-    fetch('https://formsubmit.co/pradeepbabaateam66@gmail.com', {
+    fetch('https://formsubmit.co/info@eagleceramic.com', {
       method: 'POST',
       body: submissionData,
     })
@@ -138,15 +136,14 @@ const ContactUs = () => {
       icon: <Phone />,
       title: "Phone",
       content: [
-        { href: "tel:+919586200000", text: "+91 95862 00000" },
-        { href: "tel:+919099000000", text: "+91 90990 00000" }
+        { href: "tel:+91 9884003787", text: "+91 9884003787" },
       ],
       bg: "#b8b9b6ff",
     },
     {
       icon: <Email />,
       title: "Email",
-      content: { href: "mailto:info@eaglesceramics.net", text: "info@eaglesceramics.net" },
+      content: { href: "mailto:info@eaglesceramic.com", text: "info@eaglesceramic.com" },
       bg: "#9c9a9aff"
     }
   ];
@@ -204,17 +201,15 @@ const ContactUs = () => {
         >
           <Container maxWidth="lg">
             <Typography
-              variant="h2"
-              component="h1"
+               variant="h2"
               sx={{
-                fontWeight: 'bold',
-                fontSize: {
-                  xs: '2.5rem',
-                  sm: '3rem',
-                  md: '3.5rem',
-                  lg: '4.5rem'
-                },
-                color: 'whitesmoke'
+                fontWeight: 900,
+                mb: 2,
+                background:"white",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                lineHeight: 1.2,
               }}
             >
               Contact Us
@@ -877,7 +872,7 @@ const ContactUs = () => {
                   fontSize: { xs: '1.25rem', sm: '1.5rem', md: '1.75rem' }
                 }}
               >
-                +880 876 65 455
+                +91 9884003787
               </Typography>
             </Grid>
 
@@ -1036,7 +1031,7 @@ const ContactUs = () => {
               Thank You! 🎉
             </Typography>
             <Typography variant="body1" sx={{ mb: 3, color: 'black' }}>
-              Thank you for contacting Eagles Ceramics! We have received your message and our team will get back to you shortly.
+              Thank you for contacting Eagles Ceramic! We have received your message and our team will get back to you shortly.
             </Typography>
             <Typography variant="body2" sx={{ mb: 3, opacity: 0.8, color: 'black' }}>
               We typically respond within 24 hours during business days.

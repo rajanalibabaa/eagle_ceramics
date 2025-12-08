@@ -7,7 +7,7 @@ const ServicesCollectionCard = ({
   mainImage,
   title = "Collection Title",
   hoverParagraph = "This is the paragraph that appears when hovering.",
-  subtitle = "Explore More",
+  subtitle = "Explore Collection",
   titleColor = "black",
   subtitleColor = "#b51a1a",
   overlayBg = "rgba(255,255,255,0.55)",

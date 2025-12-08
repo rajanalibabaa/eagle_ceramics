@@ -52,7 +52,7 @@ const MainPopUp = () => {
     formData.append('_autoresponse', 'Thank you for subscribing to our newsletter! We are excited to have you.'); 
 
     try {
-      const response = await fetch('https://formsubmit.co/81a5781410abf9663679482ddc4efaf6', {
+      const response = await fetch('https://formsubmit.co/info@eagleceramic.com', {
         method: 'POST',
         body: formData,
       });

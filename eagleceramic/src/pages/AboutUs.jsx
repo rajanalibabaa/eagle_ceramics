@@ -1,5 +1,9 @@
 import React from "react";
-import { Box, Typography, Button, useTheme } from "@mui/material";
+import {  useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+
 import { keyframes } from "@mui/system";
 import carving from "../assets/FloorTiles/Carvingcollection.jpg";
 import { Link } from 'react-router-dom';

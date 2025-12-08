@@ -4,17 +4,17 @@ import React, {
   useMemo,
   useCallback,
   useEffect,
-  memo
+  memo,
 } from "react";
-import {
-  Container,
-  Typography,
-  Box,
-  Avatar,
-  Paper,
-  Grid,
-  useTheme
-} from "@mui/material";
+import { useTheme } from "@mui/material";
+
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Avatar from "@mui/material/Avatar";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Autoplay, Mousewheel } from "swiper/modules";
@@ -48,7 +48,7 @@ const clients = [
   { name: "Schools & Colleges", image: school },
   { name: "IT Parks & Offices", image: job },
   { name: "Manufacturing Units", image: manufacture },
-  { name: "Hotels & Restaurants", image: hotel }
+  { name: "Hotels & Restaurants", image: hotel },
 ];
 
 const highlightedProjects = [
@@ -56,7 +56,7 @@ const highlightedProjects = [
   { title: "Commercial Buildings", image: build },
   { title: "Malls & Multiplexes", image: mall },
   { title: "Government Projects", image: government },
-  { title: "Industrial Flooring Works", image: flooring }
+  { title: "Industrial Flooring Works", image: flooring },
 ];
 
 /* --------------------  framer variants  -------------------- */
@@ -65,11 +65,11 @@ const fadeUp = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6 }
-  }
+    transition: { duration: 0.6 },
+  },
 };
 const staggerWrapper = {
-  visible: { transition: { staggerChildren: 0.2 } }
+  visible: { transition: { staggerChildren: 0.2 } },
 };
 
 /* --------------------  helper components  -------------------- */
@@ -81,7 +81,7 @@ const ClientSlide = memo(({ client, isActive }) => (
       height: "100%",
       display: "flex",
       alignItems: "center",
-      padding: "20px 0"
+      padding: "20px 0",
     }}
   >
     <Box
@@ -89,7 +89,7 @@ const ClientSlide = memo(({ client, isActive }) => (
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        width: "100%"
+        width: "100%",
       }}
     >
       <Avatar
@@ -101,7 +101,7 @@ const ClientSlide = memo(({ client, isActive }) => (
           border: "3px solid white",
           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
           mb: "-50px",
-          zIndex: 1
+          zIndex: 1,
         }}
       />
       <Paper
@@ -114,7 +114,7 @@ const ClientSlide = memo(({ client, isActive }) => (
           px: 2,
           minHeight: "140px",
           borderRadius: "16px",
-          background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)"
+          background: "linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%)",
         }}
       >
         <Typography variant="subtitle1" fontWeight="bold">
@@ -141,7 +141,7 @@ const ProjectCard = memo(({ item }) => {
         height: 280,
         borderRadius: 3,
         overflow: "hidden",
-        cursor: "pointer"
+        cursor: "pointer",
       }}
     >
       <Box
@@ -154,7 +154,7 @@ const ProjectCard = memo(({ item }) => {
           height: "100%",
           objectFit: "cover",
           filter: loaded ? "none" : "blur(8px)",
-          transition: "filter .3s"
+          transition: "filter .3s",
         }}
       />
       <Box
@@ -166,7 +166,7 @@ const ProjectCard = memo(({ item }) => {
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "center",
-          p: 2
+          p: 2,
         }}
       >
         <Typography
@@ -206,28 +206,28 @@ const OurClients = () => {
       autoplay: {
         delay: 5000,
         disableOnInteraction: false,
-        pauseOnMouseEnter: true
+        pauseOnMouseEnter: true,
       },
       mousewheel: {
         forceToAxis: true,
         sensitivity: 0.35, // require more wheel delta
-        releaseOnEdges: true
+        releaseOnEdges: true,
       },
       slidesPerView: "auto",
       spaceBetween: 20,
       breakpoints: {
         600: { slidesPerView: 2, spaceBetween: 30 },
-        900: { slidesPerView: 3, spaceBetween: 40 }
+        900: { slidesPerView: 3, spaceBetween: 40 },
       },
       coverflowEffect: {
         rotate: 0,
         stretch: 0,
         depth: 100,
         modifier: 2.5,
-        slideShadows: false
+        slideShadows: false,
       },
       modules: [EffectCoverflow, Autoplay, Mousewheel],
-      onSlideChange: handleSlideChange
+      onSlideChange: handleSlideChange,
     }),
     [handleSlideChange]
   );
@@ -258,7 +258,7 @@ const OurClients = () => {
       const next = row.scrollLeft + cardW + gap;
       row.scrollTo({
         left: next > maxScroll ? 0 : next,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     }, 5000); // slower interval
     return () => clearInterval(int);
@@ -287,7 +287,7 @@ const OurClients = () => {
             py: 2,
             scrollSnapType: "x mandatory",
             "&::-webkit-scrollbar": { display: "none" },
-            scrollbarWidth: "none"
+            scrollbarWidth: "none",
           }}
         >
           {highlightedProjects.map((p, i) => (
@@ -296,7 +296,7 @@ const OurClients = () => {
               sx={{
                 width: "80%",
                 flexShrink: 0,
-                scrollSnapAlign: "center"
+                scrollSnapAlign: "center",
               }}
             >
               <ProjectCard item={p} />
@@ -309,7 +309,7 @@ const OurClients = () => {
           sx={{
             display: { xs: "flex", md: "none" },
             justifyContent: "center",
-            mt: 2
+            mt: 2,
           }}
         >
           {highlightedProjects.map((_, i) => (
@@ -321,7 +321,7 @@ const OurClients = () => {
                 borderRadius: "50%",
                 mx: 0.75,
                 background: i === activeProjIdx ? "#d11f25" : "#cbd5e0",
-                transition: "background .3s"
+                transition: "background .3s",
               }}
             />
           ))}
@@ -369,7 +369,7 @@ const OurClients = () => {
         textAlign: "center",
         py: { xs: 4, md: 6 },
         overflowX: "hidden",
-        background: "linear-gradient(180deg,#fff 0%,#f8fafc 100%)"
+        background: "linear-gradient(180deg,#fff 0%,#f8fafc 100%)",
       }}
     >
       {/* Header */}
@@ -382,7 +382,7 @@ const OurClients = () => {
             background: "black",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
-            fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" }
+            fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
           }}
         >
           Trusted by Leading Builders & Businesses
@@ -394,7 +394,7 @@ const OurClients = () => {
             mb: 4,
             maxWidth: 750,
             mx: "auto",
-            fontSize: { xs: "1rem", sm: "1.1rem" }
+            fontSize: { xs: "1rem", sm: "1.1rem" },
           }}
         >
           Over the past 35 years, we’ve supplied tiles and ceramic products to
@@ -411,7 +411,7 @@ const OurClients = () => {
             mb: 2,
             fontWeight: 600,
             fontSize: { xs: "1.8rem", md: "2.2rem" },
-            color: "#1e293b"
+            color: "#1e293b",
           }}
         >
           Our Clients Include
@@ -424,10 +424,7 @@ const OurClients = () => {
         variants={fadeUp}
         sx={{ width: { xs: "100%", md: "90%" }, mx: "auto", py: 4 }}
       >
-        <Swiper
-          {...swiperConfig}
-          onSwiper={(sw) => (swiperRef.current = sw)}
-        >
+        <Swiper {...swiperConfig} onSwiper={(sw) => (swiperRef.current = sw)}>
           {clients.map((c, i) => (
             <SwiperSlide key={c.name} style={{ width: 280 }}>
               <ClientSlide client={c} isActive={i === activeClientIdx} />
@@ -446,7 +443,7 @@ const OurClients = () => {
                 borderRadius: "50%",
                 mx: 0.75,
                 background: i === activeClientIdx ? "#d11f25" : "#cbd5e0",
-                transition: "background .3s"
+                transition: "background .3s",
               }}
             />
           ))}
@@ -462,7 +459,7 @@ const OurClients = () => {
             mb: 4,
             fontWeight: 700,
             fontSize: { xs: "1.8rem", md: "2.2rem" },
-            color: "#1e293b"
+            color: "#1e293b",
           }}
         >
           Our Projects

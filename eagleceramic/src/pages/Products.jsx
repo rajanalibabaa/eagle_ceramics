@@ -1,27 +1,23 @@
 import React, { useRef, useState, useCallback, useMemo, memo } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  useTheme,
-  useMediaQuery,
-  Chip,
-  Grid,
-  Paper,
-  IconButton,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import{ useTheme }from "@mui/material";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import Chip from "@mui/material/Chip";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
+
 import { motion, AnimatePresence } from "framer-motion";
-import {
-  CheckCircle,
-  ArrowForward,
-  ArrowBack,
-  Square,
-  Straighten,
-  Palette,
-  Shield,
-  LocalOffer,
-  Star,
-} from "@mui/icons-material";
+
+import CheckCircle from '@mui/icons-material/CheckCircle';
+import Straighten from '@mui/icons-material/Straighten';
+import  Square  from "@mui/icons-material/Square";
+import Palette from '@mui/icons-material/Palette';
+import Shield from '@mui/icons-material/Shield';
+import Star from '@mui/icons-material/Star';
+
 import { useNavigate } from "react-router-dom";
 // Import images
 import walltile from "../assets/WallTiles/Nature.jpg";
@@ -637,39 +633,7 @@ const ImageDisplay = memo(({ item, isMobile }) => (
 ));
 
 
-// Navigation Dots Component
-const NavigationDots = memo(({ content, activeIndex, onNavigate, vertical = true }) => (
-  <Box
-    sx={{
-      display: "flex",
-      flexDirection: vertical ? "column" : "row",
-      gap: 1.5,
-      zIndex: 10,
-    }}
-  >
-    {content.map((item, index) => (
-      <Box
-        key={index}
-        onClick={() => onNavigate(index)}
-        sx={{
-          width: index === activeIndex ? (vertical ? 12 : 24) : 12,
-          height: index === activeIndex ? (vertical ? 24 : 12) : 12,
-          borderRadius: 6,
-          backgroundColor:
-            index === activeIndex ? item.color : "rgba(0,0,0,0.1)",
-          cursor: "pointer",
-          transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-          boxShadow:
-            index === activeIndex ? `0 4px 12px ${item.color}50` : "none",
-          "&:hover": {
-            transform: "scale(1.2)",
-            backgroundColor: item.color,
-          },
-        }}
-      />
-    ))}
-  </Box>
-));
+
 
 // Main Component
 function StickyScrollReveal() {
