@@ -14,8 +14,8 @@ import { Link } from 'react-router-dom';
 const MotionBox = motion(Box);
 
 // Replace with your actual images
-import heroBg from '../../../assets/Bannerimage4.png';
-import Img1 from '../../../assets/Bannerimage5.png';
+import heroBg from '../../../assets/Bannerimage4.jpeg';
+import Img1 from '../../../assets/BannerImage5.jpeg';
 import Img2 from '../../../assets/Bannerimage3.png';
 import Mission from '../../../assets/AboutImages/Mission.webp'
 import Mission1 from '../../../assets/AboutImages/Mission1.webp'
@@ -66,7 +66,7 @@ const AboutPageContent = () => {
     <Box sx={{ background: '#ffffff', color: '#0f172a', overflow: 'hidden' }}>
 
       {/* STATS BAR - Premium Horizontal */}
-      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 1, md: 5, sm: 4 }, px: { sm: 6, md: 12 }, position: 'absolute', marginTop: { xs: 67, sm: 98, md: 70 }, marginLeft: { sm: 13, md: 0 }, zIndex: 3, mx: { xs: 3, md: "15%" }, borderRadius: 5 }}>
+      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 }, position: 'absolute', marginTop: { xs: 75, sm: 98, md: 70 }, marginLeft: { sm: 13, md: 0 }, zIndex: 3, mx: { xs: 3, md: "15%" }, borderRadius: 5 }}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 12 }} justifyContent='center' alignItems='center' textAlign="center">
             {[

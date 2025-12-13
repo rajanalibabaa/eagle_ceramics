@@ -13,8 +13,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Banner from "../assets/BannerImage.png";
 import Banner2 from "../assets/BannerImage2.png";
 import Banner3 from "../assets/BannerImage3.png";
-import Banner4 from "../assets/BannerImage4.png";
-import Banner5 from "../assets/BannerImage5.png";
+import Banner4 from "../assets/BannerImage4.jpeg";
+import Banner5 from "../assets/BannerImage5.jpeg";
 
 const preloadImages = (imageUrls) => {
   imageUrls.forEach((src) => {

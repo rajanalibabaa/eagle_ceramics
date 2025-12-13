@@ -192,7 +192,7 @@ function Footer() {
                   fontSize: { xs: "0.875rem", md: "1rem" },
                 }}
               >
-                Services
+                Products
               </Link>
               <Link
                 onClick={() => navigate("/contact")}
