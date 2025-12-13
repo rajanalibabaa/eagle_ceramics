@@ -365,10 +365,10 @@ const HeroSection = () => {
                   lineHeight: 1.1,
                   mb: 3,
                   background:
-                    "linear-gradient(135deg, #FFFFFF 0%, #E8F4FD 100%)",
+                    "white",
                   backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
+                  // WebkitBackgroundClip: "text",
+                  // WebkitTextFillColor: "transparent",
                   position: "relative",
                   "&::after": {
                     content: '""',
@@ -395,7 +395,7 @@ const HeroSection = () => {
                   fontSize: { xs: "1.2rem", sm: "1.4rem", md: "1.5rem" },
                   mb: 4,
                   color: "white",
-                  opacity: 0.95,
+                  // opacity: 0.95,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: { xs: "center", md: "flex-start" },
@@ -441,7 +441,7 @@ const HeroSection = () => {
 
                 <Button
                   variant="contained"
-                  onClick={() => navigate("/services")}
+                  onClick={() => navigate("/products")}
                   sx={{
                     position: "relative",
                     px: 1.5,

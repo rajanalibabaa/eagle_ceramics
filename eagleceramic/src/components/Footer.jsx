@@ -95,8 +95,8 @@ function Footer() {
           <Typography
             variant="h4"
             sx={{
-              fontWeight: 800,
-              color: "#c41f25",
+              fontWeight: 600,
+              color: "#ffffffff",
               fontSize: { xs: "1.75rem", md: "2rem" },
             }}
           >
@@ -106,7 +106,7 @@ function Footer() {
             variant="body1"
             sx={{
               color: "white",
-              opacity: 0.9,
+              // opacity: 0.9,
               maxWidth: "800px",
               margin: "0 auto",
               mt: 2,
@@ -136,7 +136,7 @@ function Footer() {
                 fontWeight: 600,
                 mb: 3,
                 fontSize: { xs: "1.25rem", md: "1.5rem" },
-                color: "#a7a9a9",
+                color: "#ffffffff",
               }}
             >
               Quick Links
@@ -180,7 +180,7 @@ function Footer() {
                 About
               </Link>
               <Link
-                onClick={() => navigate("/services")}
+                onClick={() => navigate("/products")}
                 variant="body2"
                 sx={{
                   color: "white",
@@ -221,7 +221,7 @@ function Footer() {
                 fontWeight: 600,
                 mb: 3,
                 fontSize: { xs: "1.25rem", md: "1.5rem" },
-                color: "#a7a9a9",
+                color: "#ffffffff",
               }}
             >
               Newsletter
@@ -230,7 +230,7 @@ function Footer() {
               variant="body2"
               sx={{
                 color: "white",
-                opacity: 0.9,
+                // opacity: 0.9,
                 mb: 3,
                 fontSize: { xs: "0.875rem", md: "1rem" },
               }}
@@ -264,16 +264,16 @@ function Footer() {
                   flexGrow: 1,
                   width: "100%",
                   "& .MuiOutlinedInput-root": {
-                    color: "white",
+                    color: "Black",
                     "& fieldset": { borderColor: "white" },
-                    "&:hover fieldset": { borderColor: "#a7a7a8" },
+                    "&:hover fieldset": { borderColor: "#ffffffff" },
                     "&.Mui-focused fieldset": { borderColor: "#c41f25" },
                   },
-                  backgroundColor: "rgba(255,255,255,0.1)",
+                  backgroundColor: "rgba(255, 255, 255, 1)",
                   borderRadius: 1,
                   "& .MuiInputBase-input": {
                     "&::placeholder": {
-                      color: "rgba(255,255,255,0.7)",
+                      color: "rgba(0, 0, 0, 0.7)",
                       opacity: 1,
                     },
                   },
@@ -283,7 +283,7 @@ function Footer() {
                 type="submit"
                 variant="contained"
                 sx={{
-                  backgroundColor: "#a7a7a8",
+                  backgroundColor: "#ffffffff",
                   color: "#222626ff",
                   fontWeight: "bold",
                   "&:hover": {
@@ -370,7 +370,7 @@ function Footer() {
                 fontWeight: 600,
                 mb: 3,
                 fontSize: { xs: "1.25rem", md: "1.5rem" },
-                color: "#a7a9a9",
+                color: "#ffffffff",
               }}
             >
               Contact Us
@@ -383,13 +383,13 @@ function Footer() {
                 alignItems: "center",
               }}
             >
-              <Typography variant="body2" sx={{ color: "white", opacity: 0.9 }}>
+              <Typography variant="body2" sx={{ color: "white" }}>
                 Email: info@eagleceramic.com
               </Typography>
-              <Typography variant="body2" sx={{ color: "white", opacity: 0.9 }}>
+              <Typography variant="body2" sx={{ color: "white" }}>
                 Phone: +91 9884003787
               </Typography>
-              <Typography variant="body2" sx={{ color: "white", opacity: 0.9 }}>
+              <Typography variant="body2" sx={{ color: "white" }}>
                 Address: Shop No 13,Second Floor,Survey No 63 Paiki1/paiki2,
                 Plot No 1 Paiki Prabhat Chamber,Halvad Road, Mahendranagar,Morbi
                 MORBI-363641 GUJRAT-INDIA
@@ -472,7 +472,7 @@ function Footer() {
         <Divider
           sx={{
             my: 2,
-            borderColor: "rgba(255, 255, 255, 0.2)",
+            borderColor: "rgba(255, 255, 255, 1)",
             maxWidth: "800px",
             margin: "0 auto",
           }}

@@ -148,43 +148,43 @@ export default function ServiceSideBar() {
     {
       label: 'Wall Tiles',
       key: 'walltiles',
-      versions: [{ label: '300 X 450', url: '/services/walltiles' }]
+      versions: [{ label: '300 X 450', url: '/products/walltiles' }]
     },
     {
       label: 'Elevation Tiles',
       key: 'elevation-tiles-collection',
       versions: [
-        { label: '300 X 450', url: '/services/elevation-tiles-300x450' },
-        { label: '300 X 600', url: '/services/elevation-tiles-300x600' }
+        { label: '300 X 450', url: '/products/elevation-tiles-300x450' },
+        { label: '300 X 600', url: '/products/elevation-tiles-300x600' }
       ]
     },
     {
       label: 'Floor Tiles',
       key: 'floortiles',
       versions: [
-            { label: '600 X 1200 Glossy', url: '/services/floortiles/600x1200/glossy' },
-            { label: '600 X 1200 Matt', url: '/services/floortiles/600x1200/matt' } ,
-            { label: '600 X 600 DC', url: '/services/floortiles/600x600dc' }
+            { label: '600 X 1200 Glossy', url: '/products/floortiles/600x1200/glossy' },
+            { label: '600 X 1200 Matt', url: '/products/floortiles/600x1200/matt' } ,
+            { label: '600 X 600 DC', url: '/products/floortiles/600x600dc' }
       ]
     },
     {
       label: 'Parking Tiles',
       key: 'parkingtiles',
       versions: [
-        { label: '300 X 300', url: '/services/parkingtiles/collection1' },
-        { label: '400 X 400', url: '/services/parkingtiles/collection2' }
+        { label: '300 X 300', url: '/products/parkingtiles/collection1' },
+        { label: '400 X 400', url: '/products/parkingtiles/collection2' }
       ]
     },
     {
       label: 'CoolRoof Tiles',
       key: 'cool-roof-tiles-9mm',
       versions: [
-            { label: '300 X 300 9MM', url: '/services/cool-roof-tiles-9mm' },
-            { label: '300 X 300 10MM', url: '/services/cool-roof-tiles-10mm' }  ,
-            { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
+            { label: '300 X 300 9MM', url: '/products/cool-roof-tiles-9mm' },
+            { label: '300 X 300 10MM', url: '/products/cool-roof-tiles-10mm' }  ,
+            { label: '600 X 600', url: '/products/cool-roof-tiles-600x600' }
       ]
     },
-    { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink', versions: [] }
+    { label: 'Kitchen Sink', url: '/products/kitchen-sink', key: 'kitchen-sink', versions: [] }
   ]
 
   const sidebarRef = useRef(null)

@@ -130,7 +130,7 @@ const outlinedStyles = {
 
 const WhyOurProducts = () => {
   const navigate = useNavigate();
-  const handleCatalogueClick = React.useCallback(() => navigate('/services'), [navigate]);
+  const handleCatalogueClick = React.useCallback(() => navigate('/products'), [navigate]);
   const handleQuoteClick = React.useCallback(() => navigate('/contact'), [navigate]);
   const renderedFeatures = useMemo(() => ITEMS.map((item, index) => <FeatureItem key={index} item={item} index={index} />), []);
 

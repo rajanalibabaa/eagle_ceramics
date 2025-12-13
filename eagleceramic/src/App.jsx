@@ -3,7 +3,7 @@ import "./App.css";
 import CircularProgress from "@mui/material/CircularProgress";
 import Fab from "@mui/material/Fab";
 import ScrollToTop from "./ScrollToTop";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
@@ -18,8 +18,11 @@ import CoolRoofTiles10MM from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTil
 import CoolRoofTiles600x600 from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles600x600.jsx";
 import KitchenSink from "./pages/ServicesContent/KitchenSink/KitchenSink.jsx";
 import AboutPageContent from "./pages/ServicesContent/AboutPageContent/AboutPageContent.jsx";
+import ContactPageFab from "./components/ContactPageFab.jsx";
 
-const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
+import logo from './assets/eagle_ceramics_logo.jpg';
+
+// const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
 const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
 const TrustedChoise = React.lazy(() =>
@@ -75,7 +78,6 @@ const colors = {
   primary: "#c21f24",
   secondary: "#c21f24",
 };
-
 // WhatsApp Button (always visible)
 const WhatsAppButton = () => {
   const mobileNumber = "+918248638595";
@@ -110,34 +112,7 @@ const WhatsAppButton = () => {
   );
 };
 
-const WhatsAppButton2 = () => {
-  return (
-    <Fab
-      onClick={() => {
-        window.location.href = "/contact";
-        window.scrollTo(0, 0);
-      }}
-      sx={{
-        position: "fixed",
-        bottom: { xs: 100, sm: 120, md: 140 },
-        right: { xs: 4, sm: 20, md: 25 },
-        backgroundColor: "#25D366",
-        color: "#fff",
-        width: { xs: 58, sm: 55, md: 55, lg: 60 },
-        height: { xs: 58, sm: 55, md: 55, lg: 60 },
-        zIndex: 9999,
-        "&:hover": {
-          backgroundColor: "#1ebe5d",
-          transform: "scale(1.1)",
-        },
-        transition: "all 0.3s ease",
-      }}
-      aria-label="Contact via Message"
-    >
-      <MessageIcon sx={{ fontSize: { xs: 28, sm: 26, md: 30, lg: 32 } }} />
-    </Fab>
-  );
-};
+
 
 // Scroll button
 const SmartScrollButton = () => {
@@ -215,14 +190,10 @@ function App() {
         <ScrollToTop />
         <Suspense
           fallback={
-            <CircularProgress
-              size={50}
-              color="secondary"
-              sx={{ position: "fixed", top: "50%", left: "50%", zIndex: 9999 }}
-            />
+            <img src={logo} alt="Eagle Ceramics Logo" style={{display:'block',margin:'auto',marginTop:'20%',width:'250px',height:'100px'}} />
           }
         >
-          <MainPopUp />
+          {/* <MainPopUp /> */}
           <Navbar />
           <Routes>
             <Route path="/" element={<HomePage />} />
@@ -233,7 +204,7 @@ function App() {
             <Route path="/our-clients" element={<OurClients />} />
             <Route path="/testimonials" element={<Testimonials />} />
 
-            <Route path="/services" element={<ServicesLayout />}>
+            <Route path="/products" element={<ServicesLayout />}>
               <Route index element={<Walltiles />} />
               <Route path="walltiles" element={<Walltiles />} />
               <Route
@@ -289,12 +260,13 @@ function App() {
             </Route>
           </Routes>
           <Footer />
+                {isMobileOrTablet && <ContactPageFab />}
+
         </Suspense>
       </Router>
 
       <WhatsAppButton />
 
-      {isMobileOrTablet && <WhatsAppButton2 />}
 
       <SmartScrollButton />
     </ThemeProvider>

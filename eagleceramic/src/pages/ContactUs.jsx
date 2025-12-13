@@ -127,7 +127,7 @@ const ContactUs = () => {
     {
       icon: <LocationOn />,
       title: "Address",
-      content: `Shop No 13, Second Floor, Survey No 63 Paiki1/paiki2,
+      content: ` Eagle Ceramic Shop No 13, Second Floor, Survey No 63 Paiki1/paiki2,
        Plot No 1 Paiki Prabhat Chamber, Halvad Road, Mahendranagar,
         Morbi MORBI-363641, GUJARAT-INDIA`,
       bg: "#9c9a9aff"
@@ -143,7 +143,7 @@ const ContactUs = () => {
     {
       icon: <Email />,
       title: "Email",
-      content: { href: "mailto:info@eaglesceramic.com", text: "info@eaglesceramic.com" },
+      content: { href: "mailto:info@eagleceramic.com", text: "info@eagleceramic.com" },
       bg: "#9c9a9aff"
     }
   ];
@@ -457,7 +457,8 @@ const ContactUs = () => {
                         }
                       }}
                     >
-                      <span style={{ color: '#010000ff' }}>Shop No 13, Second Floor,</span>
+                      <span style={{ color: '#010000ff' }}>Eagle Ceramics</span>
+                      <span style={{ color: '#010000ff' }}>  Shop No 13, Second Floor,</span>
                       <span style={{ color: '#010000ff' }}>Survey No 63 Paiki1/paiki2,</span>
                       <span style={{ color: '#010000ff' }}>Plot No 1 Paiki Prabhat Chamber,</span>
                       <span style={{ color: '#010000ff' }}>Halvad Road, Mahendranagar, Morbi,</span>

@@ -66,42 +66,7 @@ const AboutPageContent = () => {
     <Box sx={{ background: '#ffffff', color: '#0f172a', overflow: 'hidden' }}>
 
       {/* STATS BAR - Premium Horizontal */}
-      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 }, position: 'absolute', marginTop: { xs: 75, sm: 98, md: 70 }, marginLeft: { sm: 13, md: 0 }, zIndex: 3, mx: { xs: 3, md: "15%" }, borderRadius: 5 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={{ xs: 2, md: 12 }} justifyContent='center' alignItems='center' textAlign="center">
-            {[
-              { number: "35+", label: "Years of Trust" },
-              { number: "15M+", label: "Sq. Ft. Delivered" },
-              { number: "1000+", label: "Happy Builders" },
-              { number: "Zero", label: "Supply Delays" },
-            ].map((stat, i) => (
-              <Grid item xs={6} sm={3} key={i}>
-                <MotionBox
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Typography variant="h3" sx={{
-                    color: 'black',
-                    fontWeight: 800,
-                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
-                    // mt:5,
-                    pb: { xs: 0, md: 3 }
-                  }}>
-                    {stat.number}
-                  </Typography>
-                  <Typography variant="h6" sx={{
-                    color: '#000000ff',
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
-                  }}>
-                    {stat.label}
-                  </Typography>
-                </MotionBox>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+      
       {/* HERO - Ultra Clean & Powerful */}
       <Box sx={{
         position: 'relative',
@@ -197,7 +162,7 @@ const AboutPageContent = () => {
 
                   <Button
                     component={Link}
-                    to="/services"
+                    to="/products"
                     variant="outlined"
                     size="large"
                     sx={{
@@ -236,12 +201,47 @@ const AboutPageContent = () => {
         }} />
       </Box>
 
-
+<Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 },maxWidth:'80%',position:'absolute',justifyContent:'center',mx:'auto',bottom:{xs:'-40px',md:'-80px'},left:'0',right:'0',textAlign:'center',borderRadius:2 ,zIndex:3,}}>
+        <Container maxWidth="lg">
+          <Grid container spacing={{ xs: 2, md: 5 }} justifyContent='space-between' alignItems='center' textAlign="center">
+            {[
+              { number: "35+", label: "Years of Trust" },
+              { number: "15M+", label: "Sq. Ft. Delivered" },
+              { number: "1000+", label: "Happy Builders" },
+              { number: "Zero", label: "Supply Delays" },
+            ].map((stat, i) => (
+              <Grid item xs={6} sm={3} key={i}>
+                <MotionBox
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Typography variant="h3" sx={{
+                    color: 'black',
+                    fontWeight: 800,
+                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                    // mt:5,
+                    pb: { xs: 0, md: 3 }
+                  }}>
+                    {stat.number}
+                  </Typography>
+                  <Typography variant="h6" sx={{
+                    color: '#000000ff',
+                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
+                  }}>
+                    {stat.label}
+                  </Typography>
+                </MotionBox>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
 
 
       {/* FOUNDER STORY - Elegant & Emotional */}
       <Box sx={{
-        py: { xs: 8, sm: 10, lg: 12 },
+        py: { xs: 8, sm: 10, lg: 5 },
         background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
         px: { xs: 2, sm: 3, md: 0 },
 

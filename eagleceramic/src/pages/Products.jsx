@@ -33,7 +33,7 @@ const content = [
     id: 1,
     title: "WALL TILES",
     subtitle: "Transform Your Spaces",
-    path : "/services/walltiles",
+    path : "/products/walltiles",
     description:
       "Explore our premium range of wall tiles — the perfect blend of style, texture, and durability to elevate any room. Crafted with precision for lasting beauty.",
     image: walltile,
@@ -65,7 +65,7 @@ const content = [
     id: 2,
     title: "ELEVATION TILES",
     subtitle: "Stunning Exteriors",
-    path :'/services/elevation-tiles-300x450',
+    path :'/products/elevation-tiles-300x450',
     description:
       "Enhance your building's exterior with our stylish and weather-resistant elevation tiles. Designed to withstand extreme conditions while maintaining elegance.",
     image: elevationTile,
@@ -100,7 +100,7 @@ const content = [
     id: 3,
     title: "FLOOR TILES",
     subtitle: "Walk in Style",
-    path :'/services/floortiles/600x1200',
+    path :'/products/floortiles/600x1200',
     description:
       "Glossy or matte — our floor tiles deliver strength, beauty, and long-lasting performance. Perfect foundation for your dream spaces.",
     image: floorTile,
@@ -133,7 +133,7 @@ const content = [
     id: 4,
     title: "PARKING TILES",
     subtitle: "Built to Endure",
-    path :'/services/parkingtiles/collection1',
+    path :'/products/parkingtiles/collection1',
     description:
       "Sturdy, anti-skid parking tiles engineered to handle heavy loads effortlessly. Maximum grip, minimum maintenance.",
     image: parkingTile,
@@ -165,7 +165,7 @@ const content = [
     id: 5,
     title: "COOLROOF TILES",
     subtitle: "Beat the Heat",
-    path :'/services/cool-roof-tiles-9mm',
+    path :'/products/cool-roof-tiles-9mm',
     description:
       "Reduce heat naturally with high-reflective cool roof tiles for thermal comfort. Save energy, stay cool.",
     image: coolroof,
@@ -197,7 +197,7 @@ const content = [
     id: 6,
     title: "KITCHEN SINK",
     subtitle: "Modern Functionality",
-    path :'/services/kitchen-sink',
+    path :'/products/kitchen-sink',
     description:
       "Modern, durable kitchen sinks that complement your interiors and enhance functionality. Premium quality for everyday use.",
     image: kitchenSink,
