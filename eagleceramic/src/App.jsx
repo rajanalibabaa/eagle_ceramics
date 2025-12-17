@@ -1,6 +1,7 @@
 import React, { Suspense, useState, useEffect } from "react";
 import "./App.css";
-import { Fab } from "@mui/material";
+import { Fab, Dialog, Box, Typography, TextField, Button, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import ScrollToTop from "./ScrollToTop";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -125,31 +126,227 @@ const WhatsAppButton = () => {
 };
 
 const WhatsAppButton2 = () => {
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    message: "",
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setShowSuccess(false);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.fullName || !formData.email || !formData.phone) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    if (!formData.email.includes("@")) {
+      alert("Please enter a valid email address");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const submissionData = new FormData();
+    submissionData.append("fullName", formData.fullName);
+    submissionData.append("email", formData.email);
+    submissionData.append("phone", formData.phone);
+    submissionData.append("message", formData.message);
+    submissionData.append("_subject", "New Message From Floating Button");
+    submissionData.append("_captcha", "false");
+    submissionData.append("_template", "table");
+    submissionData.append(
+      "_autoresponse",
+      `Thank you ${formData.fullName}! We will contact you shortly.`
+    );
+
+    try {
+      const response = await fetch("https://formsubmit.co/4928bdeea462118f9e193be9cd0da148", {
+        method: "POST",
+        body: submissionData,
+      });
+
+      if (response.ok) {
+        setShowSuccess(true);
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          message: "",
+        });
+        setTimeout(() => {
+          handleClose();
+        }, 2000);
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("An error occurred. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
-    <Fab
-      onClick={() => {
-        window.location.href = "/contact";
-        window.scrollTo(0, 0);
-      }}
-      sx={{
-        position: "fixed",
-        bottom: { xs: 100, sm: 120, md: 140 },
-        right: { xs: 4, sm: 20, md: 25 },
-        backgroundColor: "#25D366",
-        color: "#fff",
-        width: { xs: 58, sm: 55, md: 55, lg: 60 },
-        height: { xs: 58, sm: 55, md: 55, lg: 60 },
-        zIndex: 9999,
-        "&:hover": {
-          backgroundColor: "#1ebe5d",
-          transform: "scale(1.1)",
-        },
-        transition: "all 0.3s ease",
-      }}
-      aria-label="Contact via Message"
-    >
-      <MessageIcon sx={{ fontSize: { xs: 28, sm: 26, md: 30, lg: 32 } }} />
-    </Fab>
+    <>
+      <Fab
+        onClick={handleOpen}
+        sx={{
+          position: "fixed",
+          bottom: { xs: 100, sm: 120, md: 140 },
+          right: { xs: 4, sm: 20, md: 25 },
+          backgroundColor: "#25D366",
+          color: "#fff",
+          width: { xs: 58, sm: 55, md: 55, lg: 60 },
+          height: { xs: 58, sm: 55, md: 55, lg: 60 },
+          zIndex: 9999,
+          "&:hover": {
+            backgroundColor: "#1ebe5d",
+            transform: "scale(1.1)",
+          },
+          transition: "all 0.3s ease",
+        }}
+        aria-label="Contact via Message"
+      >
+        <MessageIcon sx={{ fontSize: { xs: 28, sm: 26, md: 30, lg: 32 } }} />
+      </Fab>
+
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            borderRadius: "16px",
+            boxShadow: "0 20px 40px rgba(0,0,0,0.3)",
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 3,
+            position: "relative",
+          }}
+        >
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: "grey.500",
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              mb: 3,
+              pr: 4,
+              color: "#050608",
+            }}
+          >
+            {showSuccess ? "Message Sent!" : "Send us a Message"}
+          </Typography>
+
+          {showSuccess ? (
+            <Box sx={{ textAlign: "center", py: 2 }}>
+              <Typography variant="body1" sx={{ color: "green", fontWeight: 600 }}>
+                Thank you! We'll contact you shortly.
+              </Typography>
+            </Box>
+          ) : (
+            <Box component="form" sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              <TextField
+                label="Company / Builder Name"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                size="small"
+                required
+              />
+              <TextField
+                label="Email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                size="small"
+                required
+              />
+              <TextField
+                label="Phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                size="small"
+                required
+              />
+              <TextField
+                label="Message"
+                name="message"
+                value={formData.message}
+                onChange={handleChange}
+                fullWidth
+                variant="outlined"
+                size="small"
+                multiline
+                rows={3}
+              />
+              <Button
+                variant="contained"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                sx={{
+                  mt: 2,
+                  py: 1.2,
+                  borderRadius: 2,
+                  fontWeight: 700,
+                  background: "#c21f24",
+                  "&:hover": {
+                    background: "#a01820",
+                  },
+                }}
+              >
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </Button>
+            </Box>
+          )}
+        </Box>
+      </Dialog>
+    </>
   );
 };
 

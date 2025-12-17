@@ -10,18 +10,13 @@ import {
   CardContent,
   useTheme,
   InputAdornment,
-  Fab,
 } from '@mui/material';
 import {
   Phone,
   Email,
   LocationOn,
-  AccessTime,
   Send,
-  ArrowUpward
 } from '@mui/icons-material';
-import ContactUsImage from '../assets/ContactUsImage.jpg'
-import BackgroundWhite from '../assets/BackgroundWhite.jpg'
 import HeadingImg from '../assets/ParkingTiles/PunchCollection1.jpg'
 
 const ContactUs = () => {
@@ -484,23 +479,7 @@ const ContactUs = () => {
         </Container>
       </Box>
 
-      {/* Scroll to Top Button */}
-      <Fab
-        size="small"
-        sx={{
-          position: 'fixed',
-          bottom: 16,
-          right: 16,
-          backgroundColor: '#016b61',
-          color: 'white',
-          '&:hover': {
-            backgroundColor: '#A0522D'
-          }
-        }}
-        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-      >
-        <ArrowUpward />
-      </Fab>
+     
     </Box>
   );
 };
