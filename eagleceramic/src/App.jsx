@@ -49,7 +49,7 @@ const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProdu
 // const ProductList = React.lazy(() => import("./EagleCeramicAdmin/ProductList/ProductList.jsx"));
 // const SizeManagement = React.lazy(() => import("./EagleCeramicAdmin/SizeManagement/SizeManagement.jsx"));
 // const CatalogueManagement = React.lazy(() => import("./EagleCeramicAdmin/CatalogueManagement/CatalogueManagement.jsx"));
-// const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
+const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
 
 // Theme setup
 const theme = createTheme({
