@@ -14,10 +14,10 @@ const ServicesCollectionCard = lazy(() =>
 );
 
 //images
-import RoofTiles10mm from '../../../assets/RoofTilesImages/RoofTiles10MM.PNG';
+import RoofTiles10mm from '../../../assets/RoofTilesImages/RoofTiles10mm.PNG';
 
 //pdf
-import CoolRoofTiles10mm from '../../../assets/pdf/CoolRoofTilesCollection/CoolRoofTiles10MM.pdf';
+import CoolRoofTiles10mm from '../../../assets/pdf/CoolRoofTilesCollection/CoolRoofTiles10mm.pdf';
 import BackgroundImage from "../../../assets/BannerImage3.png";
 
 const ElevationCollection = [
