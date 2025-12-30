@@ -7,7 +7,7 @@ const ServicesCollectionCard = ({
   mainImage,
   title = "Collection Title",
   hoverParagraph = "This is the paragraph that appears when hovering.",
-  subtitle = "Explore More",
+  subtitle = "Explore Collection",
   titleColor = "black",
   subtitleColor = "#b51a1a",
   overlayBg = "rgba(255,255,255,0.55)",
@@ -215,6 +215,39 @@ const ServicesCollectionCard = ({
             }}
             loading="lazy"
           />
+          {/* EXPLORE BUTTON – ALWAYS VISIBLE */}
+{isMobile && (
+  <Box
+    component="button"
+    onClick={handleButtonClick}
+    sx={{
+      position: "absolute",
+      left: "50%",
+      bottom: responsive.buttonBottom,
+      transform: "translateX(-50%)",
+      padding: responsive.buttonPadding,
+      background: "linear-gradient(135deg, #ff0062 0%, #d60055 100%)",
+      color: "#fff",
+      border: "none",
+      borderRadius: "30px",
+      fontSize: responsive.buttonFontSize,
+      fontWeight: 600,
+      cursor: "pointer",
+      zIndex: 5, // 🔥 ABOVE overlays
+      boxShadow: "0 4px 15px rgba(255, 0, 98, 0.4)",
+      letterSpacing: "0.5px",
+      minWidth: "140px",
+      minHeight: "40px",
+
+      "&:active": {
+        transform: "translate(-50%, 0)",
+      },
+    }}
+  >
+    {subtitle}
+  </Box>
+)}
+
 
           {/* HOVER DARK OVERLAY */}
           <Box
@@ -369,6 +402,7 @@ const ServicesCollectionCard = ({
             >
               {subtitle}
             </Box>
+            
           </Box>
         </Box>
       </Box>

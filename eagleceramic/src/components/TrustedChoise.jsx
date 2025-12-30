@@ -76,10 +76,7 @@ const USPCard = memo(({ item, onNavigate, sxExtra = {} }) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
 
-  const handleClick = useCallback(
-    () => onNavigate("/services"),
-    [onNavigate]
-  );
+
 
   return (
     <motion.div
@@ -362,7 +359,7 @@ const TrustedChoice = () => {
           px: 2
         }}
       >
-        <CTAButton onClick={() => navigate("/services")} variant="primary">
+        <CTAButton onClick={() => navigate("/products")} variant="primary">
           Explore Our Products
         </CTAButton>
         <CTAButton onClick={() => navigate("/contact")} variant="secondary">

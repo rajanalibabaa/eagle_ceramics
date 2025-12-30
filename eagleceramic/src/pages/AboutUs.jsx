@@ -1,7 +1,12 @@
 import React from "react";
-import { Box, Typography, Button, useTheme } from "@mui/material";
+import {  useTheme } from "@mui/material";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+
 import { keyframes } from "@mui/system";
 import carving from "../assets/FloorTiles/Carvingcollection.jpg";
+import { Link } from 'react-router-dom';
 
 // Rotation animation
 const rotateAnim = keyframes`
@@ -40,8 +45,8 @@ const AboutUs = () => {
         <Box
           sx={{
             position: "absolute",
-            right: { xs: "31%",sm: "330px", md: "-90px" },
-            bottom: { xs: "-60px",sm: "-60px", md: "130px" },
+            right: { xs: "31%", sm: "330px", md: "-90px" },
+            bottom: { xs: "-60px", sm: "-60px", md: "130px" },
             transform: {
               xs: "translateX(50%)",
               sm: "translateX(50%)",
@@ -104,8 +109,8 @@ const AboutUs = () => {
         <Box
           sx={{
             position: "absolute",
-            right: { xs: "51%",sm: "410px", md: "-90px" },
-            bottom: { xs: "-60px",sm: "-60px", md: "130px" },
+            right: { xs: "51%", sm: "410px", md: "-90px" },
+            bottom: { xs: "-60px", sm: "-60px", md: "130px" },
             transform: {
               xs: "translateX(50%)",
               sm: "translateX(50%)",
@@ -156,29 +161,29 @@ const AboutUs = () => {
         </Box>
       </Box>
 
-      <Box sx={{ width: { xs: "100%", md: "50%" } ,ml:{md:5}}}>
+      <Box sx={{ width: { xs: "100%", md: "50%" }, ml: { md: 5 } }}>
         <Typography
-  sx={{
-    fontSize: { xs: 20, sm: 35, md: 34 },
-    fontWeight: 700,
-    mb: { xs: 1.5, sm: 2 },
-    lineHeight: 1.3,
-    textAlign: { xs: "center", md: "left" },
-  }}
->
-  <Box
-    component="span"
-    sx={{
-      background: "black",
-      WebkitBackgroundClip: "text",
-      WebkitTextFillColor: "transparent",
-      fontWeight: 900,
-    }}
-  >
-    About Eagle Ceramics
-  </Box>
-  : The Leading Tiles Company in India
-</Typography>
+          sx={{
+            fontSize: { xs: 20, sm: 35, md: 34 },
+            fontWeight: 700,
+            mb: { xs: 1.5, sm: 2 },
+            lineHeight: 1.3,
+            textAlign: { xs: "center", md: "left" },
+          }}
+        >
+          <Box
+            component="span"
+            sx={{
+              background: "black",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              fontWeight: 900,
+            }}
+          >
+            About Eagle Ceramics
+          </Box>
+          : The Leading Tiles Company in India
+        </Typography>
 
 
         <Typography
@@ -190,11 +195,13 @@ const AboutUs = () => {
             textAlign: { xs: "justify", md: "justify" },
           }}
         >
-         At <strong>Eagle Ceramics</strong> and Gaurada Ceramics, we bring over three decades of expertise in supplying high-quality tiles and ceramic products to builders, contractors, architects, interior designers, and commercial project developers. With a strong B2B supply chain and an unmatched product portfolio, we ensure consistent quality, timely delivery, and value-driven pricing for every project.
+          At <strong>Eagle Ceramics</strong> and Gaurada Ceramics, we bring over three decades of expertise in supplying high-quality tiles and ceramic products to builders, contractors, architects, interior designers, and commercial project developers. With a strong B2B supply chain and an unmatched product portfolio, we ensure consistent quality, timely delivery, and value-driven pricing for every project.
         </Typography>
 
         <Box sx={{ textAlign: { xs: "center", md: "left" } }}>
           <Button
+            component={Link}
+            to="/about"
             variant="contained"
             sx={{
               backgroundColor: "#d11f25",
@@ -202,9 +209,9 @@ const AboutUs = () => {
               px: { xs: 3, sm: 4 },
               py: 1.5,
               borderRadius: 0,
-               "&:hover": {
-                      background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
-                    }
+              "&:hover": {
+                background: "linear-gradient(135deg, #E55A2B, #E57C3B)",
+              }
             }}
           >
             KNOW MORE
