@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Container, Typography, Box, Grid, Button, Stack, Divider
-} from '@mui/material';
+import Container from '@mui/material/Container';
+import Grid from '@mui/material/Grid';
+  import Button from '@mui/material/Button';
+  import Stack from '@mui/material/Stack';
+  import Divider from '@mui/material/Divider';
+  import Box from '@mui/material/Box';
+  import Typography from '@mui/material/Typography';
+
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import {
-  EmojiEvents, Verified, Speed, Handshake, TrendingUp, Architecture
-} from '@mui/icons-material';
+
 
 const MotionBox = motion(Box);
 
 // Replace with your actual images
-import heroBg from '../../../assets/Bannerimage4.png';
-import Img1 from '../../../assets/Bannerimage5.png';
+import heroBg from '../../../assets/Bannerimage4.jpeg';
+import Img1 from '../../../assets/BannerImage5.jpeg';
 import Img2 from '../../../assets/Bannerimage3.png';
 import Mission from '../../../assets/AboutImages/Mission.webp'
 import Mission1 from '../../../assets/AboutImages/Mission1.webp'
@@ -63,42 +66,7 @@ const AboutPageContent = () => {
     <Box sx={{ background: '#ffffff', color: '#0f172a', overflow: 'hidden' }}>
 
       {/* STATS BAR - Premium Horizontal */}
-      <Box sx={{ bgcolor: '#ffffffff', py: { xs: 1, md: 3, sm: 4 }, px: { sm: 6 }, position: 'absolute', marginTop: { xs: 67, sm: 98, md: 65 }, marginLeft: { sm: 13 }, zIndex: 3, mx: { xs: 3, md: "14%" }, borderRadius: 5 }}>
-        <Container maxWidth="lg">
-          <Grid container spacing={{ xs: 2, md: 12 }} justifyContent='center' alignItems='center' textAlign="center">
-            {[
-              { number: "35+", label: "Years of Trust" },
-              { number: "15M+", label: "Sq. Ft. Delivered" },
-              { number: "1000+", label: "Happy Builders" },
-              { number: "Zero", label: "Supply Delays" },
-            ].map((stat, i) => (
-              <Grid item xs={6} sm={3} key={i}>
-                <MotionBox
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Typography variant="h3" sx={{
-                    color: 'black',
-                    fontWeight: 800,
-                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
-                    // mt:5,
-                    pb: { xs: 0, md: 3 }
-                  }}>
-                    {stat.number}
-                  </Typography>
-                  <Typography variant="h6" sx={{
-                    color: '#000000ff',
-                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
-                  }}>
-                    {stat.label}
-                  </Typography>
-                </MotionBox>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </Box>
+      
       {/* HERO - Ultra Clean & Powerful */}
       <Box sx={{
         position: 'relative',
@@ -126,21 +94,21 @@ const AboutPageContent = () => {
                 viewport={{ once: true }}
                 sx={{ textAlign: 'center', px: { xs: 2, sm: 3, md: 0 } }}
               >
-                <Typography variant="h1" sx={{
-                  fontSize: { xs: '2rem', sm: '3.5rem', md: '4rem', lg: '5rem' },
-                  fontWeight: 900,
-                  lineHeight: 1.2,
-                  color: '#ffffff',
-                  mb: { xs: 2, md: 3 },
-                  textAlign: 'center',
-                  textShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
-                  whiteSpace: { xs: 'normal', md: 'nowrap' }
-                }}>
-                  Eagle & Gaurada <Box component="span" sx={{ color: '#2ab81aff', display: 'inline' }}>Ceramics</Box>
+                <Typography  variant="h2"
+              sx={{
+                fontWeight: 900,
+                mb: 2,
+                background:"white",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                lineHeight: 1.2,
+              }}>
+                  Eagle & Gaurada Ceramic
                 </Typography>
 
                 <Typography variant="h6" sx={{
-                  color: '#2ab81aff',
+                  color: '#ffffffff',
                   fontWeight: 700,
                   letterSpacing: { xs: '0.1em', md: '0.2em' },
                   mb: { xs: 3, md: 4 },
@@ -194,7 +162,7 @@ const AboutPageContent = () => {
 
                   <Button
                     component={Link}
-                    to="/services"
+                    to="/products"
                     variant="outlined"
                     size="large"
                     sx={{
@@ -233,12 +201,47 @@ const AboutPageContent = () => {
         }} />
       </Box>
 
-
+<Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 },maxWidth:'80%',position:'absolute',justifyContent:'center',mx:'auto',bottom:{xs:'-40px',md:'-80px'},left:'0',right:'0',textAlign:'center',borderRadius:2 ,zIndex:3,}}>
+        <Container maxWidth="lg">
+          <Grid container spacing={{ xs: 2, md: 5 }} justifyContent='space-between' alignItems='center' textAlign="center">
+            {[
+              { number: "35+", label: "Years of Trust" },
+              { number: "15M+", label: "Sq. Ft. Delivered" },
+              { number: "1000+", label: "Happy Builders" },
+              { number: "Zero", label: "Supply Delays" },
+            ].map((stat, i) => (
+              <Grid item xs={6} sm={3} key={i}>
+                <MotionBox
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                >
+                  <Typography variant="h3" sx={{
+                    color: 'black',
+                    fontWeight: 800,
+                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                    // mt:5,
+                    pb: { xs: 0, md: 3 }
+                  }}>
+                    {stat.number}
+                  </Typography>
+                  <Typography variant="h6" sx={{
+                    color: '#000000ff',
+                    fontSize: { xs: '0.875rem', sm: '1rem', md: '1.125rem' }
+                  }}>
+                    {stat.label}
+                  </Typography>
+                </MotionBox>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </Box>
 
 
       {/* FOUNDER STORY - Elegant & Emotional */}
       <Box sx={{
-        py: { xs: 8, sm: 10, lg: 12 },
+        py: { xs: 8, sm: 10, lg: 5 },
         background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
         px: { xs: 2, sm: 3, md: 0 },
 
@@ -287,7 +290,7 @@ const AboutPageContent = () => {
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.15rem' },
                   mb: 3
                 }}>
-                  Founded by <strong style={{ color: '#dc2626' }}>Mr. Suresh</strong>, a pioneer with <strong>35 years</strong> of experience in the tiles and construction industry, <strong>Eagle Ceramics</strong> has grown into a trusted B2B supplier known for quality, consistency, and professionalism.
+                  Founded by <strong style={{ color: '#dc2626' }}>Mr. Suresh</strong>, a pioneer with <strong>35 years</strong> of experience in the tiles and construction industry, <strong>Eagle Ceramic</strong> has grown into a trusted B2B supplier known for quality, consistency, and professionalism.
                 </Typography>
 
                 <Typography variant="h6" sx={{
@@ -296,7 +299,7 @@ const AboutPageContent = () => {
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.15rem' },
                   mb: 3
                 }}>
-                  What began as a small wholesale operation has expanded into two strong brands — <strong style={{ color: '#dc2626' }}>Eagle Ceramics</strong> and <strong style={{ color: '#dc2626' }}>Gaurada Ceramics</strong> — each addressing the growing demands of modern construction and commercial architecture.
+                  What began as a small wholesale operation has expanded into two strong brands — <strong style={{ color: '#dc2626' }}>Eagle Ceramic</strong> and <strong style={{ color: '#dc2626' }}>Gaurada Ceramic</strong> — each addressing the growing demands of modern construction and commercial architecture.
                 </Typography>
 
                 <Typography variant="h6" sx={{
@@ -401,7 +404,7 @@ const AboutPageContent = () => {
                 >
                   <img
                     src={Img2}
-                    alt="Eagle & Gaurada Ceramics Factory"
+                    alt="Eagle & Gaurada Ceramic Factory"
                     style={{
                       width: '100%',
                       height: '100%',
@@ -419,12 +422,12 @@ const AboutPageContent = () => {
 
       {/* CORE VALUES - Clean Grid */}
       <Box sx={{
-        bgcolor: 'rgba(252, 248, 251, 0.2)',
+        bgcolor: 'rgba(255, 255, 255, 0.61)',
         position: 'relative',
         overflow: 'hidden',
         py: { xs: 8, md: 10 },
         px: { xs: 2, sm: 3, md: 0 },
-        background: 'linear-gradient(135deg, #f8fafc 0%, #f0f9ff 50%, #f1f5f9 100%)'
+        background: 'black'
       }}>
         {/* Animated Background Elements */}
         <Box sx={{
@@ -438,7 +441,7 @@ const AboutPageContent = () => {
             width: '300px',
             height: '300px',
             borderRadius: '50%',
-            border: '2px solid rgba(220, 38, 38, 0.15)',
+            border: '2px solid rgba(255, 255, 255, 1)',
             position: 'relative',
             animation: 'rotate 40s linear infinite reverse',
             '@keyframes rotate': {
@@ -450,8 +453,8 @@ const AboutPageContent = () => {
               position: 'absolute',
               top: '0',
               left: '50%',
-              width: '20px',
-              height: '20px',
+              width: '30px',
+              height: '30px',
               borderRadius: '50%',
               bgcolor: '#dc2626',
               transform: 'translate(-50%, -50%)',
@@ -468,7 +471,7 @@ const AboutPageContent = () => {
           width: '200px',
           height: '200px',
           borderRadius: '50%',
-          border: '1px solid rgba(56, 196, 14, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 1)',
           zIndex: 0,
           display: { xs: 'none', md: 'block' },
           animation: 'float 8s ease-in-out infinite',
@@ -495,19 +498,15 @@ const AboutPageContent = () => {
             }}
           >
             <Typography
-              variant="h3"
-              fontWeight="bold"
+               variant="h2"
               sx={{
-                fontSize: { xs: '1.75rem', sm: '2.5rem', md: '3.5rem', lg: '4rem' },
-                color: '#0f172a',
-                maxWidth: '900px',
-                mx: 'auto',
+                fontWeight: 900,
                 mb: 2,
-                px: { xs: 1, sm: 0 },
-                background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                textShadow: '0 2px 10px rgba(15, 23, 42, 0.1)'
+                background:"white",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
+                lineHeight: 1.2,
               }}
             >
               Our Foundation & Our Promise
@@ -516,7 +515,7 @@ const AboutPageContent = () => {
             <Typography
               variant="h6"
               sx={{
-                color: '#64748b',
+                color: '#ffffffff',
                 maxWidth: '600px',
                 mx: 'auto',
                 fontSize: { xs: '1rem', md: '1.25rem' },
@@ -537,7 +536,7 @@ const AboutPageContent = () => {
               height: '6px',
             },
             '&::-webkit-scrollbar-track': {
-              background: '#f1f1f1',
+              background: '#ffffffff',
               borderRadius: '3px',
             },
             '&::-webkit-scrollbar-thumb': {
@@ -1007,7 +1006,7 @@ const AboutPageContent = () => {
             }}
           >
             <Typography variant="h4" fontWeight="bold" sx={{
-              color: '#0f172a',
+              color: '#000000ff',
               mb: 2,
               background: '#010000ff',
               WebkitBackgroundClip: 'text',
@@ -1016,12 +1015,12 @@ const AboutPageContent = () => {
               Ready to Experience Excellence?
             </Typography>
             <Typography variant="h6" sx={{
-              color: '#64748b',
+              color: '#000000ff',
               mb: 4,
               maxWidth: '600px',
               mx: 'auto'
             }}>
-              Join thousands of satisfied builders who trust Eagle & Gaurada Ceramics
+              Join thousands of satisfied builders who trust Eagle & Gaurada Ceramic
             </Typography>
             <Button
               component={Link}
@@ -1114,12 +1113,15 @@ const AboutPageContent = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <Typography variant="h2" sx={{
-                fontWeight: 800,
-                fontSize: { xs: '1.75rem', sm: '2.25rem', md: '3rem', lg: '3.5rem' },
+              <Typography  variant="h2"
+              sx={{
+                fontWeight: 900,
+                mb: 2,
+                background:"black",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
                 lineHeight: 1.2,
-                color: '#0f172a',
-                px: { xs: 1, sm: 0 }
               }}>
                 Transforming Spaces Through a Foundation of Excellence
               </Typography>
@@ -1132,14 +1134,14 @@ const AboutPageContent = () => {
                 title: 'Our Mission',
                 icon: Mission,
                 hoverImg: Mission1,
-                content: 'At Eagle & Gaurada Ceramics, our mission is to deliver innovative, high-quality tiles that elevate spaces. We strive for excellence through craftsmanship, technology, and customer satisfaction, ensuring timeless designs for India\'s construction industry.',
+                content: 'At Eagle & Gaurada Ceramic, our mission is to deliver innovative, high-quality tiles that elevate spaces. We strive for excellence through craftsmanship, technology, and customer satisfaction, ensuring timeless designs for India\'s construction industry.',
                 delay: 0
               },
               {
                 title: 'Our Vision',
                 icon: vision,
                 hoverImg: vision1,
-                content: 'We envision Eagle & Gaurada Ceramics as a leader in tile manufacturing, recognized for setting new standards in design and quality. Our goal is to inspire creativity, transforming ordinary spaces into extraordinary environments through our premium tiles.',
+                content: 'We envision Eagle & Gaurada Ceramic as a leader in tile manufacturing, recognized for setting new standards in design and quality. Our goal is to inspire creativity, transforming ordinary spaces into extraordinary environments through our premium tiles.',
                 delay: 0.1
               },
               {
@@ -1218,8 +1220,8 @@ const AboutPageContent = () => {
                         transition: 'margin-right 0.3s ease',
                       }}
                     >
-                      {card.content.split('Eagle & Gaurada Ceramics').map((part, i, arr) => (
-                        i === arr.length - 1 ? part : <span key={i}>{part}<strong style={{ color: '#dc2626' }}>Eagle & Gaurada Ceramics</strong></span>
+                      {card.content.split('Eagle & Gaurada Ceramic').map((part, i, arr) => (
+                        i === arr.length - 1 ? part : <span key={i}>{part}<strong style={{ color: '#dc2626' }}>Eagle & Gaurada Ceramic</strong></span>
                       ))}
                     </Typography>
                   </Box>

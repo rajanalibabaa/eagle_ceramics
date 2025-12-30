@@ -76,10 +76,7 @@ const USPCard = memo(({ item, onNavigate, sxExtra = {} }) => {
   const cardRef = useRef(null);
   const isInView = useInView(cardRef, { once: true, margin: "-50px" });
 
-  const handleClick = useCallback(
-    () => onNavigate("/services"),
-    [onNavigate]
-  );
+
 
   return (
     <motion.div
@@ -90,7 +87,6 @@ const USPCard = memo(({ item, onNavigate, sxExtra = {} }) => {
       style={{ flexShrink: 0 }}
     >
       <Card
-        onClick={handleClick}
         sx={{
           width: { xs: 300, sm: 350, md: 380 },
           height: { xs: 280, sm: 270 },
@@ -105,7 +101,7 @@ const USPCard = memo(({ item, onNavigate, sxExtra = {} }) => {
             "& .card-overlay": { opacity: 0.2 },
             "& .card-content": { transform: "translateY(0)" }
           },
-          ...sxExtra // ← extra styles injected by parent
+          ...sxExtra 
         }}
       >
         {/* Background image */}
@@ -272,8 +268,8 @@ const TrustedChoice = () => {
 
   const [activeIdx, setActiveIdx] = useState(0);
 
-  const CARD_WIDTH = 300; // xs width from USPCard sx
-  const CARD_GAP = 24; // xs gap -> spacing(3) = 3 * 8px
+  const CARD_WIDTH = 300; 
+  const CARD_GAP = 24; 
 
   const handleScroll = (e) => {
     const scrollLeft = e.currentTarget.scrollLeft;
@@ -308,14 +304,14 @@ const TrustedChoice = () => {
             px: { xs: 3, sm: 4, md: 6 },
             overflowX: { xs: "auto", sm: "hidden" },
             overflowY: "hidden",
-            scrollSnapType: { xs: "x mandatory", sm: "none" }, // ← NEW
+            scrollSnapType: { xs: "x mandatory", sm: "none" }, 
             pb: 3,
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
             "&::-webkit-scrollbar-track": { display: "none" },
             "&::-webkit-scrollbar-thumb": { display: "none" }
           }}
-          onScroll={handleScroll} // ← NEW
+          onScroll={handleScroll} 
         >
           {uspData.map((item, i) => (
             <USPCard
@@ -323,7 +319,7 @@ const TrustedChoice = () => {
               item={item}
               onNavigate={navigate}
               sxExtra={{
-                scrollSnapAlign: { xs: "center", sm: "unset" } // ← NEW
+                scrollSnapAlign: { xs: "center", sm: "unset" } 
               }}
             />
           ))}
@@ -363,7 +359,7 @@ const TrustedChoice = () => {
           px: 2
         }}
       >
-        <CTAButton onClick={() => navigate("/services")} variant="primary">
+        <CTAButton onClick={() => navigate("/products")} variant="primary">
           Explore Our Products
         </CTAButton>
         <CTAButton onClick={() => navigate("/contact")} variant="secondary">

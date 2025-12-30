@@ -13,8 +13,8 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import Banner from "../assets/BannerImage.png";
 import Banner2 from "../assets/BannerImage2.png";
 import Banner3 from "../assets/BannerImage3.png";
-import Banner4 from "../assets/BannerImage4.png";
-import Banner5 from "../assets/BannerImage5.png";
+import Banner4 from "../assets/BannerImage4.jpeg";
+import Banner5 from "../assets/BannerImage5.jpeg";
 
 const preloadImages = (imageUrls) => {
   imageUrls.forEach((src) => {
@@ -192,7 +192,7 @@ const HeroSection = () => {
       `Thank you ${formData.fullName}! We will contact you shortly.`
     );
 
-    fetch("https://formsubmit.co/4928bdeea462118f9e193be9cd0da148", {
+    fetch("https://formsubmit.co/info@eagleceramic.com", {
       method: "POST",
       body: submissionData,
     })
@@ -242,9 +242,9 @@ const HeroSection = () => {
     return () => clearInterval(intervalRef.current);
   }, [images.length]);
 
-const theme = useTheme();
-const isMobile = useMediaQuery(theme.breakpoints.down("md"));
-const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
   return (
     <Box
       component="section"
@@ -365,10 +365,10 @@ const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
                   lineHeight: 1.1,
                   mb: 3,
                   background:
-                    "linear-gradient(135deg, #FFFFFF 0%, #E8F4FD 100%)",
+                    "white",
                   backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
+                  // WebkitBackgroundClip: "text",
+                  // WebkitTextFillColor: "transparent",
                   position: "relative",
                   "&::after": {
                     content: '""',
@@ -395,7 +395,7 @@ const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
                   fontSize: { xs: "1.2rem", sm: "1.4rem", md: "1.5rem" },
                   mb: 4,
                   color: "white",
-                  opacity: 0.95,
+                  // opacity: 0.95,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: { xs: "center", md: "flex-start" },
@@ -441,7 +441,7 @@ const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
 
                 <Button
                   variant="contained"
-                  onClick={() => navigate("/services")}
+                  onClick={() => navigate("/products")}
                   sx={{
                     position: "relative",
                     px: 1.5,
@@ -550,129 +550,131 @@ const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
           </motion.div>
         </Box>
 
-   {!isMobile && (<>
-        <motion.div
-          variants={formVariants}
-          initial="hidden"
-          animate="visible"
-          style={{ flexShrink: 0 }}
-        >
-          <Paper
-            elevation={16}
-            component={motion.div}
-            whileHover={{ y: -5 }}
-            sx={{
-              p: 4,
-              borderRadius: 3,
-              width: { xs: "100%", sm: "400px", md: "420px" },
-              background:
-                "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.98) 100%)",
-              backdropFilter: "blur(10px)",
-              border: "1px solid rgba(255,255,255,0.3)",
-              boxShadow:
-                "0 20px 40px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.1)",
-              position: "relative",
-              overflow: "hidden",
-              "&::before": {
-                content: '""',
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                height: "4px",
-              },
-            }}
-          >
+        {!isMobile && (
+          <>
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+              variants={formVariants}
+              initial="hidden"
+              animate="visible"
+              style={{ flexShrink: 0 }}
             >
-              <Typography
-                variant="h4"
-                fontWeight={700}
-                mb={3}
+              <Paper
+                elevation={16}
+                component={motion.div}
+                whileHover={{ y: -5 }}
                 sx={{
-                  background: "#050608",
-                  backgroundClip: "text",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  textAlign: "center",
-                  fontSize: { xs: "1.5rem", sm: "1.75rem" },
+                  p: 4,
+                  borderRadius: 3,
+                  width: { xs: "100%", sm: "400px", md: "450px" },
+                  background:
+                    "linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.98) 100%)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid rgba(255,255,255,0.3)",
+                  boxShadow:
+                    "0 20px 40px rgba(0,0,0,0.15), 0 8px 24px rgba(0,0,0,0.1)",
+                  position: "relative",
+                  overflow: "hidden",
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: "4px",
+                  },
                 }}
               >
-                Get Expert Consultation
-              </Typography>
-            </motion.div>
-
-            <Box
-              component="form"
-              sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
-            >
-              {[
-                {
-                  label: "Company / Builder Name",
-                  name: "fullName",
-                  value: formData.fullName,
-                },
-                { label: "Phone", name: "phone", value: formData.phone },
-                { label: "Email", name: "email", value: formData.email },
-                {
-                  label: "Message",
-                  name: "message",
-                  value: formData.message,
-                  multiline: true,
-                  rows: 3,
-                },
-              ].map((field, i) => (
                 <motion.div
-                  key={field.name}
-                  custom={i}
-                  variants={fieldVariants}
-                  initial="initial"
-                  animate="animate"
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
                 >
-                  <TextField
-                    label={field.label}
-                    name={field.name}
-                    value={field.value}
-                    onChange={handleChange}
-                    fullWidth
-                    variant="outlined"
-                    size="medium"
-                    multiline={field.multiline}
-                    rows={field.rows}
-                  />
+                  <Typography
+                    variant="h4"
+                    fontWeight={700}
+                    mb={3}
+                    sx={{
+                      background: "#050608",
+                      backgroundClip: "text",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                      textAlign: "center",
+                      fontSize: { xs: "1.5rem", sm: "1.75rem" },
+                    }}
+                  >
+                    Get Expert Consultation
+                  </Typography>
                 </motion.div>
-              ))}
 
-              <motion.div
-                variants={fieldVariants}
-                custom={4}
-                initial="initial"
-                animate="animate"
-              >
-                <Button
-                  fullWidth
-                  variant="contained"
-                  size="large"
-                  onClick={handleSubmit}
-                  sx={{
-                    mt: 2,
-                    py: 1.5,
-                    borderRadius: 3,
-                    fontWeight: 700,
-                    fontSize: "1.1rem",
-                    background: "#d11f25",
-                  }}
+                <Box
+                  component="form"
+                  sx={{ display: "flex", flexDirection: "column", gap: 2.5 }}
                 >
-                  Get Free Quote
-                </Button>
-              </motion.div>
-            </Box>
-          </Paper>
-        </motion.div>
-   </>)}
+                  {[
+                    {
+                      label: "Company / Builder Name",
+                      name: "fullName",
+                      value: formData.fullName,
+                    },
+                    { label: "Phone", name: "phone", value: formData.phone },
+                    { label: "Email", name: "email", value: formData.email },
+                    {
+                      label: "Message",
+                      name: "message",
+                      value: formData.message,
+                      multiline: true,
+                      rows: 3,
+                    },
+                  ].map((field, i) => (
+                    <motion.div
+                      key={field.name}
+                      custom={i}
+                      variants={fieldVariants}
+                      initial="initial"
+                      animate="animate"
+                    >
+                      <TextField
+                        label={field.label}
+                        name={field.name}
+                        value={field.value}
+                        onChange={handleChange}
+                        fullWidth
+                        variant="outlined"
+                        size="medium"
+                        multiline={field.multiline}
+                        rows={field.rows}
+                      />
+                    </motion.div>
+                  ))}
+
+                  <motion.div
+                    variants={fieldVariants}
+                    custom={4}
+                    initial="initial"
+                    animate="animate"
+                  >
+                    <Button
+                      fullWidth
+                      variant="contained"
+                      size="large"
+                      onClick={handleSubmit}
+                      sx={{
+                        mt: 2,
+                        py: 1.5,
+                        borderRadius: 3,
+                        fontWeight: 700,
+                        fontSize: "1.1rem",
+                        background: "#d11f25",
+                      }}
+                    >
+                      Get Free Quote
+                    </Button>
+                  </motion.div>
+                </Box>
+              </Paper>
+            </motion.div>
+          </>
+        )}
       </Box>
 
       {/* Enhanced Navigation with Arrows */}
@@ -720,7 +722,8 @@ const isTablet = useMediaQuery(theme.breakpoints.between("md", "lg"));
                   width: i === index ? 32 : 12,
                   height: 12,
                   borderRadius: "6px",
-                  background: i === index ? "#ff171fff" : "rgba(255, 255, 255, 1)",
+                  background:
+                    i === index ? "#ff171fff" : "rgba(255, 255, 255, 1)",
                   transition: "all 0.3s ease",
                   boxShadow:
                     i === index ? "0 2px 8px rgba(255, 53, 53, 1)" : "none",

@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import {
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Typography,
-  Box,
-  Container,
-} from "@mui/material";
+
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const faqData = [
@@ -16,7 +16,8 @@ const faqData = [
       "We provide ceramic tiles, vitrified tiles, wall tiles, floor tiles, porcelain tiles, outdoor tiles, and designer decorative tiles.",
   },
   {
-    question: "Are Eagle Ceramics tiles suitable for both indoor and outdoor use?",
+    question:
+      "Are Eagle Ceramics tiles suitable for both indoor and outdoor use?",
     answer:
       "Yes, we manufacture tiles suitable for indoor spaces such as bathrooms and kitchens, as well as outdoor areas like balconies, parking, and terraces.",
   },

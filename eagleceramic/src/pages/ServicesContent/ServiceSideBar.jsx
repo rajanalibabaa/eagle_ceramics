@@ -1,23 +1,20 @@
 import React, { useState, useEffect, useRef } from 'react'
-import {
-  Box,
-  Typography,
-  Divider,
-  Collapse,
-  useMediaQuery,
-  SwipeableDrawer,
-  Fab
-} from '@mui/material'
-import {
-  ExpandMore as ExpandMoreIcon,
-  ExpandLess as ExpandLessIcon,
-  FilterList as FilterListIcon,
-  Close as CloseIcon
-} from '@mui/icons-material'
+
+import Box from "@mui/material/Box";
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import Collapse from '@mui/material/Collapse';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import SwipeableDrawer from '@mui/material/SwipeableDrawer';
+import Fab from '@mui/material/Fab';
+
+import  ExpandMoreIcon  from '@mui/icons-material/ExpandMore';
+import  ExpandLessIcon  from '@mui/icons-material/ExpandLess';
+import  FilterListIcon from '@mui/icons-material/FilterList';
+import  CloseIcon  from '@mui/icons-material/Close';
 import { styled, useTheme } from '@mui/material/styles'
 import { useNavigate, useLocation } from 'react-router-dom'
 
-/* Styled components */
 const StyledSidebar = styled(Box)(({ theme }) => ({
   padding: { xs: 0, sm: '16px', md: '24px' },
   position: 'relative',
@@ -59,12 +56,7 @@ const CollectionItem = styled(Box)(({ selected }) => ({
   borderBottomRightRadius:12,
   transition: 'all .3s',
   cursor: 'pointer',
-  // backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
-  // border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
-  '&:hover': {
-  //   backgroundColor: 'rgba(196, 31, 37, 0.05)',
-    // border: '1px solid rgba(196, 31, 37, 0.1)'
-  },
+ 
   '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 500,
@@ -81,17 +73,12 @@ const VersionItem = styled(Box)(({ selected }) => ({
   alignItems: 'center',
   margin: 0,
   padding: '10px 5% 10px 10%',  // 10% left padding for first level indent
-  // borderRadius: 0,
   borderTopRightRadius:12,
   borderBottomRightRadius:12,
   transition: 'all .3s',
   cursor: 'pointer',
-  // backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
   border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
-  // '&:hover': {
-  //   backgroundColor: 'rgba(196, 31, 37, 0.05)',
-  //   border: '1px solid rgba(196, 31, 37, 0.1)'
-  // },
+  
   '& .MuiTypography-root': {
     flex: 1,
     fontWeight: selected ? 600 : 400,
@@ -100,53 +87,19 @@ const VersionItem = styled(Box)(({ selected }) => ({
   }
 }))
 
-const SubVersionItem = styled(Box)(({ selected }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  margin: 0,
-  padding: '8px 5% 8px 15%',  // 15% left padding for second level indent
-  borderRadius: 6,
-  transition: 'all .3s',
-  cursor: 'pointer',
-  backgroundColor: selected ? 'rgba(196, 31, 37, 0.1)' : 'transparent',
-  border: selected ? '1px solid rgba(196, 31, 37, 0.3)' : '1px solid transparent',
-  '&:hover': {
-    backgroundColor: 'rgba(196, 31, 37, 0.05)',
-    border: '1px solid rgba(196, 31, 37, 0.1)'
-  },
-  '& .MuiTypography-root': {
-    flex: 1,
-    fontWeight: selected ? 600 : 400,
-    color: selected ? '#c41f25' : 'inherit',
-    paddingLeft: '5%'
-  }
-}))
 
-const ClearAllButton = styled(Typography)({
-  fontSize: 14,
-  color: '#e74c3c',
-  cursor: 'pointer',
-  fontWeight: 600,
-  padding: '8px 5%',  // Using percentage here too
-  borderRadius: 8,
-  background: 'linear-gradient(135deg,rgba(255,255,255,.9) 0%,rgba(248,249,250,.9) 100%)',
-  border: '1px solid rgba(231,76,60,.2)',
-  '&:hover': {
-    background: 'rgba(231,76,60,0.1)',
-    color: '#c0392b'
-  }
-})
 
 const SidebarWrapper = styled(Box)(({ theme }) => ({
   width: '320px',
   flexShrink: 0,
+  overflowY: 'auto',
+  backgroundColor: 'red',
   position: 'sticky',
   top: '80px',
   alignSelf: 'flex-start',
   height: 'calc(100vh - 80px)'
 }))
 
-/* Main Component */
 export default function ServiceSideBar() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -154,18 +107,16 @@ export default function ServiceSideBar() {
   const { pathname } = useLocation()
   const [, , collectionKey, maybeVersion] = pathname.split('/')
   const [openCollections, setOpenCollections] = useState(true)
-  const [openSubVersions, setOpenSubVersions] = useState({})
   const [openSub, setOpenSub] = useState({})
+  const [openSubVersions, setOpenSubVersions] = useState({})
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const go = url => () => {
     setDrawerOpen(false)
     navigate(url)
   }
-  const clearAll = () => {
-    setDrawerOpen(false)
-    navigate('/services')
-  }
+
+
 
   // Auto-open the parent when child is selected
   useEffect(() => {
@@ -191,64 +142,51 @@ export default function ServiceSideBar() {
     })
   }
 
-  // Close other versions when one is opened
-  const handleVersionClick = (label) => {
-    setOpenSubVersions(prev => {
-      const newState = {}
-      // Close all other versions
-      Object.keys(prev).forEach(k => {
-        newState[k] = false
-      })
-      // Open the clicked one
-      newState[label] = !prev[label]
-      return newState
-    })
-  }
+
 
   const collections = [
     {
       label: 'Wall Tiles',
       key: 'walltiles',
-      versions: [{ label: '300 X 450', url: '/services/walltiles' }]
+      versions: [{ label: '300 X 450', url: '/products/walltiles' }]
     },
     {
       label: 'Elevation Tiles',
       key: 'elevation-tiles-collection',
       versions: [
-        { label: '300 X 450', url: '/services/elevation-tiles-300x450' },
-        { label: '300 X 600', url: '/services/elevation-tiles-300x600' }
+        { label: '300 X 450', url: '/products/elevation-tiles-300x450' },
+        { label: '300 X 600', url: '/products/elevation-tiles-300x600' }
       ]
     },
     {
       label: 'Floor Tiles',
       key: 'floortiles',
       versions: [
-            { label: '600 X 1200 Glossy', url: '/services/floortiles/600x1200/glossy' },
-            { label: '600 X 1200 Matt', url: '/services/floortiles/600x1200/matt' } ,
-            { label: '600 X 600 DC', url: '/services/floortiles/600x600dc' }
+            { label: '600 X 1200 Glossy', url: '/products/floortiles/600x1200/glossy' },
+            { label: '600 X 1200 Matt', url: '/products/floortiles/600x1200/matt' } ,
+            { label: '600 X 600 DC', url: '/products/floortiles/600x600dc' }
       ]
     },
     {
       label: 'Parking Tiles',
       key: 'parkingtiles',
       versions: [
-        { label: '300 X 300', url: '/services/parkingtiles/collection1' },
-        { label: '400 X 400', url: '/services/parkingtiles/collection2' }
+        { label: '300 X 300', url: '/products/parkingtiles/collection1' },
+        { label: '400 X 400', url: '/products/parkingtiles/collection2' }
       ]
     },
     {
       label: 'CoolRoof Tiles',
       key: 'cool-roof-tiles-9mm',
       versions: [
-            { label: '300 X 300 9MM', url: '/services/cool-roof-tiles-9mm' },
-            { label: '300 X 300 10MM', url: '/services/cool-roof-tiles-10mm' }  ,
-            { label: '600 X 600', url: '/services/cool-roof-tiles-600x600' }
+            { label: '300 X 300 9MM', url: '/products/cool-roof-tiles-9mm' },
+            { label: '300 X 300 10MM', url: '/products/cool-roof-tiles-10mm' }  ,
+            { label: '600 X 600', url: '/products/cool-roof-tiles-600x600' }
       ]
     },
-    { label: 'Kitchen Sink', url: '/services/kitchen-sink', key: 'kitchen-sink', versions: [] }
+    { label: 'Kitchen Sink', url: '/products/kitchen-sink', key: 'kitchen-sink', versions: [] }
   ]
 
-  /* Sidebar content */
   const sidebarRef = useRef(null)
 
   const SidebarContent = (
@@ -279,13 +217,13 @@ export default function ServiceSideBar() {
             <CloseIcon />
           </Fab>
         ) : (
-          <ClearAllButton onClick={clearAll}>Clear All</ClearAllButton>
+          <></>
         )}
       </Box>
 
       <Divider sx={{ 
         mb: 2, 
-        borderColor: 'rgba(0,0,0,0.1)',
+        borderColor: 'rgba(0, 0, 0, 1)',
         ml: '5%',  // Align divider with text
         mr: '5%'
       }} />
@@ -302,13 +240,13 @@ export default function ServiceSideBar() {
       </SectionHeader>
       <Divider sx={{ 
         mb: 1, 
-        borderColor: 'rgba(0,0,0,0.1)',
+        borderColor: 'rgba(0, 0, 0, 1)',
         ml: '5%',
         mr: '5%'
       }} />
 
       <Collapse in={openCollections}>
-        <Box>
+        <Box sx={{ px: 0, mb: 2, ml: '5%', mr: '5%', }}>
           {collections.map(item => {
             const hasVersions = item.versions?.length > 0
             
@@ -382,7 +320,6 @@ export default function ServiceSideBar() {
     </StyledSidebar>
   )
 
-  /* Render */
   if (!isMobile) {
     return <SidebarWrapper>{SidebarContent}</SidebarWrapper>
   }
@@ -392,24 +329,19 @@ export default function ServiceSideBar() {
 
   useEffect(() => {
     if (!sidebarRef.current) return
-    const el = sidebarRef.current
     const obs = new IntersectionObserver(
-      entries => {
-        setSidebarVisible(!!entries[0].isIntersecting)
-      },
+      entries => setSidebarVisible(entries[0].isIntersecting),
       { threshold: 0.01 }
     )
-    obs.observe(el)
+    obs.observe(sidebarRef.current)
     return () => obs.disconnect()
-  }, [sidebarRef])
+  }, [])
 
   useEffect(() => {
     const footer = document.querySelector('footer')
     if (!footer) return
     const obs = new IntersectionObserver(
-      entries => {
-        setFooterVisible(!!entries[0].isIntersecting)
-      },
+      entries => setFooterVisible(entries[0].isIntersecting),
       { threshold: 0.05 }
     )
     obs.observe(footer)

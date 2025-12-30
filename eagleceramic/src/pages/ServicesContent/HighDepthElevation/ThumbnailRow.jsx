@@ -1,6 +1,6 @@
 import React, { memo } from "react";
 import PropTypes from "prop-types";
-import { Box, Typography } from "@mui/material";
+import  Box  from "@mui/material/Box";
 
 const ThumbnailRow = ({ images = [], selectedSrc = "", onImageClick }) => {
   return (

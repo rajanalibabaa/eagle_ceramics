@@ -60,12 +60,12 @@ const Navbar = () => {
               display: { xs: "none", md: "flex" },
               alignItems: "center",
               gap: 3,
-              color: "black",
+              color: "red",
             }}
           >
             <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/")}>HOME</Button>
             <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/about")}>ABOUT US</Button>
-            <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/services")}>PRODUCTS</Button>
+            <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/products")}>PRODUCTS</Button>
             <Button color="inherit" sx={{ fontWeight: 600 }} onClick={() => navigate("/contact")}>CONTACT US</Button>
           </Box>
 
@@ -101,7 +101,7 @@ const Navbar = () => {
         >
           <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/"); setOpenMenu(false); }}>HOME</Typography>
           <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/about"); setOpenMenu(false); }}>ABOUT US</Typography>
-          <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/services"); setOpenMenu(false); }}>PRODUCTS</Typography>
+          <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/products"); setOpenMenu(false); }}>PRODUCTS</Typography>
           <Typography sx={{ py: 1.5 }} onClick={() => { navigate("/contact"); setOpenMenu(false); }}>CONTACT US</Typography>
         </Box>
       )}

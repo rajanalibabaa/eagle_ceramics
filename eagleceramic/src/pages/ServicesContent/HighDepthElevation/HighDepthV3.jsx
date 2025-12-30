@@ -1,6 +1,8 @@
 import React, { useState, useCallback, lazy, Suspense } from "react";
-import { Box, Container, Typography, CircularProgress } from "@mui/material";
-
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import ThumbnailRow from "./ThumbnailRow";
 
@@ -59,7 +61,7 @@ const HighDepthV3 = () => {
                 mainImage={selectedImages[index]}
                 hoverImage={selectedImages[index]}
                 title={set.title}
-                subtitle="Explore More"
+                subtitle="Explore Collection"
               />
             </Box>
 

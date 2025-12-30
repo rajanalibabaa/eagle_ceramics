@@ -1,12 +1,11 @@
 import React, { useState, lazy, Suspense } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Modal,
-  IconButton,
-  CircularProgress,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
@@ -190,6 +189,7 @@ const Walltiles = () => {
     <Typography
       variant="h1"
       sx={{
+        mt:{xs:0, sm:3},
         fontWeight: 700,
         fontSize: { xs: "2.8rem", sm: "3.5rem" },
         color: { xs: "black", sm: "white" },

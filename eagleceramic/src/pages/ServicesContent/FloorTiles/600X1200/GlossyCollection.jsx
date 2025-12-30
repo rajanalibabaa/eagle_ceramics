@@ -1,12 +1,11 @@
 import React, { useState, lazy, Suspense } from "react";
-import {
-  Box,
-  Container,
-  Typography,
-  Modal,
-  IconButton,
-  CircularProgress,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/CircularProgress";
 import CloseIcon from "@mui/icons-material/Close";
 
 const ServicesCollectionCard = lazy(() =>
@@ -107,7 +106,6 @@ const GlossyCollection = () => {
       minHeight: "100vh",
       position: 'relative',
       overflow: 'hidden',
-      py: { xs: 4, md: 6 }
     }}>
       <Container maxWidth="lg" sx={{ position: "relative", zIndex: 10 }}>
         {/* Enhanced HERO HEADER */}
@@ -148,6 +146,7 @@ const GlossyCollection = () => {
                                  variant="h3"
                                  sx={{
                                    fontWeight: 700,
+                                   mt:{xs: 0, sm: 2},
                                    fontSize: { xs: "2.8rem", sm: "3.5rem" },
                                    color: { xs: "black", sm: "white" },
                                  }}
@@ -164,15 +163,7 @@ const GlossyCollection = () => {
                                 >
             Durable, stylish, and suitable for heavy-traffic areas
           </Typography>
-          {/* <Box
-            sx={{
-              height: 4,
-              background: "linear-gradient(90deg, #FFD700, #016B61, #FFD700)",
-              borderRadius: 2,
-              animation: "shineLine 2s ease-in-out infinite",
-              boxShadow: "0 0 10px rgba(255,215,0,0.6)",
-            }}
-          /> */}
+          
         </Box>
 
         {/* COLLECTION CARDS */}

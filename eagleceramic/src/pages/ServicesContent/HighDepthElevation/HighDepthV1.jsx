@@ -1,5 +1,8 @@
 import React, { useState, useCallback, lazy, Suspense } from "react";
-import { Box, Container, Typography, CircularProgress } from "@mui/material";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
+import Typography from "@mui/material/Typography";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import pola from "../../../assets/PolaV1.jpg";
 import pola201 from "../../../assets/Polo201.jpg";
@@ -178,7 +181,7 @@ const HighDepthV1 = () => {
                 mainImage={selectedImages[index]}
                 hoverImage={selectedImages[index]}
                 title={set.title}
-                subtitle="Explore More"
+                subtitle="Explore Collection"
               />
             </Box>
 
