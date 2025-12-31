@@ -23,17 +23,17 @@ import {
   ChevronRight
 } from '@mui/icons-material';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+ 
 const drawerWidth = 300;
 const collapsedWidth = 64;
-
+ 
 const AdminSidebar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isOpen, setIsOpen] = useState(true);
-
+ 
   const menuItems = [
     {
       id: 'dashboard',
@@ -45,7 +45,7 @@ const AdminSidebar = () => {
       id: 'new-product',
       name: 'New Product and Sizes',
       icon: <AddBox />,
-      path: '/admin/new-product'
+      path: '/admin/new-product-sizes'
     },
     {
       id: 'catalogue',
@@ -54,18 +54,18 @@ const AdminSidebar = () => {
       path: '/admin/catalogue'
     }
   ];
-
+ 
   const handleNavigation = (path) => {
     navigate(path);
     if (isMobile) {
       setIsOpen(false);
     }
   };
-
+ 
   const isActive = (path) => {
     return location.pathname === path;
   };
-
+ 
   return (
     <Drawer
       variant={isMobile ? 'temporary' : 'permanent'}
@@ -113,12 +113,12 @@ const AdminSidebar = () => {
           </IconButton>
         )}
       </Box>
-
+ 
       {/* Menu Items */}
       <List sx={{ p: 1 }}>
         {menuItems.map((item) => {
           const isItemActive = isActive(item.path);
-          
+         
           if (!isOpen) {
             // Collapsed view with tooltips
             return (
@@ -147,7 +147,7 @@ const AdminSidebar = () => {
               </Tooltip>
             );
           }
-
+ 
           // Expanded view
           return (
             <ListItem key={item.id} disablePadding>
@@ -185,9 +185,9 @@ const AdminSidebar = () => {
           );
         })}
       </List>
-
+ 
       <Divider />
-
+ 
       {/* Optional: Add a footer section if needed */}
       <Box sx={{ mt: 'auto', p: 2 }}>
         <Divider sx={{ mb: 2 }} />
@@ -200,5 +200,5 @@ const AdminSidebar = () => {
     </Drawer>
   );
 };
-
+ 
 export default AdminSidebar;

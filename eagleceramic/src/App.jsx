@@ -46,10 +46,11 @@ const Footer = React.lazy(() => import("./components/Footer.jsx"));
 // Admin Components
 const AdminLayout = React.lazy(() => import("./EagleCeramicAdmin/AdminLayout.jsx"));
 const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductCreate.jsx"));
+const ProductAndSize = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductAndSize.jsx"));
 // const ProductList = React.lazy(() => import("./EagleCeramicAdmin/ProductList/ProductList.jsx"));
 // const SizeManagement = React.lazy(() => import("./EagleCeramicAdmin/SizeManagement/SizeManagement.jsx"));
 // const CatalogueManagement = React.lazy(() => import("./EagleCeramicAdmin/CatalogueManagement/CatalogueManagement.jsx"));
-// const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
+const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
 
 // Theme setup
 const theme = createTheme({
@@ -240,7 +241,7 @@ function App() {
             }>
               <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="new-product-sizes" element={<NewProductSizes />} />
+              <Route path="new-product-sizes" element={<ProductAndSize />} />
             </Route>
           </Routes>
         </Suspense>
