@@ -46,6 +46,7 @@ const Footer = React.lazy(() => import("./components/Footer.jsx"));
 // Admin Components
 const AdminLayout = React.lazy(() => import("./EagleCeramicAdmin/AdminLayout.jsx"));
 const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductCreate.jsx"));
+const CreateProductPage = React.lazy(() => import("./EagleCeramicAdmin/ProductCatalogue/CreateProduct.jsx"));
 const ProductAndSize = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductAndSize.jsx"));
 const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
 const TokenHandler = React.lazy(() => import("./EagleCeramicAdmin/TokenHandler.jsx"));
@@ -191,7 +192,7 @@ function App() {
               <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="new-product-sizes" element={<ProductAndSize />} />
-              <Route path="product-catalogue" element={<CreateProduct/>}/>
+<Route path="product-catalogue" element={<CreateProductPage />} />
             </Route>
 
             {/* Public Routes */}
