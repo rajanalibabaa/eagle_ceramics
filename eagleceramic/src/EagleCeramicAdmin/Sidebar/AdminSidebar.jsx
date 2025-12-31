@@ -12,59 +12,63 @@ import {
   IconButton,
   useTheme,
   useMediaQuery,
-  Tooltip
+  Tooltip,
+  Avatar
 } from '@mui/material';
 import {
   Dashboard,
-  AddBox,
-  Category,
-  Menu as MenuIcon,
+  
+  Logout,
   ChevronLeft,
   ChevronRight
 } from '@mui/icons-material';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { getAdminMenuItems } from "../AdminMenuItems.js"; 
+import { getAdminToken, getAdminUserId, clearAdminData } from '../utils/auth';
 
 const drawerWidth = 300;
 const collapsedWidth = 64;
 
-const AdminSidebar = () => {
+const AdminSidebar = ({ token }) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [isOpen, setIsOpen] = useState(true);
 
-  const menuItems = [
-    {
-      id: 'dashboard',
-      name: 'Dashboard',
-      icon: <Dashboard />,
-      path: '/admin/dashboard'
-    },
-    {
-      id: 'new-product',
-      name: 'New Product and Sizes',
-      icon: <AddBox />,
-      path: '/admin/new-product'
-    },
-    {
-      id: 'catalogue',
-      name: 'Add Product Catalogue',
-      icon: <Category />,
-      path: '/admin/catalogue'
-    }
-  ];
+  const { token: tokenFromParams } = useParams();
+
+ 
+  const adminToken = token || tokenFromParams || getAdminToken();
+
+
+  const userId = getAdminUserId();
+
+  const AdminMenuItems = getAdminMenuItems(adminToken);
 
   const handleNavigation = (path) => {
-    navigate(path);
+    navigate(path); 
     if (isMobile) {
       setIsOpen(false);
     }
   };
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const handleLogout = () => {
+    clearAdminData();
+    navigate('/');
   };
+
+  const isActive = (path) => {
+    return location.pathname === path; 
+  };
+
+  // Check if token is valid (basic)
+  const isValid = Boolean(adminToken);
+
+  if (!isValid) {
+    handleLogout();
+    return null;
+  }
 
   return (
     <Drawer
@@ -100,27 +104,45 @@ const AdminSidebar = () => {
       >
         {isOpen ? (
           <>
-            <Typography variant="h6" noWrap sx={{ fontWeight: 600 }}>
-              Admin Panel
-            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar 
+                sx={{ 
+                  bgcolor: theme.palette.primary.main, 
+                  width: 40, 
+                  height: 40,
+                  fontSize: '0.875rem'
+                }}
+              >
+                {userId ? userId.charAt(0).toUpperCase() : 'A'}
+              </Avatar>
+              <Box>
+                <Typography variant="subtitle1" noWrap sx={{ fontWeight: 600 }}>
+                  Admin Panel
+                </Typography>
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  ID: {userId ? `${userId.substring(0, 8)}...` : 'N/A'}
+                </Typography>
+              </Box>
+            </Box>
             <IconButton onClick={() => setIsOpen(false)} size="small">
               <ChevronLeft />
             </IconButton>
           </>
         ) : (
-          <IconButton onClick={() => setIsOpen(true)} size="small">
-            <ChevronRight />
-          </IconButton>
+          <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+            <IconButton onClick={() => setIsOpen(true)} size="small">
+              <ChevronRight />
+            </IconButton>
+          </Box>
         )}
       </Box>
 
       {/* Menu Items */}
       <List sx={{ p: 1 }}>
-        {menuItems.map((item) => {
+        {AdminMenuItems.map((item) => {
           const isItemActive = isActive(item.path);
           
           if (!isOpen) {
-            // Collapsed view with tooltips
             return (
               <Tooltip key={item.id} title={item.name} placement="right" arrow>
                 <ListItem disablePadding>
@@ -140,7 +162,7 @@ const AdminSidebar = () => {
                         color: isItemActive ? theme.palette.primary.main : 'inherit',
                       }}
                     >
-                      {item.icon}
+                      {item.icon || <Dashboard />} {/* Add fallback icon */}
                     </ListItemIcon>
                   </ListItemButton>
                 </ListItem>
@@ -148,7 +170,6 @@ const AdminSidebar = () => {
             );
           }
 
-          // Expanded view
           return (
             <ListItem key={item.id} disablePadding>
               <ListItemButton
@@ -171,7 +192,7 @@ const AdminSidebar = () => {
                     color: isItemActive ? theme.palette.primary.main : 'inherit',
                   }}
                 >
-                  {item.icon}
+                  {item.icon || <Dashboard />} {/* Add fallback icon */}
                 </ListItemIcon>
                 <ListItemText
                   primary={item.name}
@@ -188,11 +209,53 @@ const AdminSidebar = () => {
 
       <Divider />
 
-      {/* Optional: Add a footer section if needed */}
+      {/* Logout Section */}
       <Box sx={{ mt: 'auto', p: 2 }}>
-        <Divider sx={{ mb: 2 }} />
+        {isOpen ? (
+          <ListItemButton
+            onClick={handleLogout}
+            sx={{
+              minHeight: 48,
+              px: 2.5,
+              borderRadius: 1,
+              color: theme.palette.error.main,
+              '&:hover': {
+                backgroundColor: theme.palette.error.lighter,
+              },
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 0, mr: 3, color: 'inherit' }}>
+              <Logout />
+            </ListItemIcon>
+            <ListItemText primary="Logout" />
+          </ListItemButton>
+        ) : (
+          <Tooltip title="Logout" placement="right" arrow>
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <IconButton
+                onClick={handleLogout}
+                sx={{
+                  color: theme.palette.error.main,
+                  '&:hover': {
+                    backgroundColor: theme.palette.error.lighter,
+                  },
+                }}
+              >
+                <Logout />
+              </IconButton>
+            </Box>
+          </Tooltip>
+        )}
+        
+        <Divider sx={{ my: 2 }} />
+        
         {isOpen && (
-          <Typography variant="body2" color="text.secondary" align="center">
+          <Typography 
+            variant="body2" 
+            color="text.secondary" 
+            align="center"
+            sx={{ mt: 1 }}
+          >
             Eagle Ceramics Admin
           </Typography>
         )}
