@@ -136,12 +136,12 @@ const AdminSidebar = ({ token }) => {
           </Box>
         )}
       </Box>
-
+ 
       {/* Menu Items */}
       <List sx={{ p: 1 }}>
         {AdminMenuItems.map((item) => {
           const isItemActive = isActive(item.path);
-          
+         
           if (!isOpen) {
             return (
               <Tooltip key={item.id} title={item.name} placement="right" arrow>
@@ -169,7 +169,6 @@ const AdminSidebar = ({ token }) => {
               </Tooltip>
             );
           }
-
           return (
             <ListItem key={item.id} disablePadding>
               <ListItemButton
@@ -206,7 +205,7 @@ const AdminSidebar = ({ token }) => {
           );
         })}
       </List>
-
+ 
       <Divider />
 
       {/* Logout Section */}
@@ -263,5 +262,5 @@ const AdminSidebar = ({ token }) => {
     </Drawer>
   );
 };
-
+ 
 export default AdminSidebar;
