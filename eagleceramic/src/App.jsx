@@ -47,10 +47,8 @@ const Footer = React.lazy(() => import("./components/Footer.jsx"));
 const AdminLayout = React.lazy(() => import("./EagleCeramicAdmin/AdminLayout.jsx"));
 const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductCreate.jsx"));
 const ProductAndSize = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductAndSize.jsx"));
-// const ProductList = React.lazy(() => import("./EagleCeramicAdmin/ProductList/ProductList.jsx"));
-// const SizeManagement = React.lazy(() => import("./EagleCeramicAdmin/SizeManagement/SizeManagement.jsx"));
-// const CatalogueManagement = React.lazy(() => import("./EagleCeramicAdmin/CatalogueManagement/CatalogueManagement.jsx"));
 const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
+const TokenHandler = React.lazy(() => import("./EagleCeramicAdmin/TokenHandler.jsx"));
 
 // Theme setup
 const theme = createTheme({
@@ -186,10 +184,18 @@ function App() {
           }
         >
           <Routes>
+            <Route path="/admin" element={<TokenHandler />} />
+
+            {/* Admin Routes with token */}
+            <Route path="/admin/:token" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="new-product-sizes" element={<ProductAndSize />} />
+            </Route>
+
             {/* Public Routes */}
             <Route path="/*" element={
               <>
-                {/* <MainPopUp /> */}
                 <Navbar />
                 <Routes>
                   <Route path="/" element={<HomePage />} />
@@ -234,15 +240,6 @@ function App() {
                 {isMobileOrTablet && <ContactPageFab />}
               </>
             } />
-
-            {/* Admin Routes */}
-            <Route path="/admin/*" element={
-              <AdminLayout />
-            }>
-              <Route index element={<AdminDashboard />} />
-              <Route path="dashboard" element={<AdminDashboard />} />
-              <Route path="new-product-sizes" element={<ProductAndSize />} />
-            </Route>
           </Routes>
         </Suspense>
       </Router>

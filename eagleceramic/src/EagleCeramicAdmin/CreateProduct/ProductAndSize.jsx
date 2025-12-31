@@ -144,8 +144,13 @@ const ProductAndSize = () => {
         try {
             setLoading(true);
 
+            console.log(
+                productData.productName,
+                savedSizes
+            )
+
             const response = await axios.post(
-                "/api/eagle-ceramic/product-sizes/create",
+                "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
                 {
                     productName: productData.productName,
                     productSizes: savedSizes
