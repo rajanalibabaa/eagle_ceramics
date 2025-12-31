@@ -71,13 +71,58 @@ export const getAdminUserId = () => {
   return localStorage.getItem('adminUserId') || getAdminData()?.userId || null;
 };
 
+// utils/auth.js
 export const clearAdminData = () => {
+  console.log('🔴 [Auth] Starting logout process...');
+  
   try {
+    // Check what we have before clearing
+    const beforeToken = localStorage.getItem('adminAccessToken');
+    const beforeData = localStorage.getItem('adminData');
+    const beforeUserId = localStorage.getItem('adminUserId');
+    
+    console.log('📋 [Auth] Before clearing - Items found:');
+    console.log('  - Token exists:', !!beforeToken);
+    console.log('  - Data exists:', !!beforeData);
+    console.log('  - User ID exists:', !!beforeUserId);
+    
+    if (beforeData) {
+      try {
+        const parsedData = JSON.parse(beforeData);
+        console.log('👤 [Auth] User being logged out:');
+        console.log('  - ID:', parsedData.id || 'N/A');
+        console.log('  - Email:', parsedData.brandDetails?.email || 'N/A');
+        console.log('  - Token stored at:', parsedData.timestamp || 'N/A');
+      } catch (e) {
+        console.warn('⚠️ [Auth] Could not parse user data:', e.message);
+      }
+    }
+    
+    // Clear the data
     localStorage.removeItem('adminData');
     localStorage.removeItem('adminAccessToken');
     localStorage.removeItem('adminUserId');
-  } catch (e) {
-    console.error('Failed to clear admin data:', e);
+    
+    console.log('✅ [Auth] All auth data cleared from localStorage');
+    
+    // Verify everything is cleared
+    const afterToken = localStorage.getItem('adminAccessToken');
+    const afterData = localStorage.getItem('adminData');
+    const afterUserId = localStorage.getItem('adminUserId');
+    
+    console.log('🔍 [Auth] Verification after clearing:');
+    console.log('  - Token removed:', !afterToken ? '✅' : '❌');
+    console.log('  - Data removed:', !afterData ? '✅' : '❌');
+    console.log('  - User ID removed:', !afterUserId ? '✅' : '❌');
+    
+    console.log('🚪 [Auth] Logout completed successfully');
+    console.log('----------------------------------------');
+    
+    return true;
+  } catch (error) {
+    console.error('❌ [Auth] Error during logout:', error);
+    console.error('Stack trace:', error.stack);
+    return false;
   }
 };
 

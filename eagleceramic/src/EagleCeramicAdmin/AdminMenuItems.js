@@ -13,11 +13,11 @@ export const getAdminMenuItems = (token) => [
     name: 'New Product and Sizes',
     path: `/admin/${encodeURIComponent(token)}/new-product-sizes`,
   },
-  // {
-  //   id: 3,
-  //   name: 'Add Product Catalogue',
-  //   path: `/admin/${encodeURIComponent(token)}/categories`,
-  // },
+  {
+    id: 3,
+    name: 'Add Product Catalogue',
+    path: `/admin/${encodeURIComponent(token)}/product-catalogue`,
+  },
   // {
   //   id: 4,
   //   name: 'Product List',
