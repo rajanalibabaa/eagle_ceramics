@@ -146,7 +146,7 @@ const AboutUs = () => {
                 lineHeight: 1,
               }}
             >
-              35
+              20
             </Typography>
             <Typography
               sx={{
@@ -180,7 +180,7 @@ const AboutUs = () => {
               fontWeight: 900,
             }}
           >
-            About Eagle Ceramics
+            About Eagle Ceramic
           </Box>
           : The Leading Tiles Company in India
         </Typography>
@@ -195,7 +195,7 @@ const AboutUs = () => {
             textAlign: { xs: "justify", md: "justify" },
           }}
         >
-          At <strong>Eagle Ceramics</strong> and Gaurada Ceramics, we bring over three decades of expertise in supplying high-quality tiles and ceramic products to builders, contractors, architects, interior designers, and commercial project developers. With a strong B2B supply chain and an unmatched product portfolio, we ensure consistent quality, timely delivery, and value-driven pricing for every project.
+          At <strong>Eagle Ceramic</strong> and Gaurada Ceramics, we bring over three decades of expertise in supplying high-quality tiles and ceramic products to builders, contractors, architects, interior designers, and commercial project developers. With a strong B2B supply chain and an unmatched product portfolio, we ensure consistent quality, timely delivery, and value-driven pricing for every project.
         </Typography>
 
         <Box sx={{ textAlign: { xs: "center", md: "left" } }}>

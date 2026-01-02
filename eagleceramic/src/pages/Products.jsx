@@ -54,7 +54,7 @@ const content = [
       "Eco-Friendly",
     ],
     benefits: [
-      { icon: Shield, text: "10 Year Warranty" },
+      // { icon: Shield, text: "10 Year Warranty" },
       { icon: Palette, text: "500+ Designs" },
       { icon: Star, text: "Premium Quality" },
     ],
@@ -89,7 +89,7 @@ const content = [
 
     ],
     benefits: [
-      { icon: Shield, text: "15 Year Warranty" },
+      // { icon: Shield, text: "15 Year Warranty" },
       { icon: Palette, text: "300+ Designs" },
       { icon: Star, text: "All-Weather" },
     ],
@@ -154,7 +154,7 @@ const content = [
       "Abrasion Proof",
     ],
     benefits: [
-      { icon: Shield, text: "20 Year Warranty" },
+      // { icon: Shield, text: "20 Year Warranty" },
       { icon: Palette, text: "150+ Designs" },
       { icon: Star, text: "Industrial Grade" },
     ],
@@ -186,7 +186,7 @@ const content = [
       "UV Resistant",
     ],
     benefits: [
-      { icon: Shield, text: "25 Year Warranty" },
+      // { icon: Shield, text: "25 Year Warranty" },
       { icon: Palette, text: "50+ Options" },
       { icon: Star, text: "5°C Cooler" },
     ],
@@ -219,7 +219,7 @@ const content = [
       "Rust Free",
     ],
     benefits: [
-      { icon: Shield, text: "Lifetime Warranty" },
+      // { icon: Shield, text: "Lifetime Warranty" },
       { icon: Palette, text: "100+ Models" },
       { icon: Star, text: "Food Grade SS" },
     ],

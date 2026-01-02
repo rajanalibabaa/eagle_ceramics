@@ -21,6 +21,9 @@ import AboutPageContent from "./pages/ServicesContent/AboutPageContent/AboutPage
 import ContactPageFab from "./components/ContactPageFab.jsx";
 
 import logo from './assets/eagle_ceramics_logo.jpg';
+import logo1 from './assets/eaglelogo.jpg';
+import video1 from './assets/Homepageloading.mp4';
+import PageLoader from "./PageLoader.jsx";
 
 // const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
@@ -190,8 +193,10 @@ function App() {
         <ScrollToTop />
         <Suspense
           fallback={
-            <img src={logo} alt="Eagle Ceramics Logo" style={{display:'block',margin:'auto',marginTop:'20%',width:'250px',height:'100px'}} />
+            <PageLoader />
+          
           }
+
         >
           {/* <MainPopUp /> */}
           <Navbar />

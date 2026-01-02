@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
+import ContactFormModal from "./ContactFormModal";
 
 const ServicesCollectionCard = ({
   mainImage,
@@ -22,7 +23,8 @@ const ServicesCollectionCard = ({
   const isDesktop = useMediaQuery(theme.breakpoints.between('md', 'lg')); // 900px - 1200px
   const isLargeDesktop = useMediaQuery(theme.breakpoints.up('lg'));  // >= 1200px
   const isMac = useMediaQuery(theme.breakpoints.between('md', 'xl')); // Mac screens typically 900px-1536px
-
+  const [openForm, setOpenForm] = React.useState(false);
+  const [pendingPdf, setPendingPdf] = React.useState(null);
   // Responsive values
   const getResponsiveValues = () => {
     if (isMobile) {
@@ -121,10 +123,27 @@ const ServicesCollectionCard = ({
     }
   };
 
+
+
   const handleButtonClick = (e) => {
     e.stopPropagation();
-    onExploreClick && onExploreClick(pdfFile);
+    // onExploreClick && onExploreClick(pdfFile);
+    const alreadySubmitted = localStorage.getItem("collection_form_submitted")==="true";
+   if (alreadySubmitted) {
+    // 🚀 Skip form, directly download/open PDF
+    window.open(pdfFile, "_blank");
+    return;
+  }
+    setPendingPdf(pdfFile);   // store pdf
+  setOpenForm(true);   
   };
+
+  const handleFormSubmit = () => {
+  if (pendingPdf) {
+    window.open(pendingPdf, "_blank");
+  }
+  setPendingPdf(null);
+};
 
   return (
     <Box
@@ -155,7 +174,7 @@ const ServicesCollectionCard = ({
             }
           })
         }}
-        onClick={handleClick}
+        // onClick={handleClick}
       >
         <Box
           sx={{
@@ -406,6 +425,11 @@ const ServicesCollectionCard = ({
           </Box>
         </Box>
       </Box>
+<ContactFormModal
+  open={openForm}
+  onClose={() => setOpenForm(false)}
+  onSubmit={handleFormSubmit}
+/>
     </Box>
   );
 };

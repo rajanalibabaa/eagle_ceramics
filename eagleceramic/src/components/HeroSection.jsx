@@ -403,7 +403,7 @@ const HeroSection = () => {
                   flexWrap: "wrap",
                 }}
               >
-                Delivering trusted ceramic solutions for 35 years across South
+                Delivering trusted ceramic solutions for 20 years across South
                 India
               </Typography>
             </motion.div>

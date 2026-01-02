@@ -457,7 +457,7 @@ const ContactUs = () => {
                         }
                       }}
                     >
-                      <span style={{ color: '#010000ff' }}>Eagle Ceramics</span>
+                      <span style={{ color: '#010000ff' }}>Eagle Ceramic</span>
                       <span style={{ color: '#010000ff' }}>  Shop No 13, Second Floor,</span>
                       <span style={{ color: '#010000ff' }}>Survey No 63 Paiki1/paiki2,</span>
                       <span style={{ color: '#010000ff' }}>Plot No 1 Paiki Prabhat Chamber,</span>
