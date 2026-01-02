@@ -25,55 +25,47 @@ import logo1 from './assets/eaglelogo.jpg';
 import video1 from './assets/Homepageloading.mp4';
 import PageLoader from "./PageLoader.jsx";
 
+// Lazy load components
 // const MainPopUp = React.lazy(() => import("./components/MainPopUp.jsx"));
 const Navbar = React.lazy(() => import("./components/Navbar.jsx"));
 const HomePage = React.lazy(() => import("./pages/HomePage.jsx"));
-const TrustedChoise = React.lazy(() =>
-  import("./components/TrustedChoise.jsx")
-);
-const WhyOurProducts = React.lazy(() =>
-  import("./components/WhyOurProducts.jsx")
-);
+const TrustedChoise = React.lazy(() => import("./components/TrustedChoise.jsx"));
+const WhyOurProducts = React.lazy(() => import("./components/WhyOurProducts.jsx"));
 const Testimonials = React.lazy(() => import("./components/Testimonials.jsx"));
 const OurClients = React.lazy(() => import("./components/OurClients.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
-const ServicesLayout = React.lazy(() =>
-  import("./pages/ServicesContent/ServicesLayout.jsx")
-);
-const Walltiles = React.lazy(() =>
-  import("./pages/ServicesContent/WallTiles/Walltiles.jsx")
-);
-const DoubleCharge = React.lazy(() =>
-  import("./pages/ServicesContent/FloorTiles/600X600DC/DoubleCharge.jsx")
-);
-const GlossyCollection = React.lazy(() =>
-  import("./pages/ServicesContent/FloorTiles/600X1200/GlossyCollection.jsx")
-);
-const MattCollection = React.lazy(() =>
-  import("./pages/ServicesContent/FloorTiles/600X1200/MattCollection.jsx")
-);
-const ParkingTiles = React.lazy(() =>
-  import("./pages/ServicesContent/ParkingTiles/Collection1.jsx")
-);
-const ParkingTilesCollection1 = React.lazy(() =>
-  import("./pages/ServicesContent/ParkingTiles/Collection1.jsx")
-);
-const ParkingTilesCollection2 = React.lazy(() =>
-  import("./pages/ServicesContent/ParkingTiles/Collection2.jsx")
-);
-
-const PlainCollection = React.lazy(() =>
-  import("./pages/ServicesContent/PlainCollection.jsx")
-);
-const SpecialCollection = React.lazy(() =>
-  import("./pages/ServicesContent/SpecialCollection.jsx")
-);
+const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
+const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
+const DoubleCharge = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X600DC/DoubleCharge.jsx"));
+const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X1200/GlossyCollection.jsx"));
+const MattCollection = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X1200/MattCollection.jsx"));
+const ParkingTiles = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection1.jsx"));
+const ParkingTilesCollection1 = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection1.jsx"));
+const ParkingTilesCollection2 = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection2.jsx"));
+const PlainCollection = React.lazy(() => import("./pages/ServicesContent/PlainCollection.jsx"));
+const SpecialCollection = React.lazy(() => import("./pages/ServicesContent/SpecialCollection.jsx"));
 const Footer = React.lazy(() => import("./components/Footer.jsx"));
+
+// Admin Components
+const AdminLayout = React.lazy(() => import("./EagleCeramicAdmin/AdminLayout.jsx"));
+const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductCreate.jsx"));
+const CreateProductPage = React.lazy(() => import("./EagleCeramicAdmin/ProductCatalogue/CreateProduct.jsx"));
+const ProductAndSize = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductAndSize.jsx"));
+const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
+const TokenHandler = React.lazy(() => import("./EagleCeramicAdmin/TokenHandler.jsx"));
 
 // Theme setup
 const theme = createTheme({
   typography: {
     fontFamily: "Arial, Helvetica, sans-serif",
+  },
+  palette: {
+    primary: {
+      main: "#c21f24",
+    },
+    secondary: {
+      main: "#c21f24",
+    },
   },
 });
 
@@ -81,6 +73,7 @@ const colors = {
   primary: "#c21f24",
   secondary: "#c21f24",
 };
+
 // WhatsApp Button (always visible)
 const WhatsAppButton = () => {
   const mobileNumber = "+918248638595";
@@ -114,8 +107,6 @@ const WhatsAppButton = () => {
     </Fab>
   );
 };
-
-
 
 // Scroll button
 const SmartScrollButton = () => {
@@ -198,81 +189,69 @@ function App() {
           }
 
         >
-          {/* <MainPopUp /> */}
-          <Navbar />
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPageContent />} />
-            <Route path="/contact" element={<ContactUs />} />
-            <Route path="/trusted-choice" element={<TrustedChoise />} />
-            <Route path="/why-our-products" element={<WhyOurProducts />} />
-            <Route path="/our-clients" element={<OurClients />} />
-            <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/admin" element={<TokenHandler />} />
 
-            <Route path="/products" element={<ServicesLayout />}>
-              <Route index element={<Walltiles />} />
-              <Route path="walltiles" element={<Walltiles />} />
-              <Route
-                path="elevation-tiles-300x450"
-                element={<ElevationTiles300x450 />}
-              />
-              <Route
-                path="elevation-tiles-300x600"
-                element={<ElevationTiles300x600 />}
-              />
-              <Route
-                path="cool-roof-tiles-9mm"
-                element={<CoolRoofTiles9MM />}
-              />
-              <Route
-                path="cool-roof-tiles-10mm"
-                element={<CoolRoofTiles10MM />}
-              />
-              <Route
-                path="cool-roof-tiles-600x600"
-                element={<CoolRoofTiles600x600 />}
-              />
-              <Route path="kitchen-sink" element={<KitchenSink />} />
-
-              {/* Floor Tiles */}
-              <Route path="floortiles">
-                <Route path="600x1200">
-                  <Route index element={<GlossyCollection />} />
-                  <Route path="glossy" element={<GlossyCollection />} />
-                  <Route path="matt" element={<MattCollection />} />
-                </Route>
-                <Route path="600x600dc" element={<DoubleCharge />} />
-              </Route>
-
-              {/* Parking Tiles */}
-              <Route path="parkingtiles" element={<ParkingTiles />} />
-              <Route
-                path="parkingtiles/collection1"
-                element={<ParkingTilesCollection1 />}
-              />
-              <Route
-                path="parkingtiles/collection2"
-                element={<ParkingTilesCollection2 />}
-              />
-
-              <Route path="glossy-collection" element={<GlossyCollection />} />
-             
-              <Route path="plain-collection" element={<PlainCollection />} />
-              <Route
-                path="special-collection"
-                element={<SpecialCollection />}
-              />
+            {/* Admin Routes with token */}
+            <Route path="/admin/:token" element={<AdminLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="dashboard" element={<AdminDashboard />} />
+              <Route path="new-product-sizes" element={<ProductAndSize />} />
+<Route path="product-catalogue" element={<CreateProductPage />} />
             </Route>
-          </Routes>
-          <Footer />
-                {isMobileOrTablet && <ContactPageFab />}
 
+            {/* Public Routes */}
+            <Route path="/*" element={
+              <>
+                <Navbar />
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPageContent />} />
+                  <Route path="/contact" element={<ContactUs />} />
+                  <Route path="/trusted-choice" element={<TrustedChoise />} />
+                  <Route path="/why-our-products" element={<WhyOurProducts />} />
+                  <Route path="/our-clients" element={<OurClients />} />
+                  <Route path="/testimonials" element={<Testimonials />} />
+
+                  <Route path="/products" element={<ServicesLayout />}>
+                    <Route index element={<Walltiles />} />
+                    <Route path="walltiles" element={<Walltiles />} />
+                    <Route path="elevation-tiles-300x450" element={<ElevationTiles300x450 />} />
+                    <Route path="elevation-tiles-300x600" element={<ElevationTiles300x600 />} />
+                    <Route path="cool-roof-tiles-9mm" element={<CoolRoofTiles9MM />} />
+                    <Route path="cool-roof-tiles-10mm" element={<CoolRoofTiles10MM />} />
+                    <Route path="cool-roof-tiles-600x600" element={<CoolRoofTiles600x600 />} />
+                    <Route path="kitchen-sink" element={<KitchenSink />} />
+
+                    {/* Floor Tiles */}
+                    <Route path="floortiles">
+                      <Route path="600x1200">
+                        <Route index element={<GlossyCollection />} />
+                        <Route path="glossy" element={<GlossyCollection />} />
+                        <Route path="matt" element={<MattCollection />} />
+                      </Route>
+                      <Route path="600x600dc" element={<DoubleCharge />} />
+                    </Route>
+
+                    {/* Parking Tiles */}
+                    <Route path="parkingtiles" element={<ParkingTiles />} />
+                    <Route path="parkingtiles/collection1" element={<ParkingTilesCollection1 />} />
+                    <Route path="parkingtiles/collection2" element={<ParkingTilesCollection2 />} />
+
+                    <Route path="glossy-collection" element={<GlossyCollection />} />
+                    <Route path="plain-collection" element={<PlainCollection />} />
+                    <Route path="special-collection" element={<SpecialCollection />} />
+                  </Route>
+                </Routes>
+                <Footer />
+                {isMobileOrTablet && <ContactPageFab />}
+              </>
+            } />
+          </Routes>
         </Suspense>
       </Router>
 
       <WhatsAppButton />
-
-
       <SmartScrollButton />
     </ThemeProvider>
   );

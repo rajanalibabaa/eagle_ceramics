@@ -900,7 +900,7 @@ function StickyScrollReveal() {
       </Typography>
     </Box>
             
-            </Box>
+       </Box>
           
         ))}
         <Box>
