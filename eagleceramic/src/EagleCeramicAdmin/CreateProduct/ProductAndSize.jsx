@@ -28,7 +28,7 @@ import axios from "axios";
 
 const ProductAndSize = () => {
     const [openModal, setOpenModal] = useState(false);
-    const [modalMode, setModalMode] = useState('create'); // 'create' or 'update'
+    const [modalMode, setModalMode] = useState('create'); 
     const [editingProduct, setEditingProduct] = useState(null);
     const [getData, setGetData] = useState([]);
     const [loading, setLoading] = useState(false);
