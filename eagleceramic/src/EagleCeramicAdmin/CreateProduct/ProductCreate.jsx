@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Box,
     TextField,
@@ -24,6 +24,7 @@ import {
     TableHead,
     TableRow,
     Tooltip,
+    Avatar,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -36,6 +37,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
+import ImageIcon from "@mui/icons-material/Image";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 
 const ProductCreate = ({ 
@@ -57,7 +60,10 @@ const ProductCreate = ({
         _id: null, 
         size: "", 
         title: "", 
-        description: "" 
+        description: "",
+        image: null,
+        imageFile: null,
+        imagePreview: null
     });
     const [editingIndex, setEditingIndex] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -65,6 +71,7 @@ const ProductCreate = ({
     const [errorSnackbar, setErrorSnackbar] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sizesToDelete, setSizesToDelete] = useState([]);
+    const fileInputRef = useRef(null);
 
     // Initialize form when modal opens or editingProduct changes
     useEffect(() => {
@@ -81,7 +88,9 @@ const ProductCreate = ({
                 _id: size._id,
                 size: size.size || "",
                 title: size.title || "",
-                description: size.description || ""
+                description: size.description || "",
+                image: size.image || "", // Store image URL
+                imagePreview: size.image || null
             })) || [];
             
             setSavedSizes(initialSizes);
@@ -99,9 +108,20 @@ const ProductCreate = ({
             productSizes: []
         });
         setSavedSizes([]);
-        setCurrentSize({ _id: null, size: "", title: "", description: "" });
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
         setEditingIndex(null);
         setSizesToDelete([]);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
     const handleCloseModal = () => {
@@ -122,17 +142,65 @@ const ProductCreate = ({
         setCurrentSize(prev => ({ ...prev, [field]: value }));
     };
 
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check file size (1MB = 1048576 bytes)
+        if (file.size > 1048576) {
+            alert("Image size must be less than 1MB");
+            e.target.value = "";
+            return;
+        }
+
+        // Check file type
+        if (!file.type.match('image.*')) {
+            alert("Please select an image file");
+            e.target.value = "";
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setCurrentSize(prev => ({
+                ...prev,
+                imageFile: file,
+                imagePreview: reader.result
+            }));
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const removeImage = () => {
+        setCurrentSize(prev => ({
+            ...prev,
+            imageFile: null,
+            imagePreview: null,
+            image: null
+        }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
     const handleSaveSize = () => {
         console.log('Checkpoint: Attempting to save size. Current size:', currentSize, 'Editing index:', editingIndex);
+        
+        // Validate required fields
         if (!currentSize.size || !currentSize.title || !currentSize.description) {
             alert("Please fill all size fields before saving");
             return;
-        }
+        } 
 
         if (editingIndex !== null) {
             // Update existing size
             const updatedSizes = [...savedSizes];
-            updatedSizes[editingIndex] = { ...currentSize };
+            const updatedSize = {
+                ...currentSize,
+                // If we're updating with a new image file, reset the existing image URL
+                image: currentSize.imageFile ? null : currentSize.image
+            };
+            updatedSizes[editingIndex] = updatedSize;
             setSavedSizes(updatedSizes);
             console.log('Checkpoint: Updated existing size at index', editingIndex, '. New savedSizes:', updatedSizes);
             setEditingIndex(null);
@@ -140,20 +208,36 @@ const ProductCreate = ({
             // Add new size (with temporary ID if not updating)
             const newSize = {
                 ...currentSize,
-                _id: currentSize._id || `temp-${Date.now()}-${Math.random()}` // Temp ID for new sizes
+                _id: currentSize._id || `temp-${Date.now()}-${Math.random()}`
             };
             setSavedSizes(prev => [...prev, newSize]);
             console.log('Checkpoint: Added new size. New savedSizes:', [...savedSizes, newSize]);
         }
 
         // Reset current size
-        setCurrentSize({ _id: null, size: "", title: "", description: "" });
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
         console.log('Checkpoint: Reset currentSize after save');
     };
 
     const handleEditSize = (index) => {
         console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
-        setCurrentSize({ ...savedSizes[index] });
+        const sizeToEdit = savedSizes[index];
+        setCurrentSize({
+            ...sizeToEdit,
+            imageFile: null, // Reset file when editing
+            imagePreview: sizeToEdit.image || null
+        });
         setEditingIndex(index);
     };
 
@@ -172,15 +256,37 @@ const ProductCreate = ({
         console.log('Checkpoint: Removed size from savedSizes. New savedSizes:', savedSizes.filter((_, i) => i !== index));
         
         if (editingIndex === index) {
-            setCurrentSize({ _id: null, size: "", title: "", description: "" });
+            setCurrentSize({ 
+                _id: null, 
+                size: "", 
+                title: "", 
+                description: "",
+                image: null,
+                imageFile: null,
+                imagePreview: null
+            });
             setEditingIndex(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
             console.log('Checkpoint: Cleared currentSize and editingIndex after delete');
         }
     };
 
     const handleAddNewSize = () => {
         console.log('Checkpoint: Adding new size - resetting currentSize');
-        setCurrentSize({ _id: null, size: "", title: "", description: "" });
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
         setEditingIndex(null);
     };
 
@@ -196,35 +302,57 @@ const ProductCreate = ({
         try {
             setLoading(true);
 
-            const payload = {
-                productName: productData.productName.trim(),
-                productSizes: savedSizes.map(size => ({
-                    _id: size._id && size._id.toString().length === 24 ? size._id : undefined,
-                    size: size.size.trim(),
-                    title: size.title.trim(),
-                    description: size.description.trim()
-                })).filter(size => size.size && size.title && size.description)
-            };
+            // Create FormData to handle file uploads
+            const formData = new FormData();
+            formData.append('productName', productData.productName.trim());
+
+            // Add sizes data as JSON string
+            const sizesData = savedSizes.map(size => ({
+                _id: size._id && size._id.toString().length === 24 ? size._id : undefined,
+                size: size.size.trim(),
+                title: size.title.trim(),
+                description: size.description.trim(),
+                image: size.image || null // For existing images
+            }));
+
+            formData.append('productSizes', JSON.stringify(sizesData));
+
+            // Append image files
+            savedSizes.forEach((size, index) => {
+                if (size.imageFile) {
+                    formData.append(`image_${index}`, size.imageFile);
+                }
+            });
 
             // Add sizesToDelete for update mode
             if (mode === 'update' && editingProduct) {
-                payload.sizesToDelete = sizesToDelete;
+                formData.append('sizesToDelete', JSON.stringify(sizesToDelete));
             }
 
-            console.log("Checkpoint: Submitting payload:", payload);
+            console.log("Checkpoint: Submitting form data");
 
             let response;
             if (mode === 'update' && editingProduct) {
                 // Update existing product
                 response = await axios.put(
                     `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
-                    payload
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
                 );
             } else {
                 // Create new product
                 response = await axios.post(
                     "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
-                    payload
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    }
                 );
             }
 
@@ -346,7 +474,7 @@ const ProductCreate = ({
                                     borderRadius: 3,
                                 }}
                             >
-                                <CardContent  >
+                                <CardContent>
                                     <Typography variant="body1" fontWeight="600" gutterBottom 
                                         color={mode === 'update' ? "secondary" : "primary"}>
                                         Product Name *
@@ -381,7 +509,7 @@ const ProductCreate = ({
                         </Grid>
 
                         {/* Add/Edit Size Section */}
-                        <Grid item xs={12}>
+                        <Grid item xs={12} >
                             <Card
                                 elevation={2}
                                 sx={{
@@ -398,7 +526,7 @@ const ProductCreate = ({
                                 </Typography>
                                 
                                 <Grid container spacing={3}>
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
                                         <TextField
                                             label="Size"
                                             placeholder="e.g., 12x24"
@@ -425,7 +553,7 @@ const ProductCreate = ({
                                         />
                                     </Grid>
 
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
                                         <TextField
                                             label="Title"
                                             placeholder="e.g., Medium Tile"
@@ -452,7 +580,62 @@ const ProductCreate = ({
                                         />
                                     </Grid>
 
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                ref={fileInputRef}
+                                                style={{ display: 'none' }}
+                                                id="image-upload"
+                                            />
+                                            <Button
+                                                variant="outlined"
+                                                component="label"
+                                                htmlFor="image-upload"
+                                                startIcon={<CloudUploadIcon />}
+                                                disabled={loading}
+                                                sx={{
+                                                    height: '56px',
+                                                    borderRadius: 2,
+                                                    fontSize: "0.9rem",
+                                                    gap:1
+                                                }}
+                                            >
+                                                Upload Image
+                                                <Typography variant="overline" display="block" color="text.secondary" >
+                                                    Max 1MB
+                                                </Typography>
+                                            </Button>
+                                            
+                                            {currentSize.imagePreview && (
+                                                <Box sx={{ mt: 1, textAlign: 'center' }}>
+                                                    <Avatar
+                                                        src={currentSize.imagePreview}
+                                                        alt="Preview"
+                                                        sx={{ 
+                                                            width: 70, 
+                                                            height: 70, 
+                                                            mx: 'auto',
+                                                            border: '2px solid',
+                                                            borderRadius: 0
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={removeImage}
+                                                        sx={{ mt: 1 }}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    </Grid>
+                                    
+                                    <Grid item xs={12} >
                                         <TextField
                                             label="Description"
                                             placeholder="e.g., Perfect for kitchen backsplash"
@@ -474,13 +657,15 @@ const ProductCreate = ({
                                                 "& .MuiOutlinedInput-root": {
                                                     borderRadius: 2,
                                                     fontSize: "0.9rem",
+                                                    width:'300px'
+                                                   
                                                 },
                                             }}
                                         />
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 1, ml: 8 }}>
                                             <Button
                                                 variant="contained"
                                                 startIcon={<SaveIcon />}
@@ -561,6 +746,7 @@ const ProductCreate = ({
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Size</TableCell>
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Title</TableCell>
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Description</TableCell>
+                                                    <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Image</TableCell>
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem", textAlign: "center" }}>
                                                         Actions
                                                     </TableCell>
@@ -591,6 +777,31 @@ const ProductCreate = ({
                                                             <TableCell sx={{ fontWeight: 500 }}>{size.size}</TableCell>
                                                             <TableCell>{size.title}</TableCell>
                                                             <TableCell>{size.description}</TableCell>
+                                                            <TableCell>
+                                                                {size.imagePreview || size.image ? (
+                                                                    <Avatar
+                                                                        src={size.imagePreview || size.image}
+                                                                        alt={`${size.size} image`}
+                                                                        sx={{ 
+                                                                            width: 50, 
+                                                                            height: 50,
+                                                                            border: '1px solid #ddd'
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <Box sx={{ 
+                                                                        display: 'flex', 
+                                                                        alignItems: 'center', 
+                                                                        gap: 1,
+                                                                        color: 'text.secondary'
+                                                                    }}>
+                                                                        <ImageIcon />
+                                                                        <Typography variant="caption">
+                                                                            No image
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
+                                                            </TableCell>
                                                             <TableCell sx={{ textAlign: "center" }}>
                                                                 <Stack direction="row" spacing={1} justifyContent="center">
                                                                     <Tooltip title="Edit">
