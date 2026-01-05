@@ -18,10 +18,7 @@ import {
     DialogContent,
     DialogActions,
     Backdrop,
-    LinearProgress,
     Card,
-    CardMedia,
-    CardContent,
     Grid,
     Avatar,
 } from "@mui/material";
@@ -40,13 +37,16 @@ const ProductAndSize = () => {
     const [loading, setLoading] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
+    const [expandedAccordion, setExpandedAccordion] = useState(null);
+     const handleAccordionChange = (panelId) => (event, isExpanded) => {
+        setExpandedAccordion(isExpanded ? panelId : null);
+    };
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
         severity: 'success'
     });
 
-    // Modal handlers
     const handleOpenCreateModal = () => {
         console.log('Checkpoint: Opening create modal');
         setModalMode('create');
@@ -248,7 +248,8 @@ const ProductAndSize = () => {
                     </Box>
                 ) : (
                     getData.map((item) => (
-                        <Accordion key={item._id} sx={{ mt: '15px', borderRadius: '5px' }}>
+                        <Accordion key={item._id} sx={{ mt: '15px', borderRadius: '5px' }}expanded={expandedAccordion === item._id}
+        onChange={handleAccordionChange(item._id)}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls={`panel-${item._id}-content`}
