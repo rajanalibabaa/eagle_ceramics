@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
     Box,
     TextField,
@@ -24,6 +24,7 @@ import {
     TableHead,
     TableRow,
     Tooltip,
+    Avatar,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -36,6 +37,8 @@ import SaveIcon from "@mui/icons-material/Save";
 import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
+import ImageIcon from "@mui/icons-material/Image";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 
 const ProductCreate = ({ 
@@ -57,7 +60,10 @@ const ProductCreate = ({
         _id: null, 
         size: "", 
         title: "", 
-        description: "" 
+        description: "",
+        image: null,
+        imageFile: null,
+        imagePreview: null
     });
     const [editingIndex, setEditingIndex] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -65,32 +71,49 @@ const ProductCreate = ({
     const [errorSnackbar, setErrorSnackbar] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [sizesToDelete, setSizesToDelete] = useState([]);
+    const fileInputRef = useRef(null);
+
+
+
+    console.log("currentSize",currentSize);
 
     // Initialize form when modal opens or editingProduct changes
-    useEffect(() => {
-        console.log('Checkpoint: Initializing ProductCreate with mode:', mode, 'editingProduct:', editingProduct);
-        if (mode === 'update' && editingProduct) {
-            // Pre-fill form with existing product data
-            setProductData({
-                productName: editingProduct.productName || "",
-                productSizes: editingProduct.productSizes || []
+   useEffect(() => {
+    console.log('Checkpoint: Initializing ProductCreate with mode:', mode, 'editingProduct:', editingProduct);
+    if (mode === 'update' && editingProduct) {
+        // Pre-fill form with existing product data
+        setProductData({
+            productName: editingProduct.productName || "",
+            productSizes: editingProduct.productSizes || []
+        });
+        
+        // Convert existing sizes to savedSizes format
+        const initialSizes = editingProduct.productSizes?.map(size => {
+            console.log('Loading size from DB:', {
+                _id: size._id,
+                size: size.size,
+                image: size.image
             });
             
-            // Convert existing sizes to savedSizes format
-            const initialSizes = editingProduct.productSizes?.map(size => ({
+            return {
                 _id: size._id,
                 size: size.size || "",
                 title: size.title || "",
-                description: size.description || ""
-            })) || [];
-            
-            setSavedSizes(initialSizes);
-            setSizesToDelete([]);
-        } else {
-            // Reset form for create mode
-            resetForm();
-        }
-    }, [mode, editingProduct, openModal]);
+                description: size.description || "",
+                image: size.image || "", // Store the image URL from database
+                imageFile: null, // No file initially
+                imagePreview: size.image || null // Use URL for preview
+            };
+        }) || [];
+        
+        console.log('Initial sizes loaded:', initialSizes);
+        setSavedSizes(initialSizes);
+        setSizesToDelete([]);
+    } else {
+        // Reset form for create mode
+        resetForm();
+    }
+}, [mode, editingProduct, openModal]);
 
     const resetForm = () => {
         console.log('Checkpoint: Resetting form');
@@ -99,9 +122,20 @@ const ProductCreate = ({
             productSizes: []
         });
         setSavedSizes([]);
-        setCurrentSize({ _id: null, size: "", title: "", description: "" });
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
         setEditingIndex(null);
         setSizesToDelete([]);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
 
     const handleCloseModal = () => {
@@ -122,40 +156,137 @@ const ProductCreate = ({
         setCurrentSize(prev => ({ ...prev, [field]: value }));
     };
 
-    const handleSaveSize = () => {
-        console.log('Checkpoint: Attempting to save size. Current size:', currentSize, 'Editing index:', editingIndex);
-        if (!currentSize.size || !currentSize.title || !currentSize.description) {
-            alert("Please fill all size fields before saving");
+    const handleImageChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Check file size (1MB = 1048576 bytes)
+        if (file.size > 1048576) {
+            alert("Image size must be less than 1MB");
+            e.target.value = "";
             return;
         }
 
-        if (editingIndex !== null) {
-            // Update existing size
-            const updatedSizes = [...savedSizes];
-            updatedSizes[editingIndex] = { ...currentSize };
-            setSavedSizes(updatedSizes);
-            console.log('Checkpoint: Updated existing size at index', editingIndex, '. New savedSizes:', updatedSizes);
-            setEditingIndex(null);
-        } else {
-            // Add new size (with temporary ID if not updating)
-            const newSize = {
-                ...currentSize,
-                _id: currentSize._id || `temp-${Date.now()}-${Math.random()}` // Temp ID for new sizes
-            };
-            setSavedSizes(prev => [...prev, newSize]);
-            console.log('Checkpoint: Added new size. New savedSizes:', [...savedSizes, newSize]);
+        // Check file type
+        if (!file.type.match('image.*')) {
+            alert("Please select an image file");
+            e.target.value = "";
+            return;
         }
 
-        // Reset current size
-        setCurrentSize({ _id: null, size: "", title: "", description: "" });
-        console.log('Checkpoint: Reset currentSize after save');
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setCurrentSize(prev => ({
+                ...prev,
+                imageFile: file,
+                imagePreview: reader.result
+            }));
+        };
+        reader.readAsDataURL(file);
     };
 
-    const handleEditSize = (index) => {
-        console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
-        setCurrentSize({ ...savedSizes[index] });
-        setEditingIndex(index);
+    const removeImage = () => {
+        setCurrentSize(prev => ({
+            ...prev,
+            imageFile: null,
+            imagePreview: null,
+            image: null
+        }));
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
     };
+
+const handleSaveSize = () => {
+    console.log('Checkpoint: Attempting to save size. Current size:', currentSize, 'Editing index:', editingIndex);
+    
+    // Validate required fields
+    if (!currentSize.size || !currentSize.title || !currentSize.description) {
+        alert("Please fill all size fields before saving");
+        return;
+    }
+
+    if (editingIndex !== null) {
+        // UPDATE EXISTING SIZE
+        const updatedSizes = [...savedSizes];
+        
+        // Create updated size object - CRITICAL: Preserve existing image if no new file
+        const updatedSize = {
+            _id: currentSize._id,
+            size: currentSize.size.trim(),
+            title: currentSize.title.trim(),
+            description: currentSize.description.trim(),
+            // Preserve existing image URL if no new file is uploaded
+            image: currentSize.image || updatedSizes[editingIndex].image,
+            // Track new image file if uploaded
+            imageFile: currentSize.imageFile || null,
+            // Use new preview or existing image for display
+            imagePreview: currentSize.imagePreview || currentSize.image || updatedSizes[editingIndex].imagePreview || updatedSizes[editingIndex].image
+        };
+        
+        // Special handling for update mode
+        if (mode === 'update') {
+            // If we're not uploading a new file, make sure we keep the existing image
+            if (!currentSize.imageFile) {
+                // Ensure the image field has the URL from the original size
+                updatedSize.image = currentSize.image || updatedSizes[editingIndex].image;
+            }
+        }
+        
+        updatedSizes[editingIndex] = updatedSize;
+        setSavedSizes(updatedSizes);
+        console.log('Updated existing size at index', editingIndex, 'New size data:', updatedSize);
+        setEditingIndex(null);
+    } else {
+        // ADD NEW SIZE
+        const newSize = {
+            ...currentSize,
+            _id: currentSize._id || (mode === 'update' ? `temp-${Date.now()}-${Math.random()}` : null)
+        };
+        
+        setSavedSizes(prev => [...prev, newSize]);
+        console.log('Added new size:', newSize);
+    }
+
+    // Reset current size
+    setCurrentSize({ 
+        _id: null, 
+        size: "", 
+        title: "", 
+        description: "",
+        image: null,
+        imageFile: null,
+        imagePreview: null
+    });
+    if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+    }
+};
+   const handleEditSize = (index) => {
+    console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
+    const sizeToEdit = savedSizes[index];
+    
+    setCurrentSize({
+        _id: sizeToEdit._id,
+        size: sizeToEdit.size || "",
+        title: sizeToEdit.title || "",
+        description: sizeToEdit.description || "",
+        image: sizeToEdit.image || null, // Preserve existing image URL
+        imageFile: sizeToEdit.imageFile || null, // Keep any existing file
+        imagePreview: sizeToEdit.imagePreview || sizeToEdit.image || null
+    });
+    
+    setEditingIndex(index);
+    
+    // Debug log
+    console.log('Current size after edit:', {
+        _id: sizeToEdit._id,
+        size: sizeToEdit.size,
+        image: sizeToEdit.image,
+        hasImageFile: !!sizeToEdit.imageFile,
+        hasImagePreview: !!sizeToEdit.imagePreview
+    });
+};
 
     const handleDeleteSize = (index) => {
         console.log('Checkpoint: Deleting size at index:', index);
@@ -172,89 +303,167 @@ const ProductCreate = ({
         console.log('Checkpoint: Removed size from savedSizes. New savedSizes:', savedSizes.filter((_, i) => i !== index));
         
         if (editingIndex === index) {
-            setCurrentSize({ _id: null, size: "", title: "", description: "" });
+            setCurrentSize({ 
+                _id: null, 
+                size: "", 
+                title: "", 
+                description: "",
+                image: null,
+                imageFile: null,
+                imagePreview: null
+            });
             setEditingIndex(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
             console.log('Checkpoint: Cleared currentSize and editingIndex after delete');
         }
     };
 
     const handleAddNewSize = () => {
         console.log('Checkpoint: Adding new size - resetting currentSize');
-        setCurrentSize({ _id: null, size: "", title: "", description: "" });
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
         setEditingIndex(null);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log('Checkpoint: Submitting form. productData:', productData, 'savedSizes:', savedSizes, 'sizesToDelete:', sizesToDelete);
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (savedSizes.length === 0) {
-            alert("Please add at least one size before " + (mode === 'update' ? 'updating' : 'creating') + " the product");
-            return;
-        }
+    try {
+        setLoading(true);
 
-        try {
-            setLoading(true);
+        const formData = new FormData();
+        formData.append('productName', productData.productName.trim());
 
-            const payload = {
-                productName: productData.productName.trim(),
-                productSizes: savedSizes.map(size => ({
-                    _id: size._id && size._id.toString().length === 24 ? size._id : undefined,
+        if (mode === 'create') {
+            // FOR CREATE MODE - No changes needed
+            savedSizes.forEach((size, index) => {
+                formData.append(`productSizes[${index}][size]`, size.size.trim());
+                formData.append(`productSizes[${index}][title]`, size.title.trim());
+                formData.append(`productSizes[${index}][description]`, size.description.trim());
+                
+                if (size.imageFile) {
+                    formData.append('image', size.imageFile);
+                }
+            });
+        } 
+        else if (mode === 'update' && editingProduct) {
+            // FOR UPDATE MODE - Fixed version
+            const productSizesData = savedSizes.map((size, index) => {
+                const sizeData = {
                     size: size.size.trim(),
                     title: size.title.trim(),
-                    description: size.description.trim()
-                })).filter(size => size.size && size.title && size.description)
-            };
-
-            // Add sizesToDelete for update mode
-            if (mode === 'update' && editingProduct) {
-                payload.sizesToDelete = sizesToDelete;
-            }
-
-            console.log("Checkpoint: Submitting payload:", payload);
-
-            let response;
-            if (mode === 'update' && editingProduct) {
-                // Update existing product
-                response = await axios.put(
-                    `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
-                    payload
-                );
-            } else {
-                // Create new product
-                response = await axios.post(
-                    "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
-                    payload
-                );
-            }
-
-            console.log(`Checkpoint: ${mode === 'update' ? 'Update' : 'Create'} response:`, response.data);
-
-            // Show success message
-            setSuccessSnackbar(true);
+                    description: size.description.trim(),
+                    hasNewImage: !!size.imageFile, // ✅ Flag to indicate new image
+                };
+                
+                // Include _id only for existing sizes (MongoDB ObjectId is 24 chars)
+                if (size._id && typeof size._id === 'string' && size._id.length === 24) {
+                    sizeData._id = size._id;
+                } else if (size._id && typeof size._id === 'object') {
+                    sizeData._id = size._id.toString();
+                }
+                
+                // ✅ If no new image file, include existing image URL
+                if (!size.imageFile && size.image) {
+                    sizeData.existingImage = size.image;
+                }
+                
+                return sizeData;
+            });
             
-            // Notify parent component
-            if (onSuccess) {
-                onSuccess();
+            formData.append('productSizes', JSON.stringify(productSizesData));
+            
+            // ✅ Append only NEW image files (in order)
+            savedSizes.forEach((size) => {
+                if (size.imageFile) {
+                    formData.append('image', size.imageFile);
+                }
+            });
+            
+            // Append sizesToDelete if any
+            if (sizesToDelete.length > 0) {
+                formData.append('sizesToDelete', JSON.stringify(sizesToDelete));
             }
-
-            // Close modal after delay
-            setTimeout(() => {
-                handleCloseModal();
-            }, 1500);
-
-        } catch (error) {
-            console.error(`Checkpoint: ${mode === 'update' ? 'Update' : 'Create'} Product Error:`, error);
-            setErrorMessage(
-                error?.response?.data?.message || 
-                `Failed to ${mode === 'update' ? 'update' : 'create'} product`
-            );
-            setErrorSnackbar(true);
-        } finally {
-            setLoading(false);
         }
-    };
 
+        // Debug logging
+        console.log("=== FormData Contents ===");
+        for (let pair of formData.entries()) {
+            const key = pair[0];
+            const value = pair[1];
+            if (key === 'productSizes' || key === 'sizesToDelete') {
+                try {
+                    console.log(key + ': ', JSON.parse(value));
+                } catch {
+                    console.log(key + ': ', value);
+                }
+            } else if (value instanceof File) {
+                console.log(key + ': ', value.name);
+            } else {
+                console.log(key + ': ', value);
+            }
+        }
+        console.log("=========================");
+
+        let response;
+        if (mode === 'update' && editingProduct) {
+            response = await axios.put(
+                `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+        } else {
+            response = await axios.post(
+                "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+        }
+
+        console.log(`Response:`, response.data);
+        setSuccessSnackbar(true);
+        
+        if (onSuccess) {
+            onSuccess();
+        }
+
+        setTimeout(() => {
+            handleCloseModal();
+        }, 1500);
+
+    } catch (error) {
+        console.error(`Error:`, error);
+        console.error('Error details:', error.response?.data);
+        
+        setErrorMessage(
+            error?.response?.data?.message || 
+            `Failed to ${mode === 'update' ? 'update' : 'create'} product`
+        );
+        setErrorSnackbar(true);
+    } finally {
+        setLoading(false);
+    }
+};
     const handleCloseSnackbar = () => {
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
@@ -346,7 +555,7 @@ const ProductCreate = ({
                                     borderRadius: 3,
                                 }}
                             >
-                                <CardContent  >
+                                <CardContent>
                                     <Typography variant="body1" fontWeight="600" gutterBottom 
                                         color={mode === 'update' ? "secondary" : "primary"}>
                                         Product Name *
@@ -381,7 +590,7 @@ const ProductCreate = ({
                         </Grid>
 
                         {/* Add/Edit Size Section */}
-                        <Grid item xs={12}>
+                        <Grid item xs={12} >
                             <Card
                                 elevation={2}
                                 sx={{
@@ -398,7 +607,7 @@ const ProductCreate = ({
                                 </Typography>
                                 
                                 <Grid container spacing={3}>
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
                                         <TextField
                                             label="Size"
                                             placeholder="e.g., 12x24"
@@ -425,7 +634,7 @@ const ProductCreate = ({
                                         />
                                     </Grid>
 
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
                                         <TextField
                                             label="Title"
                                             placeholder="e.g., Medium Tile"
@@ -452,7 +661,62 @@ const ProductCreate = ({
                                         />
                                     </Grid>
 
-                                    <Grid item xs={12} md={4}>
+                                    <Grid item xs={12} md={3}>
+                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                onChange={handleImageChange}
+                                                ref={fileInputRef}
+                                                style={{ display: 'none' }}
+                                                id="image-upload"
+                                            />
+                                            <Button
+                                                variant="outlined"
+                                                component="label"
+                                                htmlFor="image-upload"
+                                                startIcon={<CloudUploadIcon />}
+                                                disabled={loading}
+                                                sx={{
+                                                    height: '56px',
+                                                    borderRadius: 2,
+                                                    fontSize: "0.9rem",
+                                                    gap:1
+                                                }}
+                                            >
+                                                Upload Image
+                                                <Typography variant="overline" display="block" color="text.secondary" >
+                                                    Max 1MB
+                                                </Typography>
+                                            </Button>
+                                            
+                                            {currentSize.imagePreview && (
+                                                <Box sx={{ mt: 1, textAlign: 'center' }}>
+                                                    <Avatar
+                                                        src={currentSize.imagePreview}
+                                                        alt="Preview"
+                                                        sx={{ 
+                                                            width: 70, 
+                                                            height: 70, 
+                                                            mx: 'auto',
+                                                            border: '2px solid',
+                                                            borderRadius: 0
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={removeImage}
+                                                        sx={{ mt: 1 }}
+                                                    >
+                                                        Remove
+                                                    </Button>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    </Grid>
+                                    
+                                    <Grid item xs={12} >
                                         <TextField
                                             label="Description"
                                             placeholder="e.g., Perfect for kitchen backsplash"
@@ -474,13 +738,15 @@ const ProductCreate = ({
                                                 "& .MuiOutlinedInput-root": {
                                                     borderRadius: 2,
                                                     fontSize: "0.9rem",
+                                                    width:'300px'
+                                                   
                                                 },
                                             }}
                                         />
                                     </Grid>
 
                                     <Grid item xs={12}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 2 }}>
+                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 1, ml: 8 }}>
                                             <Button
                                                 variant="contained"
                                                 startIcon={<SaveIcon />}
@@ -561,6 +827,7 @@ const ProductCreate = ({
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Size</TableCell>
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Title</TableCell>
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Description</TableCell>
+                                                    <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem" }}>Image</TableCell>
                                                     <TableCell sx={{ color: "black", fontWeight: 600, fontSize: "1rem", textAlign: "center" }}>
                                                         Actions
                                                     </TableCell>
@@ -591,6 +858,31 @@ const ProductCreate = ({
                                                             <TableCell sx={{ fontWeight: 500 }}>{size.size}</TableCell>
                                                             <TableCell>{size.title}</TableCell>
                                                             <TableCell>{size.description}</TableCell>
+                                                            <TableCell>
+                                                                {size.imagePreview || size.image ? (
+                                                                    <Avatar
+                                                                        src={size.imagePreview || size.image}
+                                                                        alt={`${size.size} image`}
+                                                                        sx={{ 
+                                                                            width: 50, 
+                                                                            height: 50,
+                                                                            border: '1px solid #ddd'
+                                                                        }}
+                                                                    />
+                                                                ) : (
+                                                                    <Box sx={{ 
+                                                                        display: 'flex', 
+                                                                        alignItems: 'center', 
+                                                                        gap: 1,
+                                                                        color: 'text.secondary'
+                                                                    }}>
+                                                                        <ImageIcon />
+                                                                        <Typography variant="caption">
+                                                                            No image
+                                                                        </Typography>
+                                                                    </Box>
+                                                                )}
+                                                            </TableCell>
                                                             <TableCell sx={{ textAlign: "center" }}>
                                                                 <Stack direction="row" spacing={1} justifyContent="center">
                                                                     <Tooltip title="Edit">

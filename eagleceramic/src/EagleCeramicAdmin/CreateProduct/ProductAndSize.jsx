@@ -18,29 +18,35 @@ import {
     DialogContent,
     DialogActions,
     Backdrop,
-    LinearProgress,
+    Card,
+    Grid,
+    Avatar,
 } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CloseIcon from "@mui/icons-material/Close";
+import ImageIcon from "@mui/icons-material/Image";
 import axios from "axios";
 
 const ProductAndSize = () => {
     const [openModal, setOpenModal] = useState(false);
-    const [modalMode, setModalMode] = useState('create'); // 'create' or 'update'
+    const [modalMode, setModalMode] = useState('create'); 
     const [editingProduct, setEditingProduct] = useState(null);
     const [getData, setGetData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [productToDelete, setProductToDelete] = useState(null);
+    const [expandedAccordion, setExpandedAccordion] = useState(null);
+     const handleAccordionChange = (panelId) => (event, isExpanded) => {
+        setExpandedAccordion(isExpanded ? panelId : null);
+    };
     const [snackbar, setSnackbar] = useState({
         open: false,
         message: '',
         severity: 'success'
     });
 
-    // Modal handlers
     const handleOpenCreateModal = () => {
         console.log('Checkpoint: Opening create modal');
         setModalMode('create');
@@ -92,7 +98,7 @@ const ProductAndSize = () => {
         try {
             setLoading(true);
             const response = await axios.delete(
-                `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/delete/${productToDelete.uuid}`
+                `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/deletebyID/${productToDelete.uuid}`
             );
 
             console.log('Checkpoint: Delete response:', response.data);
@@ -242,7 +248,8 @@ const ProductAndSize = () => {
                     </Box>
                 ) : (
                     getData.map((item) => (
-                        <Accordion key={item._id} sx={{ mt: '15px', borderRadius: '5px' }}>
+                        <Accordion key={item._id} sx={{ mt: '15px', borderRadius: '5px' }}expanded={expandedAccordion === item._id}
+        onChange={handleAccordionChange(item._id)}>
                             <AccordionSummary
                                 expandIcon={<ExpandMoreIcon />}
                                 aria-controls={`panel-${item._id}-content`}
@@ -287,32 +294,68 @@ const ProductAndSize = () => {
                             <AccordionDetails>
                                 <Typography component="div">
                                     {item.productSizes && item.productSizes.length > 0 ? (
-                                        item.productSizes.map((data, index) => (
-                                            <Box
-                                                key={index}
-                                                sx={{
-                                                    mb: 2,
-                                                    p: 2,
-                                                    border: '1px solid #ccc',
-                                                    borderRadius: 2,
-                                                    display: 'flex',
-                                                    justifyContent: 'space-between',
-                                                    alignItems: 'center'
-                                                }}
-                                            >
-                                                <Box sx={{ flexGrow: 1 }}>
-                                                    <Typography variant="subtitle1" fontWeight="bold">
-                                                        Size: {data.size}
-                                                    </Typography>
-                                                    <Typography variant="body2" fontWeight="bold">
-                                                        Title: {data.title}
-                                                    </Typography>
-                                                    <Typography variant="body2" fontWeight="bold">
-                                                        Description: {data.description}
-                                                    </Typography>
-                                                </Box>
-                                            </Box>
-                                        ))
+                                        <Grid container spacing={2}>
+                                            {item.productSizes.map((data, index) => (
+                                                <Grid item xs={12} sm={6} md={4} key={index}>
+                                                    <Card
+                                                        sx={{
+                                                            height: '100%',
+                                                            display: 'flex',
+                                                            flexDirection: 'column',
+                                                            transition: 'transform 0.2s',
+                                                            '&:hover': {
+                                                                transform: 'translateY(-4px)',
+                                                                boxShadow: 3
+                                                            }
+                                                        }}
+                                                    >
+                                                        <Box sx={{ p: 2, textAlign: 'center', flexGrow: 1 }}>
+                                                            {data.image ? (
+                                                                <Avatar
+                                                                    src={data.image}
+                                                                    alt={data.title}
+                                                                    sx={{
+                                                                        width: 100,
+                                                                        height: 100,
+                                                                        mx: 'auto',
+                                                                        mb: 2,
+                                                                        border: '2px solid',
+                                                                        borderColor: 'primary.light'
+                                                                    }}
+                                                                />
+                                                            ) : (
+                                                                <Box
+                                                                    sx={{
+                                                                        width: 100,
+                                                                        height: 100,
+                                                                        mx: 'auto',
+                                                                        mb: 2,
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        justifyContent: 'center',
+                                                                        backgroundColor: 'grey.100',
+                                                                        borderRadius: '50%',
+                                                                        border: '2px dashed',
+                                                                        borderColor: 'grey.400'
+                                                                    }}
+                                                                >
+                                                                    <ImageIcon sx={{ fontSize: 40, color: 'grey.500' }} />
+                                                                </Box>
+                                                            )}
+                                                            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                                                                Size: {data.size}
+                                                            </Typography>
+                                                            <Typography variant="body1" fontWeight="bold" color="primary" gutterBottom>
+                                                                {data.title}
+                                                            </Typography>
+                                                            <Typography variant="body2" color="text.secondary">
+                                                                {data.description}
+                                                            </Typography>
+                                                        </Box>
+                                                    </Card>
+                                                </Grid>
+                                            ))}
+                                        </Grid>
                                     ) : (
                                         <Typography color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
                                             No sizes added for this product

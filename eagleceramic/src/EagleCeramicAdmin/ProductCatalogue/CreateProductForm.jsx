@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   TextField,
@@ -7,27 +7,21 @@ import {
   Grid,
   Paper,
   IconButton,
-  Divider,
   Stack,
-  Chip,
-  Card,
   LinearProgress,
   InputAdornment,
   Alert,
   Snackbar,
   Fade,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Tooltip,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Backdrop,
+  CircularProgress,
+  Chip,
+  MenuItem,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -45,7 +39,18 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import axios from "axios";
 
-const CreateProductForm = ({ openModal, setOpenModal }) => {
+const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
+
+const CreateProductForm = ({ 
+  openModal, 
+  setOpenModal, 
+  mode = "create", 
+  editingProduct = null,
+  onSuccess,
+  onClose 
+}) => {
+  const modalTitle = mode === "update" ? "Update Product Catalogue" : "Create New Product Catalogue";
+  
   const [productData, setProductData] = useState({
     productName: "",
     productSize: "",
@@ -67,29 +72,211 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
 
   const [imagePreview, setImagePreview] = useState("");
   const [pdfName, setPdfName] = useState("");
+  const [imageLoadError, setImageLoadError] = useState(false);
 
-  const handleChange = (e) => {
+  // New state for dropdowns
+  const [productsData, setProductsData] = useState([]);
+  const [productNameOptions, setProductNameOptions] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState("");
+  const [availableSizes, setAvailableSizes] = useState([]);
+  const [loadingDropdowns, setLoadingDropdowns] = useState(false);
+
+  // Track if dropdowns have been initialized for edit mode
+  const dropdownsInitialized = useRef(false);
+
+  // Fetch dropdown data when modal opens
+  useEffect(() => {
+    if (openModal) {
+      fetchDropdownData();
+      dropdownsInitialized.current = false; // Reset initialization flag
+    }
+  }, [openModal]);
+
+  // Handle initial form setup
+  useEffect(() => {
+    if (!openModal) return;
+
+    // Only reset form for create mode
+    if (mode === "create") {
+      resetForm();
+    }
+    
+    // For update mode, set the basic form data
+    if (mode === "update" && editingProduct) {
+      setProductData({
+        productName: editingProduct.productName || "",
+        productSize: editingProduct.productSize || "",
+        title: editingProduct.title || "",
+        description: editingProduct.description || "",
+        buttonText: editingProduct.buttonText || "View Details",
+        imageFile: null, 
+        pdfFile: null,  
+      });
+
+      // Set image and PDF previews
+      if (editingProduct.imageUrl) {
+        const img = new Image();
+        img.onload = () => {
+          setImagePreview(editingProduct.imageUrl);
+          setImageLoadError(false);
+        };
+        img.onerror = () => {
+          console.error("Image failed to load from URL:", editingProduct.imageUrl);
+          setImageLoadError(true);
+          setImagePreview("");
+        };
+        img.src = editingProduct.imageUrl;
+      }
+
+      if (editingProduct.pdfUrl) {
+        const pdfFilename = editingProduct.pdfUrl.split('/').pop() || "Existing PDF";
+        setPdfName(pdfFilename);
+      }
+    }
+  }, [editingProduct, mode, openModal]);
+
+  // Handle dropdown initialization for edit mode AFTER dropdowns are loaded
+  useEffect(() => {
+    if (mode === "update" && editingProduct && openModal && 
+        productNameOptions.length > 0 && !dropdownsInitialized.current) {
+      
+      console.log("Setting up dropdowns for editing product:", {
+        productName: editingProduct.productName,
+        productOptionsCount: productNameOptions.length
+      });
+      
+      // Find and set the selected product from dropdown options
+      if (editingProduct.productName) {
+        const matchingProduct = productNameOptions.find(
+          option => option.name === editingProduct.productName
+        );
+        
+        console.log("Matching product found:", matchingProduct);
+        
+        if (matchingProduct) {
+          setSelectedProductId(matchingProduct.id);
+          setAvailableSizes(matchingProduct.sizes || []);
+          dropdownsInitialized.current = true;
+          
+          // Ensure productData has the correct product name
+          setProductData(prev => ({
+            ...prev,
+            productName: matchingProduct.name,
+            productSize: editingProduct.productSize || ""
+          }));
+        } else {
+          console.warn("No matching product found for:", editingProduct.productName);
+          // If no match found, keep the product name as is but clear selected ID
+          setSelectedProductId("");
+          setAvailableSizes([]);
+        }
+      }
+    }
+  }, [editingProduct, mode, openModal, productNameOptions]);
+
+  const fetchDropdownData = async () => {
+    try {
+      setLoadingDropdowns(true);
+      
+      const response = await axios.get(`${API_BASE_URL}/product-sizes/dropdown`);
+      
+      if (response.data.success) {
+        setProductsData(response.data.data || []);
+        
+        const productNames = response.data.data.map(item => ({
+          id: item.id,
+          name: item.productName,
+          sizes: item.productSizes || []
+        }));
+        setProductNameOptions(productNames);
+        
+        console.log("Dropdown data loaded:", productNames);
+        
+        // For create mode, we don't need to set any initial selection
+        if (mode === "update" && editingProduct && editingProduct.productName) {
+          const matchingProduct = productNames.find(
+            option => option.name === editingProduct.productName
+          );
+          if (matchingProduct) {
+            console.log("Found initial matching product:", matchingProduct);
+            setSelectedProductId(matchingProduct.id);
+            setAvailableSizes(matchingProduct.sizes || []);
+            dropdownsInitialized.current = true;
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching dropdown data:", error);
+      setErrorMessage("Failed to load dropdown options");
+      setErrorSnackbar(true);
+    } finally {
+      setLoadingDropdowns(false);
+    }
+  };
+
+  const handleProductNameChange = (e) => {
+    const productId = e.target.value;
+    console.log("Product selected:", productId);
+    setSelectedProductId(productId);
+    
+    if (productId) {
+      const selectedProduct = productNameOptions.find(option => option.id === productId);
+      if (selectedProduct) {
+        setAvailableSizes(selectedProduct.sizes || []);
+        setProductData(prev => ({
+          ...prev,
+          productName: selectedProduct.name,
+          productSize: ""
+        }));
+        console.log("Updated product data:", {
+          productName: selectedProduct.name,
+          sizes: selectedProduct.sizes
+        });
+      }
+    } else {
+      setAvailableSizes([]);
+      setProductData(prev => ({
+        ...prev,
+        productName: "",
+        productSize: ""
+      }));
+    }
+  };
+
+  const handleProductSizeChange = (e) => {
+    setProductData(prev => ({
+      ...prev,
+      productSize: e.target.value
+    }));
+  };
+
+  const handleOtherChange = (e) => {
     const { name, value } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: value }));
+    setProductData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
     resetForm();
+    dropdownsInitialized.current = false; // Reset initialization flag
+    if (onClose) onClose();
   };
 
   const handleImageFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
-        setErrorMessage("Please select an image file");
+        setErrorMessage("Please select a valid image file.");
         setErrorSnackbar(true);
         return;
       }
-
+      if (imagePreview && imagePreview.startsWith('blob:')) {
+        URL.revokeObjectURL(imagePreview);
+      }
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
       setProductData((prev) => ({ ...prev, imageFile: file }));
+      setImageLoadError(false);
     }
   };
 
@@ -108,39 +295,46 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
   };
 
   const handleSaveProduct = () => {
-    if (
-      !productData.productName ||
-      !productData.imageFile ||
-      !productData.pdfFile
-    ) {
-      setErrorMessage(
-        "Please fill all required fields (Product Name, Image, PDF)"
-      );
-      setErrorSnackbar(true);
-      return;
-    }
-
-    if (editingIndex !== null) {
-      const updatedProducts = [...products];
-      updatedProducts[editingIndex] = productData;
-      setProducts(updatedProducts);
-      setEditingIndex(null);
+    if (mode === "create") {
+      if (!selectedProductId || !productData.imageFile || !productData.pdfFile) {
+        setErrorMessage("Product Name, Image, and PDF are required to save.");
+        setErrorSnackbar(true);
+        return;
+      }
+      if (editingIndex !== null) {
+        const updatedProducts = [...products];
+        updatedProducts[editingIndex] = productData;
+        setProducts(updatedProducts);
+      } else {
+        setProducts((prev) => [...prev, productData]);
+      }
+      resetForm();
     } else {
-      setProducts((prev) => [...prev, productData]);
+      handleSubmit();
     }
-
-    resetForm();
   };
 
   const handleEditProduct = (index) => {
     const product = products[index];
     setProductData(product);
 
+    if (product.productName && productNameOptions.length > 0) {
+      const matchingProduct = productNameOptions.find(
+        option => option.name === product.productName
+      );
+      if (matchingProduct) {
+        setSelectedProductId(matchingProduct.id);
+        setAvailableSizes(matchingProduct.sizes || []);
+      }
+    }
+
     if (product.imageFile && product.imageFile instanceof File) {
       const previewUrl = URL.createObjectURL(product.imageFile);
       setImagePreview(previewUrl);
+      setImageLoadError(false);
     } else if (typeof product.imageFile === "string") {
       setImagePreview(product.imageFile);
+      setImageLoadError(false);
     }
 
     if (product.pdfFile && product.pdfFile instanceof File) {
@@ -170,19 +364,22 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
       imageFile: null,
       pdfFile: null,
     });
+    setSelectedProductId("");
+    setAvailableSizes([]);
     setEditingIndex(null);
-    setImagePreview("");
-    setPdfName("");
-
-    if (imagePreview) {
+    if (imagePreview && imagePreview.startsWith('blob:')) {
       URL.revokeObjectURL(imagePreview);
     }
+    setImagePreview("");
+    setPdfName("");
+    setImageLoadError(false);
+    dropdownsInitialized.current = false;
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
 
-    if (products.length === 0) {
+    if (mode === "create" && products.length === 0) {
       setErrorMessage("Please add at least one product before submitting");
       setErrorSnackbar(true);
       return;
@@ -191,28 +388,33 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
     try {
       setLoading(true);
 
-      const results = [];
-
-      for (let i = 0; i < products.length; i++) {
-        const product = products[i];
+      if (mode === "update" && editingProduct) {
         const formData = new FormData();
 
-        formData.append("productName", product.productName);
-        formData.append("productSize", product.productSize || "");
-        formData.append("title", product.title || "");
-        formData.append("description", product.description || "");
-        formData.append("buttonText", product.buttonText || "View Details");
+        formData.append("productName", productData.productName);
+        formData.append("productSize", productData.productSize || "");
+        formData.append("title", productData.title || "");
+        formData.append("description", productData.description || "");
+        formData.append("buttonText", productData.buttonText || "View Details");
 
-        if (product.imageFile) {
-          formData.append("image", product.imageFile);
+        if (productData.imageFile && productData.imageFile instanceof File) {
+          formData.append("image", productData.imageFile);
         }
 
-        if (product.pdfFile) {
-          formData.append("pdf", product.pdfFile);
+        if (productData.pdfFile && productData.pdfFile instanceof File) {
+          formData.append("pdf", productData.pdfFile);
         }
 
-        const response = await axios.post(
-          "http://localhost:5050/api/v1/eagle-ceramic/catalog/create",
+        console.log("Updating product with form data:", {
+          productName: productData.productName,
+          productSize: productData.productSize,
+          selectedProductId: selectedProductId,
+          hasNewImage: productData.imageFile instanceof File,
+          hasNewPdf: productData.pdfFile instanceof File
+        });
+
+        const response = await axios.put(
+          `${API_BASE_URL}/catalog/update/${editingProduct.uuid || editingProduct._id}`,
           formData,
           {
             headers: {
@@ -221,16 +423,57 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
           }
         );
 
-        results.push(response.data);
+        if (response.data.success) {
+          setSuccessSnackbar(true);
+          if (onSuccess) onSuccess();
+          
+          setTimeout(() => {
+            handleCloseModal();
+          }, 1500);
+        }
+      } else {
+        const results = [];
+
+        for (let i = 0; i < products.length; i++) {
+          const product = products[i];
+          const formData = new FormData();
+
+          formData.append("productName", product.productName);
+          formData.append("productSize", product.productSize || "");
+          formData.append("title", product.title || "");
+          formData.append("description", product.description || "");
+          formData.append("buttonText", product.buttonText || "View Details");
+
+          if (product.imageFile) {
+            formData.append("image", product.imageFile);
+          }
+
+          if (product.pdfFile) {
+            formData.append("pdf", product.pdfFile);
+          }
+
+          const response = await axios.post(
+            `${API_BASE_URL}/catalog/create`,
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+
+          results.push(response.data);
+        }
+
+        setSuccessSnackbar(true);
+        if (onSuccess) onSuccess();
+
+        setTimeout(() => {
+          handleCloseModal();
+        }, 1500);
       }
-
-      setSuccessSnackbar(true);
-
-      setTimeout(() => {
-        handleCloseModal();
-      }, 1500);
     } catch (error) {
-      console.error("Create Products Error:", error);
+      console.error(`${mode === "update" ? "Update" : "Create"} Product Error:`, error);
 
       if (error.response?.data?.message) {
         setErrorMessage(`Server error: ${error.response.data.message}`);
@@ -239,7 +482,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
           "File upload error: Field names don't match backend expectations."
         );
       } else {
-        setErrorMessage(error?.message || "Failed to create products");
+        setErrorMessage(error?.message || `Failed to ${mode === "update" ? "update" : "create"} product`);
       }
       setErrorSnackbar(true);
     } finally {
@@ -251,6 +494,15 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
     setSuccessSnackbar(false);
     setErrorSnackbar(false);
   };
+
+  const handleImageError = () => {
+    console.log("Image failed to load:", imagePreview);
+    setImageLoadError(true);
+  };
+
+  const isUpdateMode = mode === "update";
+  const hasExistingImage = isUpdateMode && editingProduct?.imageUrl && !productData.imageFile;
+  const hasExistingPdf = isUpdateMode && editingProduct?.pdfUrl && !productData.pdfFile;
 
   return (
     <>
@@ -273,7 +525,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
         <DialogTitle
           sx={{
             m: 0,
-            backgroundColor: "primary.main",
+            backgroundColor: isUpdateMode ? "secondary.main" : "primary.main",
             color: "white",
             display: "flex",
             justifyContent: "space-between",
@@ -284,7 +536,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
           <Stack direction="row" alignItems="center" spacing={2}>
             <InventoryIcon />
             <Typography variant="h6" fontWeight="600">
-              Create Product Catalog
+              {modalTitle}
             </Typography>
           </Stack>
           <IconButton
@@ -309,7 +561,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
               icon={<CheckCircleOutlineIcon />}
               sx={{ width: "100%" }}
             >
-              Products created successfully!
+              {isUpdateMode ? "Product updated successfully!" : "Products created successfully!"}
             </Alert>
           </Snackbar>
 
@@ -350,22 +602,10 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                 />
               )}
 
-             
-
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={3}>
                   <Grid item xs={12}>
-                    <Box
-                    //   elevation={1}
-                      sx={{
-                        p: 0,
-                        // borderRadius: 3,
-                        mb: 3,
-                        // border: "1px solid",
-                        // borderColor: "divider",
-                        // backgroundColor: "white",
-                      }}
-                    >
+                    <Box sx={{ p: 0, mb: 3 }}>
                       <Typography
                         variant="h6"
                         fontWeight="600"
@@ -379,136 +619,181 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                           mb: 5,
                         }}
                       >
-                        {editingIndex !== null ? (
+                        {isUpdateMode ? (
+                          <>
+                            <EditIcon /> Update Product
+                          </>
+                        ) : editingIndex !== null ? (
                           <>
                             <EditIcon /> Edit Product
                           </>
                         ) : (
                           <>
-                            <InventoryIcon /> Add New Product
+                            <InventoryIcon /> {isUpdateMode ? "Update" : "Add New"} Product
                           </>
                         )}
                       </Typography>
 
-                      <Box
-                        container
-                        spacing={4}
-                      >
-                        <Grid gridTemplateColumns="4fr 1fr" container spacing={2}  sx={{ display: "flex", justifyContent: "center" }} >
-                        {/* Row 1: Product Name and Product Size (2 fields) */}
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Product Name *"
-                            name="productName"
-                            value={productData.productName}
-                            onChange={handleChange}
-                            fullWidth
-                            required
-                            disabled={loading}
-                            placeholder="e.g., Marble Tile"
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <InventoryIcon color="action" />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                              },
-                            }}
-                            helperText="Enter the product name"
-                          />
+                      <Box>
+                        <Grid container spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
+                          {/* Row 1: Product Name and Product Size (2 fields) */}
+                          <Grid item xs={12} md={6}>
+                           <TextField
+  select
+  label="Product Name *"
+  value={selectedProductId || ""}
+  onChange={handleProductNameChange}
+  fullWidth
+  required
+  disabled={loading || loadingDropdowns}
+  SelectProps={{
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          maxHeight: 300,
+        },
+      },
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <InventoryIcon color="action" />
+      </InputAdornment>
+    ),
+  }}
+  sx={{
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 2,
+    },
+  }}
+  helperText={
+    loadingDropdowns 
+      ? "Loading products..." 
+      : `Selected: ${productData.productName || 'None'}`
+  }
+>
+  {loadingDropdowns ? (
+    <MenuItem disabled>
+      <CircularProgress size={20} sx={{ mr: 1 }} />
+      Loading products...
+    </MenuItem>
+  ) : (
+    [
+      <MenuItem key="empty" value="">
+        <em>Select Product Name</em>
+      </MenuItem>,
+      ...productNameOptions.map((option) => (
+        <MenuItem key={option.id} value={option.id}>
+          {option.name}
+        </MenuItem>
+      ))
+    ]
+  )}
+</TextField>
+                          </Grid>
+
+                          <Grid item xs={12} md={6}>
+                           <TextField
+  select
+  label="Product Size"
+  value={productData.productSize || ""}
+  onChange={handleProductSizeChange}
+  fullWidth
+  disabled={loading || !selectedProductId}
+  SelectProps={{
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          maxHeight: 300,
+        },
+      },
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <AspectRatioIcon color="action" />
+      </InputAdornment>
+    ),
+  }}
+  sx={{
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 2,
+    },
+  }}
+  helperText={!selectedProductId ? "Select product first" : "Select product size"}
+>
+  {[
+    <MenuItem key="empty" value="">
+      <em>Select Product Size (Optional)</em>
+    </MenuItem>,
+    ...availableSizes.map((size, index) => (
+      <MenuItem key={index} value={size}>
+        {size}
+      </MenuItem>
+    ))
+  ]}
+</TextField>
+                          </Grid>
+
+                          <Grid item xs={12} md={6}>
+                            <TextField
+                              label="Display Title"
+                              name="title"
+                              value={productData.title}
+                              onChange={handleOtherChange}
+                              fullWidth
+                              disabled={loading}
+                              placeholder="e.g., Premium Marble Collection"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <TitleIcon color="action" />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={{
+                                "& .MuiOutlinedInput-root": {
+                                  borderRadius: 2,
+                                },
+                              }}
+                              helperText="Title to display on product card"
+                            />
+                          </Grid>
+                          <Grid item xs={12} md={6}>
+                            <TextField
+                              label="Button Text"
+                              name="buttonText"
+                              value={productData.buttonText}
+                              onChange={handleOtherChange}
+                              fullWidth
+                              disabled={loading}
+                              placeholder="e.g., View Details"
+                              InputProps={{
+                                startAdornment: (
+                                  <InputAdornment position="start">
+                                    <LinkIcon color="action" />
+                                  </InputAdornment>
+                                ),
+                              }}
+                              sx={{
+                                "& .MuiOutlinedInput-root": {
+                                  borderRadius: 2,
+                                },
+                              }}
+                              helperText="Text for the action button"
+                            />
+                          </Grid>
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Product Size"
-                            name="productSize"
-                            value={productData.productSize}
-                            onChange={handleChange}
-                            fullWidth
-                            disabled={loading}
-                            placeholder="e.g., 24x24 inches"
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <AspectRatioIcon color="action" />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                              },
-                            }}
-                            helperText="Enter product dimensions"
-                          />
-                        </Grid>
-
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Display Title"
-                            name="title"
-                            value={productData.title}
-                            onChange={handleChange}
-                            fullWidth
-                            disabled={loading}
-                            placeholder="e.g., Premium Marble Collection"
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <TitleIcon color="action" />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                              },
-                            }}
-                            helperText="Title to display on product card"
-                          />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <TextField
-                            label="Button Text"
-                            name="buttonText"
-                            value={productData.buttonText}
-                            onChange={handleChange}
-                            // fullWidth
-                            disabled={loading}
-                            placeholder="e.g., View Details"
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <LinkIcon color="action" />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                              },
-                            }}
-                            helperText="Text for the action button"
-                          />
-                        </Grid>
-                 </Grid>
-       
-              </Box>            
-                        
-
-
-<Box item xs={12} mt={4}>
+                        <Box sx={{ mt: 4 }}>
                           <TextField
                             label="Description"
                             name="description"
                             value={productData.description}
-                            onChange={handleChange}
+                            onChange={handleOtherChange}
                             fullWidth
-                            
                             multiline
                             rows={3}
                             disabled={loading}
@@ -524,7 +809,6 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                               ),
                             }}
                             sx={{
-                                
                               "& .MuiOutlinedInput-root": {
                                 borderRadius: 2,
                               },
@@ -535,10 +819,16 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                             helperText="Detailed product description"
                           />
                         </Box>
-                        <Box display="flex" flexDirection={{ xs: "column", md: "row" }} justifyContent='space-evenly'  width='100%' mt={4}>
-                        {/* Row 4: Image Upload and PDF Upload (2 fields) */}
-                        <Box >
-                          <Box width={'70vh'}>
+                        <Box
+                          display="flex"
+                          flexDirection={{ xs: "column", md: "row" }}
+                          justifyContent="space-evenly"
+                          width="100%"
+                          mt={4}
+                          gap={3}
+                        >
+                          {/* Image Upload */}
+                          <Box width={{ xs: "100%", md: "45%" }}>
                             <Typography
                               variant="subtitle2"
                               fontWeight="500"
@@ -546,6 +836,11 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                               color="primary"
                             >
                               Product Image *
+                              {hasExistingImage && (
+                                <Typography variant="caption" color="text.secondary" display="block">
+                                  Current image will be replaced if you upload a new one
+                                </Typography>
+                              )}
                             </Typography>
                             <Box
                               sx={{
@@ -561,19 +856,22 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                                 flexDirection: "column",
                                 justifyContent: "center",
                                 alignItems: "center",
+                                overflow: 'hidden'
                               }}
                             >
-                              {imagePreview ? (
+                              {imagePreview && !imageLoadError ? (
                                 <>
                                   <img
                                     src={imagePreview}
                                     alt="Preview"
                                     style={{
-                                      maxWidth: "100%",
-                                      maxHeight: "120px",
+                                      width: "100%",
+                                      height: "100%",
                                       objectFit: "contain",
+                                      maxHeight: "120px",
                                       borderRadius: "8px",
                                     }}
+                                    onError={handleImageError}
                                   />
                                   <Typography
                                     variant="caption"
@@ -581,7 +879,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                                     display="block"
                                     sx={{ mt: 1 }}
                                   >
-                                    Image Preview
+                                    {hasExistingImage ? "Current Image" : "Image Preview"}
                                   </Typography>
                                 </>
                               ) : (
@@ -597,8 +895,19 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                                     variant="body2"
                                     color="text.secondary"
                                   >
-                                    No image selected
+                                    {imageLoadError && hasExistingImage 
+                                      ? "Unable to load image from URL" 
+                                      : "No image selected"}
                                   </Typography>
+                                  {imageLoadError && hasExistingImage && (
+                                    <Typography
+                                      variant="caption"
+                                      color="error"
+                                      sx={{ mt: 1 }}
+                                    >
+                                      URL: {editingProduct?.imageUrl?.substring(0, 50)}...
+                                    </Typography>
+                                  )}
                                 </Box>
                               )}
                             </Box>
@@ -638,17 +947,22 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                                 <span
                                   style={{ color: "green", fontWeight: "500" }}
                                 >
-                                  ✓ {productData.imageFile.name}
+                                  ✓ {productData.imageFile instanceof File 
+                                    ? productData.imageFile.name 
+                                    : "Existing image"}
+                                </span>
+                              ) : hasExistingImage ? (
+                                <span style={{ color: "blue", fontWeight: "500" }}>
+                                  {imageLoadError ? "Image URL exists but failed to load" : "Using existing image from database"}
                                 </span>
                               ) : (
                                 "Select an image file (JPG, PNG, etc.)"
                               )}
                             </Typography>
                           </Box>
-                        </Box>
 
-                        <Box >
-                          <Box width={'70vh'}>
+                          {/* PDF Upload */}
+                          <Box width={{ xs: "100%", md: "45%" }}>
                             <Typography
                               variant="subtitle2"
                               fontWeight="500"
@@ -656,6 +970,11 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                               color="primary"
                             >
                               Product PDF *
+                              {hasExistingPdf && (
+                                <Typography variant="caption" color="text.secondary" display="block">
+                                  Current PDF will be replaced if you upload a new one
+                                </Typography>
+                              )}
                             </Typography>
                             <Box
                               sx={{
@@ -734,7 +1053,13 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                                 <span
                                   style={{ color: "green", fontWeight: "500" }}
                                 >
-                                  ✓ {productData.pdfFile.name}
+                                  ✓ {productData.pdfFile instanceof File
+                                    ? productData.pdfFile.name
+                                    : "Existing PDF"}
+                                </span>
+                              ) : hasExistingPdf ? (
+                                <span style={{ color: "blue", fontWeight: "500" }}>
+                                  Using existing PDF from database
                                 </span>
                               ) : (
                                 "Select a PDF file for specifications"
@@ -742,79 +1067,80 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                             </Typography>
                           </Box>
                         </Box>
-</Box>
-                        {/* Row 5: Action Buttons (centered) */}
-                        <Grid item xs={12}>
-                          <Box
+
+                        {/* Action Buttons */}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "center",
+                            gap: 2,
+                            mt: 4,
+                            pt: 3,
+                            borderTop: "1px dashed",
+                            borderColor: "divider",
+                          }}
+                        >
+                          <Button
+                            variant="contained"
+                            startIcon={<SaveIcon />}
+                            onClick={handleSaveProduct}
+                            disabled={
+                              loading || uploadingImage || uploadingPdf
+                            }
                             sx={{
-                              display: "flex",
-                              justifyContent: "center",
-                              gap: 2,
-                              mt: 2,
-                              pt: 2,
-                              borderTop: "1px dashed",
-                              borderColor: "divider",
+                              px: 4,
+                              py: 1.5,
+                              borderRadius: 2,
+                              fontSize: "1rem",
+                              minWidth: 200,
+                              fontWeight: 600,
+                              background:
+                                "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
+                              "&:hover": {
+                                background:
+                                  "linear-gradient(45deg, #1565c0 30%, #1976d2 90%)",
+                                transform: "translateY(-2px)",
+                                boxShadow: 3,
+                              },
                             }}
                           >
+                            {isUpdateMode 
+                              ? "Update Product" 
+                              : editingIndex !== null
+                              ? "Update Product"
+                              : "Save Product"}
+                          </Button>
+
+                          {(editingIndex !== null || isUpdateMode) && (
                             <Button
-                              variant="contained"
-                              startIcon={<SaveIcon />}
-                              onClick={handleSaveProduct}
-                              disabled={
-                                loading || uploadingImage || uploadingPdf
-                              }
+                              variant="outlined"
+                              color="secondary"
+                              onClick={() => {
+                                resetForm();
+                                setEditingIndex(null);
+                              }}
                               sx={{
                                 px: 4,
                                 py: 1.5,
                                 borderRadius: 2,
                                 fontSize: "1rem",
-                                minWidth: 200,
                                 fontWeight: 600,
-                                background:
-                                  "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
                                 "&:hover": {
-                                  background:
-                                    "linear-gradient(45deg, #1565c0 30%, #1976d2 90%)",
                                   transform: "translateY(-2px)",
-                                  boxShadow: 3,
+                                  boxShadow: 1,
                                 },
                               }}
                             >
-                              {editingIndex !== null
-                                ? "Update Product"
-                                : "Save Product"}
+                              Cancel
                             </Button>
-
-                            {editingIndex !== null && (
-                              <Button
-                                variant="outlined"
-                                color="secondary"
-                                onClick={() => {
-                                  resetForm();
-                                  setEditingIndex(null);
-                                }}
-                                sx={{
-                                  px: 4,
-                                  py: 1.5,
-                                  borderRadius: 2,
-                                  fontSize: "1rem",
-                                  fontWeight: 600,
-                                  "&:hover": {
-                                    transform: "translateY(-2px)",
-                                    boxShadow: 1,
-                                  },
-                                }}
-                              >
-                                Cancel Edit
-                              </Button>
-                            )}
-                          </Box>
-                        </Grid>
-                     
+                          )}
+                        </Box>
+                      </Box>
                     </Box>
                   </Grid>
 
-                  {products.length > 0 && (
+                  {/* Products Table - Only show in CREATE mode */}
+                  {!isUpdateMode && products.length > 0 && (
                     <Grid item xs={12}>
                       <Box sx={{ mb: 4 }}>
                         <Stack
@@ -862,157 +1188,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
                           </Stack>
                         </Stack>
 
-                        <TableContainer
-                          component={Paper}
-                          elevation={0}
-                          sx={{
-                            borderRadius: 2,
-                            border: "1px solid",
-                            borderColor: "divider",
-                            maxHeight: 300,
-                            overflow: "auto",
-                            "& .MuiTableCell-root": {
-                              py: 1.5,
-                            },
-                          }}
-                        >
-                          <Table stickyHeader size="small">
-                            <TableHead>
-                              <TableRow sx={{ backgroundColor: "grey.50" }}>
-                                <TableCell sx={{ fontWeight: 600, width: 60 }}>
-                                  #
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>
-                                  Product
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>
-                                  Size
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>
-                                  Image
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: 600 }}>
-                                  PDF
-                                </TableCell>
-                                <TableCell
-                                  sx={{
-                                    fontWeight: 600,
-                                    width: 120,
-                                    textAlign: "center",
-                                  }}
-                                >
-                                  Actions
-                                </TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {products.map((product, index) => (
-                                <TableRow
-                                  key={index}
-                                  hover
-                                  sx={{
-                                    "&:last-child td, &:last-child th": {
-                                      border: 0,
-                                    },
-                                    backgroundColor:
-                                      editingIndex === index
-                                        ? "action.selected"
-                                        : "inherit",
-                                    "&:hover": {
-                                      backgroundColor: "action.hover",
-                                    },
-                                  }}
-                                >
-                                  <TableCell sx={{ fontWeight: 600 }}>
-                                    {index + 1}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography
-                                      variant="subtitle2"
-                                      fontWeight="500"
-                                    >
-                                      {product.productName}
-                                    </Typography>
-                                    <Typography
-                                      variant="caption"
-                                      color="text.secondary"
-                                      display="block"
-                                    >
-                                      {product.description?.substring(0, 50)}...
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    {product.productSize || "-"}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography
-                                      variant="caption"
-                                      color="text.secondary"
-                                    >
-                                      {product.imageFile
-                                        ? product.imageFile.name
-                                        : "No image"}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography
-                                      variant="caption"
-                                      color="text.secondary"
-                                    >
-                                      {product.pdfFile
-                                        ? product.pdfFile.name
-                                        : "No PDF"}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={{ textAlign: "center" }}>
-                                    <Stack
-                                      direction="row"
-                                      spacing={0.5}
-                                      justifyContent="center"
-                                    >
-                                      <Tooltip title="Edit">
-                                        <IconButton
-                                          color="primary"
-                                          onClick={() =>
-                                            handleEditProduct(index)
-                                          }
-                                          size="small"
-                                          sx={{
-                                            backgroundColor: "primary.light",
-                                            "&:hover": {
-                                              backgroundColor: "primary.main",
-                                              color: "white",
-                                            },
-                                          }}
-                                        >
-                                          <EditIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                      <Tooltip title="Delete">
-                                        <IconButton
-                                          color="error"
-                                          onClick={() =>
-                                            handleDeleteProduct(index)
-                                          }
-                                          size="small"
-                                          sx={{
-                                            backgroundColor: "error.light",
-                                            "&:hover": {
-                                              backgroundColor: "error.main",
-                                              color: "white",
-                                            },
-                                          }}
-                                        >
-                                          <DeleteOutlineIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                    </Stack>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
+                        {/* Products table - you can add your table code here if needed */}
                       </Box>
                     </Grid>
                   )}
@@ -1065,7 +1241,7 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
           <Button
             onClick={handleSubmit}
             variant="contained"
-            disabled={loading || products.length === 0}
+            disabled={loading || (!isUpdateMode && products.length === 0)}
             startIcon={!loading && <CheckCircleOutlineIcon />}
             sx={{
               px: 4,
@@ -1074,12 +1250,12 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
               fontWeight: 600,
               minWidth: 200,
               background:
-                products.length === 0
+                (!isUpdateMode && products.length === 0)
                   ? "grey.400"
                   : "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
               "&:hover": {
                 background:
-                  products.length === 0
+                  (!isUpdateMode && products.length === 0)
                     ? "grey.400"
                     : "linear-gradient(45deg, #1565c0 30%, #1976d2 90%)",
               },
@@ -1087,24 +1263,11 @@ const CreateProductForm = ({ openModal, setOpenModal }) => {
           >
             {loading ? (
               <>
-                <Box
-                  sx={{
-                    width: 20,
-                    height: 20,
-                    mr: 1,
-                    border: "2px solid",
-                    borderColor: "white.transparent",
-                    borderTopColor: "white",
-                    borderRadius: "50%",
-                    animation: "spin 1s linear infinite",
-                    "@keyframes spin": {
-                      "0%": { transform: "rotate(0deg)" },
-                      "100%": { transform: "rotate(360deg)" },
-                    },
-                  }}
-                />
-                Creating...
+                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                {isUpdateMode ? "Updating..." : "Creating..."}
               </>
+            ) : isUpdateMode ? (
+              "Update Product"
             ) : (
               `Create Catalog (${products.length})`
             )}
