@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   TextField,
@@ -21,6 +21,7 @@ import {
   Backdrop,
   CircularProgress,
   Chip,
+  MenuItem,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -48,6 +49,8 @@ const CreateProductForm = ({
   onSuccess,
   onClose 
 }) => {
+  const modalTitle = mode === "update" ? "Update Product Catalogue" : "Create New Product Catalogue";
+  
   const [productData, setProductData] = useState({
     productName: "",
     productSize: "",
@@ -71,10 +74,35 @@ const CreateProductForm = ({
   const [pdfName, setPdfName] = useState("");
   const [imageLoadError, setImageLoadError] = useState(false);
 
-useEffect(() => {
-    resetForm();
+  // New state for dropdowns
+  const [productsData, setProductsData] = useState([]);
+  const [productNameOptions, setProductNameOptions] = useState([]);
+  const [selectedProductId, setSelectedProductId] = useState("");
+  const [availableSizes, setAvailableSizes] = useState([]);
+  const [loadingDropdowns, setLoadingDropdowns] = useState(false);
 
-    if (mode === "update" && editingProduct && openModal) {
+  // Track if dropdowns have been initialized for edit mode
+  const dropdownsInitialized = useRef(false);
+
+  // Fetch dropdown data when modal opens
+  useEffect(() => {
+    if (openModal) {
+      fetchDropdownData();
+      dropdownsInitialized.current = false; // Reset initialization flag
+    }
+  }, [openModal]);
+
+  // Handle initial form setup
+  useEffect(() => {
+    if (!openModal) return;
+
+    // Only reset form for create mode
+    if (mode === "create") {
+      resetForm();
+    }
+    
+    // For update mode, set the basic form data
+    if (mode === "update" && editingProduct) {
       setProductData({
         productName: editingProduct.productName || "",
         productSize: editingProduct.productSize || "",
@@ -85,21 +113,21 @@ useEffect(() => {
         pdfFile: null,  
       });
 
+      // Set image and PDF previews
       if (editingProduct.imageUrl) {
         const img = new Image();
         img.onload = () => {
-          setImagePreview(editingProduct.imageUrl); // Set preview ONLY on success
+          setImagePreview(editingProduct.imageUrl);
           setImageLoadError(false);
         };
         img.onerror = () => {
           console.error("Image failed to load from URL:", editingProduct.imageUrl);
           setImageLoadError(true);
-          setImagePreview(""); // Prevent rendering a broken image link
+          setImagePreview("");
         };
         img.src = editingProduct.imageUrl;
       }
 
-      // Set PDF name from existing URL
       if (editingProduct.pdfUrl) {
         const pdfFilename = editingProduct.pdfUrl.split('/').pop() || "Existing PDF";
         setPdfName(pdfFilename);
@@ -107,18 +135,134 @@ useEffect(() => {
     }
   }, [editingProduct, mode, openModal]);
 
-  const handleChange = (e) => {
+  // Handle dropdown initialization for edit mode AFTER dropdowns are loaded
+  useEffect(() => {
+    if (mode === "update" && editingProduct && openModal && 
+        productNameOptions.length > 0 && !dropdownsInitialized.current) {
+      
+      console.log("Setting up dropdowns for editing product:", {
+        productName: editingProduct.productName,
+        productOptionsCount: productNameOptions.length
+      });
+      
+      // Find and set the selected product from dropdown options
+      if (editingProduct.productName) {
+        const matchingProduct = productNameOptions.find(
+          option => option.name === editingProduct.productName
+        );
+        
+        console.log("Matching product found:", matchingProduct);
+        
+        if (matchingProduct) {
+          setSelectedProductId(matchingProduct.id);
+          setAvailableSizes(matchingProduct.sizes || []);
+          dropdownsInitialized.current = true;
+          
+          // Ensure productData has the correct product name
+          setProductData(prev => ({
+            ...prev,
+            productName: matchingProduct.name,
+            productSize: editingProduct.productSize || ""
+          }));
+        } else {
+          console.warn("No matching product found for:", editingProduct.productName);
+          // If no match found, keep the product name as is but clear selected ID
+          setSelectedProductId("");
+          setAvailableSizes([]);
+        }
+      }
+    }
+  }, [editingProduct, mode, openModal, productNameOptions]);
+
+  const fetchDropdownData = async () => {
+    try {
+      setLoadingDropdowns(true);
+      
+      const response = await axios.get(`${API_BASE_URL}/product-sizes/dropdown`);
+      
+      if (response.data.success) {
+        setProductsData(response.data.data || []);
+        
+        const productNames = response.data.data.map(item => ({
+          id: item.id,
+          name: item.productName,
+          sizes: item.productSizes || []
+        }));
+        setProductNameOptions(productNames);
+        
+        console.log("Dropdown data loaded:", productNames);
+        
+        // For create mode, we don't need to set any initial selection
+        if (mode === "update" && editingProduct && editingProduct.productName) {
+          const matchingProduct = productNames.find(
+            option => option.name === editingProduct.productName
+          );
+          if (matchingProduct) {
+            console.log("Found initial matching product:", matchingProduct);
+            setSelectedProductId(matchingProduct.id);
+            setAvailableSizes(matchingProduct.sizes || []);
+            dropdownsInitialized.current = true;
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching dropdown data:", error);
+      setErrorMessage("Failed to load dropdown options");
+      setErrorSnackbar(true);
+    } finally {
+      setLoadingDropdowns(false);
+    }
+  };
+
+  const handleProductNameChange = (e) => {
+    const productId = e.target.value;
+    console.log("Product selected:", productId);
+    setSelectedProductId(productId);
+    
+    if (productId) {
+      const selectedProduct = productNameOptions.find(option => option.id === productId);
+      if (selectedProduct) {
+        setAvailableSizes(selectedProduct.sizes || []);
+        setProductData(prev => ({
+          ...prev,
+          productName: selectedProduct.name,
+          productSize: ""
+        }));
+        console.log("Updated product data:", {
+          productName: selectedProduct.name,
+          sizes: selectedProduct.sizes
+        });
+      }
+    } else {
+      setAvailableSizes([]);
+      setProductData(prev => ({
+        ...prev,
+        productName: "",
+        productSize: ""
+      }));
+    }
+  };
+
+  const handleProductSizeChange = (e) => {
+    setProductData(prev => ({
+      ...prev,
+      productSize: e.target.value
+    }));
+  };
+
+  const handleOtherChange = (e) => {
     const { name, value } = e.target;
-    setProductData((prev) => ({ ...prev, [name]: value }));
+    setProductData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
     resetForm();
+    dropdownsInitialized.current = false; // Reset initialization flag
     if (onClose) onClose();
   };
 
- const handleImageFileSelect = (e) => {
+  const handleImageFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -135,6 +279,7 @@ useEffect(() => {
       setImageLoadError(false);
     }
   };
+
   const handlePdfFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -149,9 +294,9 @@ useEffect(() => {
     }
   };
 
-   const handleSaveProduct = () => {
+  const handleSaveProduct = () => {
     if (mode === "create") {
-      if (!productData.productName || !productData.imageFile || !productData.pdfFile) {
+      if (!selectedProductId || !productData.imageFile || !productData.pdfFile) {
         setErrorMessage("Product Name, Image, and PDF are required to save.");
         setErrorSnackbar(true);
         return;
@@ -172,6 +317,16 @@ useEffect(() => {
   const handleEditProduct = (index) => {
     const product = products[index];
     setProductData(product);
+
+    if (product.productName && productNameOptions.length > 0) {
+      const matchingProduct = productNameOptions.find(
+        option => option.name === product.productName
+      );
+      if (matchingProduct) {
+        setSelectedProductId(matchingProduct.id);
+        setAvailableSizes(matchingProduct.sizes || []);
+      }
+    }
 
     if (product.imageFile && product.imageFile instanceof File) {
       const previewUrl = URL.createObjectURL(product.imageFile);
@@ -199,7 +354,7 @@ useEffect(() => {
     }
   };
 
-   const resetForm = () => {
+  const resetForm = () => {
     setProductData({
       productName: "",
       productSize: "",
@@ -209,6 +364,8 @@ useEffect(() => {
       imageFile: null,
       pdfFile: null,
     });
+    setSelectedProductId("");
+    setAvailableSizes([]);
     setEditingIndex(null);
     if (imagePreview && imagePreview.startsWith('blob:')) {
       URL.revokeObjectURL(imagePreview);
@@ -216,6 +373,7 @@ useEffect(() => {
     setImagePreview("");
     setPdfName("");
     setImageLoadError(false);
+    dropdownsInitialized.current = false;
   };
 
   const handleSubmit = async (e) => {
@@ -231,7 +389,6 @@ useEffect(() => {
       setLoading(true);
 
       if (mode === "update" && editingProduct) {
-        // UPDATE MODE: Update single product
         const formData = new FormData();
 
         formData.append("productName", productData.productName);
@@ -240,18 +397,18 @@ useEffect(() => {
         formData.append("description", productData.description || "");
         formData.append("buttonText", productData.buttonText || "View Details");
 
-        // Only append image if it's a new file (not the URL string)
         if (productData.imageFile && productData.imageFile instanceof File) {
           formData.append("image", productData.imageFile);
         }
 
-        // Only append PDF if it's a new file (not the URL string)
         if (productData.pdfFile && productData.pdfFile instanceof File) {
           formData.append("pdf", productData.pdfFile);
         }
 
         console.log("Updating product with form data:", {
           productName: productData.productName,
+          productSize: productData.productSize,
+          selectedProductId: selectedProductId,
           hasNewImage: productData.imageFile instanceof File,
           hasNewPdf: productData.pdfFile instanceof File
         });
@@ -275,7 +432,6 @@ useEffect(() => {
           }, 1500);
         }
       } else {
-        // CREATE MODE: Create multiple products
         const results = [];
 
         for (let i = 0; i < products.length; i++) {
@@ -344,7 +500,7 @@ useEffect(() => {
     setImageLoadError(true);
   };
 
-   const isUpdateMode = mode === "update";
+  const isUpdateMode = mode === "update";
   const hasExistingImage = isUpdateMode && editingProduct?.imageUrl && !productData.imageFile;
   const hasExistingPdf = isUpdateMode && editingProduct?.pdfUrl && !productData.pdfFile;
 
@@ -482,54 +638,103 @@ useEffect(() => {
                         <Grid container spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
                           {/* Row 1: Product Name and Product Size (2 fields) */}
                           <Grid item xs={12} md={6}>
-                            <TextField
-                              label="Product Name *"
-                              name="productName"
-                              value={productData.productName}
-                              onChange={handleChange}
-                              fullWidth
-                              required
-                              disabled={loading}
-                              placeholder="e.g., Marble Tile"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <InventoryIcon color="action" />
-                                  </InputAdornment>
-                                ),
-                              }}
-                              sx={{
-                                "& .MuiOutlinedInput-root": {
-                                  borderRadius: 2,
-                                },
-                              }}
-                              helperText="Enter the product name"
-                            />
+                           <TextField
+  select
+  label="Product Name *"
+  value={selectedProductId || ""}
+  onChange={handleProductNameChange}
+  fullWidth
+  required
+  disabled={loading || loadingDropdowns}
+  SelectProps={{
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          maxHeight: 300,
+        },
+      },
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <InventoryIcon color="action" />
+      </InputAdornment>
+    ),
+  }}
+  sx={{
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 2,
+    },
+  }}
+  helperText={
+    loadingDropdowns 
+      ? "Loading products..." 
+      : `Selected: ${productData.productName || 'None'}`
+  }
+>
+  {loadingDropdowns ? (
+    <MenuItem disabled>
+      <CircularProgress size={20} sx={{ mr: 1 }} />
+      Loading products...
+    </MenuItem>
+  ) : (
+    [
+      <MenuItem key="empty" value="">
+        <em>Select Product Name</em>
+      </MenuItem>,
+      ...productNameOptions.map((option) => (
+        <MenuItem key={option.id} value={option.id}>
+          {option.name}
+        </MenuItem>
+      ))
+    ]
+  )}
+</TextField>
                           </Grid>
 
                           <Grid item xs={12} md={6}>
-                            <TextField
-                              label="Product Size"
-                              name="productSize"
-                              value={productData.productSize}
-                              onChange={handleChange}
-                              fullWidth
-                              disabled={loading}
-                              placeholder="e.g., 24x24 inches"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <AspectRatioIcon color="action" />
-                                  </InputAdornment>
-                                ),
-                              }}
-                              sx={{
-                                "& .MuiOutlinedInput-root": {
-                                  borderRadius: 2,
-                                },
-                              }}
-                              helperText="Enter product dimensions"
-                            />
+                           <TextField
+  select
+  label="Product Size"
+  value={productData.productSize || ""}
+  onChange={handleProductSizeChange}
+  fullWidth
+  disabled={loading || !selectedProductId}
+  SelectProps={{
+    MenuProps: {
+      PaperProps: {
+        sx: {
+          maxHeight: 300,
+        },
+      },
+    },
+  }}
+  InputProps={{
+    startAdornment: (
+      <InputAdornment position="start">
+        <AspectRatioIcon color="action" />
+      </InputAdornment>
+    ),
+  }}
+  sx={{
+    "& .MuiOutlinedInput-root": {
+      borderRadius: 2,
+    },
+  }}
+  helperText={!selectedProductId ? "Select product first" : "Select product size"}
+>
+  {[
+    <MenuItem key="empty" value="">
+      <em>Select Product Size (Optional)</em>
+    </MenuItem>,
+    ...availableSizes.map((size, index) => (
+      <MenuItem key={index} value={size}>
+        {size}
+      </MenuItem>
+    ))
+  ]}
+</TextField>
                           </Grid>
 
                           <Grid item xs={12} md={6}>
@@ -537,7 +742,7 @@ useEffect(() => {
                               label="Display Title"
                               name="title"
                               value={productData.title}
-                              onChange={handleChange}
+                              onChange={handleOtherChange}
                               fullWidth
                               disabled={loading}
                               placeholder="e.g., Premium Marble Collection"
@@ -561,7 +766,7 @@ useEffect(() => {
                               label="Button Text"
                               name="buttonText"
                               value={productData.buttonText}
-                              onChange={handleChange}
+                              onChange={handleOtherChange}
                               fullWidth
                               disabled={loading}
                               placeholder="e.g., View Details"
@@ -587,7 +792,7 @@ useEffect(() => {
                             label="Description"
                             name="description"
                             value={productData.description}
-                            onChange={handleChange}
+                            onChange={handleOtherChange}
                             fullWidth
                             multiline
                             rows={3}

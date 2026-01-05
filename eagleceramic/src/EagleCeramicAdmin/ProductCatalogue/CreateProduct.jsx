@@ -59,22 +59,22 @@ const CreateProductPage = () => {
     setOpenModal(true);
   };
   
-const handleOpenUpdateModal = (product) => {
-  console.log("Opening update modal with product:", product);
-  console.log("Product fields:", {
-    productName: product.productName,
-    productSize: product.productSize,
-    title: product.title,
-    buttonText: product.buttonText,
-    description: product.description,
-    imageUrl: product.imageUrl,
-    pdfUrl: product.pdfUrl,
-  });
-  
-  setModalMode("update");
-  setEditingProduct(product);
-  setOpenModal(true);
-};
+  const handleOpenUpdateModal = (product) => {
+    console.log("Opening update modal with product:", product);
+    console.log("Product fields:", {
+      productName: product.productName,
+      productSize: product.productSize,
+      title: product.title,
+      buttonText: product.buttonText,
+      description: product.description,
+      imageUrl: product.imageUrl,
+      pdfUrl: product.pdfUrl,
+    });
+    
+    setModalMode("update");
+    setEditingProduct(product);
+    setOpenModal(true);
+  };
 
   const handleCloseModal = () => {
     setOpenModal(false);
@@ -296,11 +296,9 @@ const handleOpenUpdateModal = (product) => {
           <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
             Product Catalogue
           </Typography>
-         
         </Box>
 
         <Box sx={{ display: "flex", gap: 2 }}>
-          
           <Button
             variant="contained"
             size="large"

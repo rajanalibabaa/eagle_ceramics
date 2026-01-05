@@ -73,33 +73,47 @@ const ProductCreate = ({
     const [sizesToDelete, setSizesToDelete] = useState([]);
     const fileInputRef = useRef(null);
 
+
+
+    console.log("currentSize",currentSize);
+
     // Initialize form when modal opens or editingProduct changes
-    useEffect(() => {
-        console.log('Checkpoint: Initializing ProductCreate with mode:', mode, 'editingProduct:', editingProduct);
-        if (mode === 'update' && editingProduct) {
-            // Pre-fill form with existing product data
-            setProductData({
-                productName: editingProduct.productName || "",
-                productSizes: editingProduct.productSizes || []
+   useEffect(() => {
+    console.log('Checkpoint: Initializing ProductCreate with mode:', mode, 'editingProduct:', editingProduct);
+    if (mode === 'update' && editingProduct) {
+        // Pre-fill form with existing product data
+        setProductData({
+            productName: editingProduct.productName || "",
+            productSizes: editingProduct.productSizes || []
+        });
+        
+        // Convert existing sizes to savedSizes format
+        const initialSizes = editingProduct.productSizes?.map(size => {
+            console.log('Loading size from DB:', {
+                _id: size._id,
+                size: size.size,
+                image: size.image
             });
             
-            // Convert existing sizes to savedSizes format
-            const initialSizes = editingProduct.productSizes?.map(size => ({
+            return {
                 _id: size._id,
                 size: size.size || "",
                 title: size.title || "",
                 description: size.description || "",
-                image: size.image || "", // Store image URL
-                imagePreview: size.image || null
-            })) || [];
-            
-            setSavedSizes(initialSizes);
-            setSizesToDelete([]);
-        } else {
-            // Reset form for create mode
-            resetForm();
-        }
-    }, [mode, editingProduct, openModal]);
+                image: size.image || "", // Store the image URL from database
+                imageFile: null, // No file initially
+                imagePreview: size.image || null // Use URL for preview
+            };
+        }) || [];
+        
+        console.log('Initial sizes loaded:', initialSizes);
+        setSavedSizes(initialSizes);
+        setSizesToDelete([]);
+    } else {
+        // Reset form for create mode
+        resetForm();
+    }
+}, [mode, editingProduct, openModal]);
 
     const resetForm = () => {
         console.log('Checkpoint: Resetting form');
@@ -183,63 +197,96 @@ const ProductCreate = ({
         }
     };
 
-    const handleSaveSize = () => {
-        console.log('Checkpoint: Attempting to save size. Current size:', currentSize, 'Editing index:', editingIndex);
+const handleSaveSize = () => {
+    console.log('Checkpoint: Attempting to save size. Current size:', currentSize, 'Editing index:', editingIndex);
+    
+    // Validate required fields
+    if (!currentSize.size || !currentSize.title || !currentSize.description) {
+        alert("Please fill all size fields before saving");
+        return;
+    }
+
+    if (editingIndex !== null) {
+        // UPDATE EXISTING SIZE
+        const updatedSizes = [...savedSizes];
         
-        // Validate required fields
-        if (!currentSize.size || !currentSize.title || !currentSize.description) {
-            alert("Please fill all size fields before saving");
-            return;
-        } 
-
-        if (editingIndex !== null) {
-            // Update existing size
-            const updatedSizes = [...savedSizes];
-            const updatedSize = {
-                ...currentSize,
-                // If we're updating with a new image file, reset the existing image URL
-                image: currentSize.imageFile ? null : currentSize.image
-            };
-            updatedSizes[editingIndex] = updatedSize;
-            setSavedSizes(updatedSizes);
-            console.log('Checkpoint: Updated existing size at index', editingIndex, '. New savedSizes:', updatedSizes);
-            setEditingIndex(null);
-        } else {
-            // Add new size (with temporary ID if not updating)
-            const newSize = {
-                ...currentSize,
-                _id: currentSize._id || `temp-${Date.now()}-${Math.random()}`
-            };
-            setSavedSizes(prev => [...prev, newSize]);
-            console.log('Checkpoint: Added new size. New savedSizes:', [...savedSizes, newSize]);
+        // Create updated size object - CRITICAL: Preserve existing image if no new file
+        const updatedSize = {
+            _id: currentSize._id,
+            size: currentSize.size.trim(),
+            title: currentSize.title.trim(),
+            description: currentSize.description.trim(),
+            // Preserve existing image URL if no new file is uploaded
+            image: currentSize.image || updatedSizes[editingIndex].image,
+            // Track new image file if uploaded
+            imageFile: currentSize.imageFile || null,
+            // Use new preview or existing image for display
+            imagePreview: currentSize.imagePreview || currentSize.image || updatedSizes[editingIndex].imagePreview || updatedSizes[editingIndex].image
+        };
+        
+        // Special handling for update mode
+        if (mode === 'update') {
+            // If we're not uploading a new file, make sure we keep the existing image
+            if (!currentSize.imageFile) {
+                // Ensure the image field has the URL from the original size
+                updatedSize.image = currentSize.image || updatedSizes[editingIndex].image;
+            }
         }
+        
+        updatedSizes[editingIndex] = updatedSize;
+        setSavedSizes(updatedSizes);
+        console.log('Updated existing size at index', editingIndex, 'New size data:', updatedSize);
+        setEditingIndex(null);
+    } else {
+        // ADD NEW SIZE
+        const newSize = {
+            ...currentSize,
+            _id: currentSize._id || (mode === 'update' ? `temp-${Date.now()}-${Math.random()}` : null)
+        };
+        
+        setSavedSizes(prev => [...prev, newSize]);
+        console.log('Added new size:', newSize);
+    }
 
-        // Reset current size
-        setCurrentSize({ 
-            _id: null, 
-            size: "", 
-            title: "", 
-            description: "",
-            image: null,
-            imageFile: null,
-            imagePreview: null
-        });
-        if (fileInputRef.current) {
-            fileInputRef.current.value = "";
-        }
-        console.log('Checkpoint: Reset currentSize after save');
-    };
-
-    const handleEditSize = (index) => {
-        console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
-        const sizeToEdit = savedSizes[index];
-        setCurrentSize({
-            ...sizeToEdit,
-            imageFile: null, // Reset file when editing
-            imagePreview: sizeToEdit.image || null
-        });
-        setEditingIndex(index);
-    };
+    // Reset current size
+    setCurrentSize({ 
+        _id: null, 
+        size: "", 
+        title: "", 
+        description: "",
+        image: null,
+        imageFile: null,
+        imagePreview: null
+    });
+    if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+    }
+};
+   const handleEditSize = (index) => {
+    console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
+    const sizeToEdit = savedSizes[index];
+    
+    setCurrentSize({
+        _id: sizeToEdit._id,
+        size: sizeToEdit.size || "",
+        title: sizeToEdit.title || "",
+        description: sizeToEdit.description || "",
+        image: sizeToEdit.image || null, // Preserve existing image URL
+        imageFile: sizeToEdit.imageFile || null, // Keep any existing file
+        imagePreview: sizeToEdit.imagePreview || sizeToEdit.image || null
+    });
+    
+    setEditingIndex(index);
+    
+    // Debug log
+    console.log('Current size after edit:', {
+        _id: sizeToEdit._id,
+        size: sizeToEdit.size,
+        image: sizeToEdit.image,
+        hasImageFile: !!sizeToEdit.imageFile,
+        hasImagePreview: !!sizeToEdit.imagePreview
+    });
+};
 
     const handleDeleteSize = (index) => {
         console.log('Checkpoint: Deleting size at index:', index);
@@ -290,99 +337,133 @@ const ProductCreate = ({
         setEditingIndex(null);
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        console.log('Checkpoint: Submitting form. productData:', productData, 'savedSizes:', savedSizes, 'sizesToDelete:', sizesToDelete);
+const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        if (savedSizes.length === 0) {
-            alert("Please add at least one size before " + (mode === 'update' ? 'updating' : 'creating') + " the product");
-            return;
-        }
+    try {
+        setLoading(true);
 
-        try {
-            setLoading(true);
+        const formData = new FormData();
+        formData.append('productName', productData.productName.trim());
 
-            // Create FormData to handle file uploads
-            const formData = new FormData();
-            formData.append('productName', productData.productName.trim());
-
-            // Add sizes data as JSON string
-            const sizesData = savedSizes.map(size => ({
-                _id: size._id && size._id.toString().length === 24 ? size._id : undefined,
-                size: size.size.trim(),
-                title: size.title.trim(),
-                description: size.description.trim(),
-                image: size.image || null // For existing images
-            }));
-
-            formData.append('productSizes', JSON.stringify(sizesData));
-
-            // Append image files
+        if (mode === 'create') {
+            // FOR CREATE MODE - No changes needed
             savedSizes.forEach((size, index) => {
+                formData.append(`productSizes[${index}][size]`, size.size.trim());
+                formData.append(`productSizes[${index}][title]`, size.title.trim());
+                formData.append(`productSizes[${index}][description]`, size.description.trim());
+                
                 if (size.imageFile) {
-                    formData.append(`image_${index}`, size.imageFile);
+                    formData.append('image', size.imageFile);
                 }
             });
-
-            // Add sizesToDelete for update mode
-            if (mode === 'update' && editingProduct) {
+        } 
+        else if (mode === 'update' && editingProduct) {
+            // FOR UPDATE MODE - Fixed version
+            const productSizesData = savedSizes.map((size, index) => {
+                const sizeData = {
+                    size: size.size.trim(),
+                    title: size.title.trim(),
+                    description: size.description.trim(),
+                    hasNewImage: !!size.imageFile, // ✅ Flag to indicate new image
+                };
+                
+                // Include _id only for existing sizes (MongoDB ObjectId is 24 chars)
+                if (size._id && typeof size._id === 'string' && size._id.length === 24) {
+                    sizeData._id = size._id;
+                } else if (size._id && typeof size._id === 'object') {
+                    sizeData._id = size._id.toString();
+                }
+                
+                // ✅ If no new image file, include existing image URL
+                if (!size.imageFile && size.image) {
+                    sizeData.existingImage = size.image;
+                }
+                
+                return sizeData;
+            });
+            
+            formData.append('productSizes', JSON.stringify(productSizesData));
+            
+            // ✅ Append only NEW image files (in order)
+            savedSizes.forEach((size) => {
+                if (size.imageFile) {
+                    formData.append('image', size.imageFile);
+                }
+            });
+            
+            // Append sizesToDelete if any
+            if (sizesToDelete.length > 0) {
                 formData.append('sizesToDelete', JSON.stringify(sizesToDelete));
             }
-
-            console.log("Checkpoint: Submitting form data");
-
-            let response;
-            if (mode === 'update' && editingProduct) {
-                // Update existing product
-                response = await axios.put(
-                    `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }
-                );
-            } else {
-                // Create new product
-                response = await axios.post(
-                    "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
-                    formData,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    }
-                );
-            }
-
-            console.log(`Checkpoint: ${mode === 'update' ? 'Update' : 'Create'} response:`, response.data);
-
-            // Show success message
-            setSuccessSnackbar(true);
-            
-            // Notify parent component
-            if (onSuccess) {
-                onSuccess();
-            }
-
-            // Close modal after delay
-            setTimeout(() => {
-                handleCloseModal();
-            }, 1500);
-
-        } catch (error) {
-            console.error(`Checkpoint: ${mode === 'update' ? 'Update' : 'Create'} Product Error:`, error);
-            setErrorMessage(
-                error?.response?.data?.message || 
-                `Failed to ${mode === 'update' ? 'update' : 'create'} product`
-            );
-            setErrorSnackbar(true);
-        } finally {
-            setLoading(false);
         }
-    };
 
+        // Debug logging
+        console.log("=== FormData Contents ===");
+        for (let pair of formData.entries()) {
+            const key = pair[0];
+            const value = pair[1];
+            if (key === 'productSizes' || key === 'sizesToDelete') {
+                try {
+                    console.log(key + ': ', JSON.parse(value));
+                } catch {
+                    console.log(key + ': ', value);
+                }
+            } else if (value instanceof File) {
+                console.log(key + ': ', value.name);
+            } else {
+                console.log(key + ': ', value);
+            }
+        }
+        console.log("=========================");
+
+        let response;
+        if (mode === 'update' && editingProduct) {
+            response = await axios.put(
+                `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+        } else {
+            response = await axios.post(
+                "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    }
+                }
+            );
+        }
+
+        console.log(`Response:`, response.data);
+        setSuccessSnackbar(true);
+        
+        if (onSuccess) {
+            onSuccess();
+        }
+
+        setTimeout(() => {
+            handleCloseModal();
+        }, 1500);
+
+    } catch (error) {
+        console.error(`Error:`, error);
+        console.error('Error details:', error.response?.data);
+        
+        setErrorMessage(
+            error?.response?.data?.message || 
+            `Failed to ${mode === 'update' ? 'update' : 'create'} product`
+        );
+        setErrorSnackbar(true);
+    } finally {
+        setLoading(false);
+    }
+};
     const handleCloseSnackbar = () => {
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
