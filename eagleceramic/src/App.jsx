@@ -35,20 +35,20 @@ const Testimonials = React.lazy(() => import("./components/Testimonials.jsx"));
 const OurClients = React.lazy(() => import("./components/OurClients.jsx"));
 const ContactUs = React.lazy(() => import("./pages/ContactUs.jsx"));
 const ServicesLayout = React.lazy(() => import("./pages/ServicesContent/ServicesLayout.jsx"));
-const Walltiles = React.lazy(() => import("./pages/ServicesContent/WallTiles/Walltiles.jsx"));
-const DoubleCharge = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X600DC/DoubleCharge.jsx"));
-const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X1200/GlossyCollection.jsx"));
-const MattCollection = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X1200/MattCollection.jsx"));
-const ParkingTiles = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection1.jsx"));
-const ParkingTilesCollection1 = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection1.jsx"));
-const ParkingTilesCollection2 = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection2.jsx"));
-const PlainCollection = React.lazy(() => import("./pages/ServicesContent/PlainCollection.jsx"));
-const SpecialCollection = React.lazy(() => import("./pages/ServicesContent/SpecialCollection.jsx"));
+const CatalogPage = React.lazy(() => import("./pages/ServicesContent/CatalogPage.jsx"));
+// const DoubleCharge = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X600DC/DoubleCharge.jsx"));
+// const GlossyCollection = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X1200/GlossyCollection.jsx"));
+// const MattCollection = React.lazy(() => import("./pages/ServicesContent/FloorTiles/600X1200/MattCollection.jsx"));
+// const ParkingTiles = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection1.jsx"));
+// const ParkingTilesCollection1 = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection1.jsx"));
+// const ParkingTilesCollection2 = React.lazy(() => import("./pages/ServicesContent/ParkingTiles/Collection2.jsx"));
+// const PlainCollection = React.lazy(() => import("./pages/ServicesContent/PlainCollection.jsx"));
+// const SpecialCollection = React.lazy(() => import("./pages/ServicesContent/SpecialCollection.jsx"));
 const Footer = React.lazy(() => import("./components/Footer.jsx"));
 
 // Admin Components
 const AdminLayout = React.lazy(() => import("./EagleCeramicAdmin/AdminLayout.jsx"));
-const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductCreate.jsx"));
+// const NewProductSizes = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductCreate.jsx"));
 const CreateProductPage = React.lazy(() => import("./EagleCeramicAdmin/ProductCatalogue/CreateProduct.jsx"));
 const ProductAndSize = React.lazy(() => import("./EagleCeramicAdmin/CreateProduct/ProductAndSize.jsx"));
 const AdminDashboard = React.lazy(() => import("./EagleCeramicAdmin/Dashboard/AdminDashboard.jsx"));
@@ -214,34 +214,38 @@ function App() {
                   <Route path="/testimonials" element={<Testimonials />} />
 
                   <Route path="/products" element={<ServicesLayout />}>
-                    <Route index element={<Walltiles />} />
-                    <Route path="walltiles" element={<Walltiles />} />
+                    <Route index element={<CatalogPage />} />
+                  </Route>
+
+                  
+             
+                    {/* <Route path="walltiles" element={<Walltiles />} />
                     <Route path="elevation-tiles-300x450" element={<ElevationTiles300x450 />} />
                     <Route path="elevation-tiles-300x600" element={<ElevationTiles300x600 />} />
                     <Route path="cool-roof-tiles-9mm" element={<CoolRoofTiles9MM />} />
                     <Route path="cool-roof-tiles-10mm" element={<CoolRoofTiles10MM />} />
                     <Route path="cool-roof-tiles-600x600" element={<CoolRoofTiles600x600 />} />
-                    <Route path="kitchen-sink" element={<KitchenSink />} />
+                    <Route path="kitchen-sink" element={<KitchenSink />} /> */}
 
                     {/* Floor Tiles */}
-                    <Route path="floortiles">
+                    {/* <Route path="floortiles">
                       <Route path="600x1200">
                         <Route index element={<GlossyCollection />} />
                         <Route path="glossy" element={<GlossyCollection />} />
                         <Route path="matt" element={<MattCollection />} />
                       </Route>
                       <Route path="600x600dc" element={<DoubleCharge />} />
-                    </Route>
+                    </Route> */}
 
                     {/* Parking Tiles */}
-                    <Route path="parkingtiles" element={<ParkingTiles />} />
+                    {/* <Route path="parkingtiles" element={<ParkingTiles />} />
                     <Route path="parkingtiles/collection1" element={<ParkingTilesCollection1 />} />
                     <Route path="parkingtiles/collection2" element={<ParkingTilesCollection2 />} />
 
                     <Route path="glossy-collection" element={<GlossyCollection />} />
                     <Route path="plain-collection" element={<PlainCollection />} />
-                    <Route path="special-collection" element={<SpecialCollection />} />
-                  </Route>
+                    <Route path="special-collection" element={<SpecialCollection />} /> */}
+              
                 </Routes>
                 <Footer />
                 {isMobileOrTablet && <ContactPageFab />}

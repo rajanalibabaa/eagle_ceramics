@@ -82,8 +82,7 @@ const SpecialCollection = () => {
                 {cardData.map((item, index) => (
                     <ServicesCollectionCard
                         key={index}
-                        mainImage={item.main}
-                        hoverImage={item.hover}
+                        mainImage={item.imageUrl}
                         title={item.title}
                         subtitle="Explore Collections"
                         pdfFile={Special}
