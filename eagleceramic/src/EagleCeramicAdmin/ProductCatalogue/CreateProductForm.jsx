@@ -48,6 +48,9 @@ const CreateProductForm = ({
   onSuccess,
   onClose 
 }) => {
+  // Define modalTitle at the beginning to fix the error
+  const modalTitle = mode === "update" ? "Update Product Catalogue" : "Create New Product Catalogue";
+  
   const [productData, setProductData] = useState({
     productName: "",
     productSize: "",
@@ -71,7 +74,7 @@ const CreateProductForm = ({
   const [pdfName, setPdfName] = useState("");
   const [imageLoadError, setImageLoadError] = useState(false);
 
-useEffect(() => {
+  useEffect(() => {
     resetForm();
 
     if (mode === "update" && editingProduct && openModal) {
@@ -118,7 +121,7 @@ useEffect(() => {
     if (onClose) onClose();
   };
 
- const handleImageFileSelect = (e) => {
+  const handleImageFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
       if (!file.type.startsWith("image/")) {
@@ -135,6 +138,7 @@ useEffect(() => {
       setImageLoadError(false);
     }
   };
+
   const handlePdfFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -149,7 +153,7 @@ useEffect(() => {
     }
   };
 
-   const handleSaveProduct = () => {
+  const handleSaveProduct = () => {
     if (mode === "create") {
       if (!productData.productName || !productData.imageFile || !productData.pdfFile) {
         setErrorMessage("Product Name, Image, and PDF are required to save.");
@@ -199,7 +203,7 @@ useEffect(() => {
     }
   };
 
-   const resetForm = () => {
+  const resetForm = () => {
     setProductData({
       productName: "",
       productSize: "",
@@ -344,7 +348,7 @@ useEffect(() => {
     setImageLoadError(true);
   };
 
-   const isUpdateMode = mode === "update";
+  const isUpdateMode = mode === "update";
   const hasExistingImage = isUpdateMode && editingProduct?.imageUrl && !productData.imageFile;
   const hasExistingPdf = isUpdateMode && editingProduct?.pdfUrl && !productData.pdfFile;
 
