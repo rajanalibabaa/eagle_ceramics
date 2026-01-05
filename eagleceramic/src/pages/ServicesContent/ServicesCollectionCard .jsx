@@ -18,7 +18,7 @@ const ServicesCollectionCard = ({
 }) => {
   const theme = useTheme();
   
-  console.log("Rendering ServicesCollectionCard with imageUrl:", imageUrl);
+  // console.log("Rendering ServicesCollectionCard with imageUrl:", imageUrl);
   // Responsive breakpoints
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
