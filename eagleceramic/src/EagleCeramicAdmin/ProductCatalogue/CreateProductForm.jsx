@@ -67,6 +67,7 @@ const CreateProductForm = ({
   const [productData, setProductData] = useState({
     productName: "",
     productSize: "",
+    productId: "",
     title: "",
     description: "",
     buttonText: "View Details",
@@ -126,6 +127,7 @@ const CreateProductForm = ({
     setProductData({
       productName: editingProduct.productName || "",
       productSize: editingProduct.productSize || "",
+      productId: editingProduct.productId || "",
       title: editingProduct.title || "",
       description: editingProduct.description || "",
       buttonText: editingProduct.buttonText || "View Details",
@@ -220,7 +222,6 @@ const CreateProductForm = ({
     }
   };
 
-  // ✅ FIXED: Use proper event handling
   const handleProductNameChange = (event) => {
     const productId = event.target.value;
     console.log("=== PRODUCT NAME CHANGED ===");
@@ -394,6 +395,7 @@ const CreateProductForm = ({
     setProductData({
       productName: "",
       productSize: "",
+      productId: "",
       title: "",
       description: "",
       buttonText: "View Details",
@@ -411,110 +413,144 @@ const CreateProductForm = ({
     setImageLoadError(false);
   };
 
-  const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
+const handleSubmit = async (e) => {
+  if (e) e.preventDefault();
 
-    if (mode === "create" && products.length === 0) {
-      setErrorMessage("Please add at least one product before submitting");
-      setErrorSnackbar(true);
-      return;
-    }
+  if (mode === "create" && products.length === 0) {
+    setErrorMessage("Please add at least one product before submitting");
+    setErrorSnackbar(true);
+    return;
+  }
 
-    if (mode === "update" && !productData.productName) {
-      setErrorMessage("Product Name is required");
-      setErrorSnackbar(true);
-      return;
-    }
+  if (mode === "update" && !productData.productName) {
+    setErrorMessage("Product Name is required");
+    setErrorSnackbar(true);
+    return;
+  }
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      if (mode === "update" && editingProduct) {
-        const formData = new FormData();
-        formData.append("productId",SelectedProductId);
-        formData.append("productName", productData.productName);
-        formData.append("productSize", productData.productSize || "");
-        formData.append("title", productData.title || "");
-        formData.append("description", productData.description || "");
-        formData.append("buttonText", productData.buttonText || "View Details");
+    if (mode === "update" && editingProduct) {
+      const formData = new FormData();
+      
+      // ✅ FIX: Don't append the catalog UUID to formData
+      // It should only be in the URL path
+      // productId is the reference to the product master, not the catalog ID
+      
+      if (productData.productId || selectedProductId) {
+        formData.append("productId", productData.productId || selectedProductId);
+      }
+      
+      formData.append("productName", productData.productName);
+      formData.append("productSize", productData.productSize || "");
+      formData.append("title", productData.title || "");
+      formData.append("description", productData.description || "");
+      formData.append("buttonText", productData.buttonText || "View Details");
 
-        if (productData.imageFile instanceof File) {
-          formData.append("image", productData.imageFile);
+      // Handle image
+      if (productData.imageFile instanceof File) {
+        formData.append("image", productData.imageFile);
+      } else if (editingProduct.imageUrl) {
+        formData.append("existingImageUrl", editingProduct.imageUrl);
+      }
+
+      // Handle PDF
+      if (productData.pdfFile instanceof File) {
+        formData.append("pdf", productData.pdfFile);
+      } else if (editingProduct.pdfUrl) {
+        formData.append("existingPdfUrl", editingProduct.pdfUrl);
+      }
+
+      // ✅ FIX: Use the correct UUID field
+      const catalogId = editingProduct.uuid || editingProduct._id;
+      
+      console.log("=== UPDATE REQUEST ===");
+      console.log("Catalog UUID:", catalogId);
+      console.log("URL:", `${API_BASE_URL}/catalog/update/${catalogId}`);
+      console.log("Product Data:", {
+        productId: productData.productId || selectedProductId,
+        productName: productData.productName,
+        productSize: productData.productSize,
+        hasNewImage: !!productData.imageFile,
+        hasNewPdf: !!productData.pdfFile,
+      });
+
+      // Debug FormData contents
+      console.log("FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
+      }
+
+      const response = await axios.put(
+        `${API_BASE_URL}/catalog/update/${catalogId}`, // ✅ Use catalogId here
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         }
+      );
 
-        if (productData.pdfFile instanceof File) {
-          formData.append("pdf", productData.pdfFile);
-        }
+      console.log("Update Response:", response.data);
 
-        console.log("=== UPDATE REQUEST ===");
-        console.log("UUID:", editingProduct.uuid);
-
-        const response = await axios.put(
-          `${API_BASE_URL}/catalog/update/${editingProduct.uuid || editingProduct._id}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        console.log("Update Response:", response.data);
-
-        if (response.data.success) {
-          setSuccessSnackbar(true);
-          if (onSuccess) onSuccess();
-          setTimeout(() => {
-            handleCloseModal();
-          }, 1500);
-        } else {
-          throw new Error(response.data.message || "Update failed");
-        }
-      } else {
-        for (let i = 0; i < products.length; i++) {
-          const product = products[i];
-          const formData = new FormData();
-          formData.append("productId",product.id);
-          formData.append("productName", product.productName);
-          formData.append("productSize", product.productSize || "");
-          formData.append("title", product.title || "");
-          formData.append("description", product.description || "");
-          formData.append("buttonText", product.buttonText || "View Details");
-
-          if (product.imageFile) {
-            formData.append("image", product.imageFile);
-          }
-
-          if (product.pdfFile) {
-            formData.append("pdf", product.pdfFile);
-          }
-
-          await axios.post(`${API_BASE_URL}/catalog/create`, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          });
-        }
-
+      if (response.data.success) {
         setSuccessSnackbar(true);
-        setProducts([]);
         if (onSuccess) onSuccess();
         setTimeout(() => {
           handleCloseModal();
         }, 1500);
+      } else {
+        throw new Error(response.data.message || "Update failed");
       }
-    } catch (error) {
-      console.error("Submit Error:", error);
-      setErrorMessage(
-        error.response?.data?.message ||
-          error.message ||
-          "Operation failed"
-      );
-      setErrorSnackbar(true);
-    } finally {
-      setLoading(false);
+    } else {
+      // CREATE mode - existing code remains the same
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+        const formData = new FormData();
+        
+        formData.append("productId", product.productId || selectedProductId);
+        formData.append("productName", product.productName);
+        formData.append("productSize", product.productSize || "");
+        formData.append("title", product.title || "");
+        formData.append("description", product.description || "");
+        formData.append("buttonText", product.buttonText || "View Details");
+
+        if (product.imageFile) {
+          formData.append("image", product.imageFile);
+        }
+
+        if (product.pdfFile) {
+          formData.append("pdf", product.pdfFile);
+        }
+
+        await axios.post(`${API_BASE_URL}/catalog/create`, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+      }
+
+      setSuccessSnackbar(true);
+      setProducts([]);
+      if (onSuccess) onSuccess();
+      setTimeout(() => {
+        handleCloseModal();
+      }, 1500);
     }
-  };
+  } catch (error) {
+    console.error("Submit Error:", error);
+    console.error("Error Response:", error.response?.data);
+    setErrorMessage(
+      error.response?.data?.message ||
+        error.message ||
+        "Operation failed"
+    );
+    setErrorSnackbar(true);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCloseSnackbar = () => {
     setSuccessSnackbar(false);
@@ -610,8 +646,6 @@ const CreateProductForm = ({
           <Box
             sx={{ p: { xs: 2, md: 3 }, overflow: "auto", maxHeight: "70vh" }}
           >
-          
-
             <form onSubmit={handleSubmit}>
               <Grid container spacing={3}>
                 {/* Left Column - Form */}
@@ -649,7 +683,7 @@ const CreateProductForm = ({
                     )}
 
                     <Grid container spacing={2}>
-                      {/* ✅ FIXED: Using FormControl + Select instead of TextField select */}
+                      {/* Product Name Dropdown */}
                       <Grid item xs={12} md={6}>
                         <FormControl
                           fullWidth
@@ -689,7 +723,7 @@ const CreateProductForm = ({
                         </FormControl>
                       </Grid>
 
-                      {/* ✅ FIXED: Using FormControl + Select for Size */}
+                      {/* Product Size Dropdown */}
                       <Grid item xs={12} md={6}>
                         <FormControl
                           fullWidth
