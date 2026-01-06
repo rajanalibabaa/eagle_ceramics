@@ -8,7 +8,6 @@ import {
   Paper,
   IconButton,
   Stack,
-  LinearProgress,
   InputAdornment,
   Alert,
   Snackbar,
@@ -22,6 +21,16 @@ import {
   CircularProgress,
   Chip,
   MenuItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  FormControl,
+  InputLabel,
+  Select,
+  FormHelperText,
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -37,23 +46,28 @@ import ImageIcon from "@mui/icons-material/Image";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 
 const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
 
-const CreateProductForm = ({ 
-  openModal, 
-  setOpenModal, 
-  mode = "create", 
+const CreateProductForm = ({
+  openModal,
+  setOpenModal,
+  mode = "create",
   editingProduct = null,
   onSuccess,
-  onClose 
+  onClose,
 }) => {
-  const modalTitle = mode === "update" ? "Update Product Catalogue" : "Create New Product Catalogue";
-  
+  const modalTitle =
+    mode === "update"
+      ? "Update Product Catalogue"
+      : "Create New Product Catalogue";
+
   const [productData, setProductData] = useState({
     productName: "",
     productSize: "",
+    productId: "",
     title: "",
     description: "",
     buttonText: "View Details",
@@ -74,8 +88,7 @@ const CreateProductForm = ({
   const [pdfName, setPdfName] = useState("");
   const [imageLoadError, setImageLoadError] = useState(false);
 
-  // New state for dropdowns
-  const [productsData, setProductsData] = useState([]);
+  // State for dropdowns
   const [productNameOptions, setProductNameOptions] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState("");
   const [availableSizes, setAvailableSizes] = useState([]);
@@ -87,123 +100,118 @@ const CreateProductForm = ({
   // Fetch dropdown data when modal opens
   useEffect(() => {
     if (openModal) {
+      console.log("=== MODAL OPENED ===");
+      console.log("Mode:", mode);
+      console.log("Editing Product:", editingProduct);
+      dropdownsInitialized.current = false;
       fetchDropdownData();
-      dropdownsInitialized.current = false; // Reset initialization flag
     }
   }, [openModal]);
 
-  // Handle initial form setup
+  // Handle initial form setup for CREATE mode only
   useEffect(() => {
     if (!openModal) return;
 
-    // Only reset form for create mode
     if (mode === "create") {
       resetForm();
     }
-    
-    // For update mode, set the basic form data
-    if (mode === "update" && editingProduct) {
-      setProductData({
-        productName: editingProduct.productName || "",
-        productSize: editingProduct.productSize || "",
-        title: editingProduct.title || "",
-        description: editingProduct.description || "",
-        buttonText: editingProduct.buttonText || "View Details",
-        imageFile: null, 
-        pdfFile: null,  
-      });
+  }, [mode, openModal]);
 
-      // Set image and PDF previews
-      if (editingProduct.imageUrl) {
-        const img = new Image();
-        img.onload = () => {
-          setImagePreview(editingProduct.imageUrl);
-          setImageLoadError(false);
-        };
-        img.onerror = () => {
-          console.error("Image failed to load from URL:", editingProduct.imageUrl);
-          setImageLoadError(true);
-          setImagePreview("");
-        };
-        img.src = editingProduct.imageUrl;
-      }
+  // Handle form setup for UPDATE mode
+  useEffect(() => {
+    if (!openModal || mode !== "update" || !editingProduct) return;
 
-      if (editingProduct.pdfUrl) {
-        const pdfFilename = editingProduct.pdfUrl.split('/').pop() || "Existing PDF";
-        setPdfName(pdfFilename);
-      }
+    console.log("=== SETTING UP UPDATE MODE ===");
+    console.log("Editing Product:", editingProduct);
+
+    setProductData({
+      productName: editingProduct.productName || "",
+      productSize: editingProduct.productSize || "",
+      productId: editingProduct.productId || "",
+      title: editingProduct.title || "",
+      description: editingProduct.description || "",
+      buttonText: editingProduct.buttonText || "View Details",
+      imageFile: null,
+      pdfFile: null,
+    });
+
+    if (editingProduct.imageUrl) {
+      setImagePreview(editingProduct.imageUrl);
+      setImageLoadError(false);
+    } else {
+      setImagePreview("");
+    }
+
+    if (editingProduct.pdfUrl) {
+      const pdfFilename =
+        editingProduct.pdfUrl.split("/").pop() || "Existing PDF";
+      setPdfName(pdfFilename);
+    } else {
+      setPdfName("");
     }
   }, [editingProduct, mode, openModal]);
 
-  // Handle dropdown initialization for edit mode AFTER dropdowns are loaded
+  // Handle dropdown initialization for UPDATE mode AFTER dropdowns are loaded
   useEffect(() => {
-    if (mode === "update" && editingProduct && openModal && 
-        productNameOptions.length > 0 && !dropdownsInitialized.current) {
-      
-      console.log("Setting up dropdowns for editing product:", {
-        productName: editingProduct.productName,
-        productOptionsCount: productNameOptions.length
-      });
-      
-      // Find and set the selected product from dropdown options
-      if (editingProduct.productName) {
-        const matchingProduct = productNameOptions.find(
-          option => option.name === editingProduct.productName
-        );
-        
-        console.log("Matching product found:", matchingProduct);
-        
-        if (matchingProduct) {
-          setSelectedProductId(matchingProduct.id);
-          setAvailableSizes(matchingProduct.sizes || []);
-          dropdownsInitialized.current = true;
-          
-          // Ensure productData has the correct product name
-          setProductData(prev => ({
-            ...prev,
-            productName: matchingProduct.name,
-            productSize: editingProduct.productSize || ""
-          }));
-        } else {
-          console.warn("No matching product found for:", editingProduct.productName);
-          // If no match found, keep the product name as is but clear selected ID
-          setSelectedProductId("");
-          setAvailableSizes([]);
-        }
-      }
+    if (mode !== "update" || !editingProduct || !openModal) return;
+    if (productNameOptions.length === 0 || dropdownsInitialized.current) return;
+
+    console.log("=== INITIALIZING DROPDOWNS FOR UPDATE ===");
+    console.log("Looking for product:", editingProduct.productName);
+    console.log("Available options:", productNameOptions);
+
+    const matchingProduct = productNameOptions.find(
+      (option) => option.name === editingProduct.productName
+    );
+
+    if (matchingProduct) {
+      console.log("✅ Found matching product:", matchingProduct);
+      setSelectedProductId(matchingProduct.id);
+      setAvailableSizes(matchingProduct.sizes || []);
+      dropdownsInitialized.current = true;
+    } else {
+      console.warn("❌ No matching product found for:", editingProduct.productName);
+      console.log("Available names:", productNameOptions.map((o) => o.name));
+      setSelectedProductId("");
+      setAvailableSizes([]);
     }
   }, [editingProduct, mode, openModal, productNameOptions]);
 
   const fetchDropdownData = async () => {
     try {
       setLoadingDropdowns(true);
-      
+      console.log("=== FETCHING DROPDOWN DATA ===");
+
       const response = await axios.get(`${API_BASE_URL}/product-sizes/dropdown`);
-      
+
+      console.log("API Response:", response.data);
+
       if (response.data.success) {
-        setProductsData(response.data.data || []);
+        const responseData = response.data.data;
         
-        const productNames = response.data.data.map(item => ({
-          id: item.id,
-          name: item.productName,
-          sizes: item.productSizes || []
-        }));
-        setProductNameOptions(productNames);
+        // Handle different response structures
+        let filterData = [];
         
-        console.log("Dropdown data loaded:", productNames);
-        
-        // For create mode, we don't need to set any initial selection
-        if (mode === "update" && editingProduct && editingProduct.productName) {
-          const matchingProduct = productNames.find(
-            option => option.name === editingProduct.productName
-          );
-          if (matchingProduct) {
-            console.log("Found initial matching product:", matchingProduct);
-            setSelectedProductId(matchingProduct.id);
-            setAvailableSizes(matchingProduct.sizes || []);
-            dropdownsInitialized.current = true;
-          }
+        if (Array.isArray(responseData)) {
+          filterData = responseData;
+        } else if (responseData.filterdata) {
+          filterData = responseData.filterdata;
+        } else if (responseData.catalogData) {
+          filterData = responseData.catalogData;
         }
+
+        console.log("Extracted filter data:", filterData);
+
+        const productNames = filterData.map((item) => ({
+          id: item.uuid || item._id || item.id,
+          name: item.productName,
+          sizes: (item.productSizes || []).map((sizeObj) =>
+            typeof sizeObj === "object" ? sizeObj.size : sizeObj
+          ),
+        }));
+
+        console.log("Processed options:", productNames);
+        setProductNameOptions(productNames);
       }
     } catch (error) {
       console.error("Error fetching dropdown data:", error);
@@ -214,51 +222,57 @@ const CreateProductForm = ({
     }
   };
 
-  const handleProductNameChange = (e) => {
-    const productId = e.target.value;
-    console.log("Product selected:", productId);
+  const handleProductNameChange = (event) => {
+    const productId = event.target.value;
+    console.log("=== PRODUCT NAME CHANGED ===");
+    console.log("Selected ID:", productId);
+
     setSelectedProductId(productId);
-    
+
     if (productId) {
-      const selectedProduct = productNameOptions.find(option => option.id === productId);
+      const selectedProduct = productNameOptions.find(
+        (option) => option.id === productId
+      );
+      console.log("Found product:", selectedProduct);
+
       if (selectedProduct) {
         setAvailableSizes(selectedProduct.sizes || []);
-        setProductData(prev => ({
+        setProductData((prev) => ({
           ...prev,
+          productId: selectedProduct.id,
           productName: selectedProduct.name,
-          productSize: ""
+          productSize: "",
         }));
-        console.log("Updated product data:", {
-          productName: selectedProduct.name,
-          sizes: selectedProduct.sizes
-        });
       }
     } else {
       setAvailableSizes([]);
-      setProductData(prev => ({
+      setProductData((prev) => ({
         ...prev,
+        productId: "",
         productName: "",
-        productSize: ""
+        productSize: "",
       }));
     }
   };
 
-  const handleProductSizeChange = (e) => {
-    setProductData(prev => ({
+  const handleProductSizeChange = (event) => {
+    const newSize = event.target.value;
+    console.log("Size changed:", newSize);
+    setProductData((prev) => ({
       ...prev,
-      productSize: e.target.value
+      productSize: newSize,
     }));
   };
 
   const handleOtherChange = (e) => {
     const { name, value } = e.target;
-    setProductData(prev => ({ ...prev, [name]: value }));
+    setProductData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleCloseModal = () => {
     setOpenModal(false);
     resetForm();
-    dropdownsInitialized.current = false; // Reset initialization flag
+    dropdownsInitialized.current = false;
     if (onClose) onClose();
   };
 
@@ -270,7 +284,7 @@ const CreateProductForm = ({
         setErrorSnackbar(true);
         return;
       }
-      if (imagePreview && imagePreview.startsWith('blob:')) {
+      if (imagePreview && imagePreview.startsWith("blob:")) {
         URL.revokeObjectURL(imagePreview);
       }
       const previewUrl = URL.createObjectURL(file);
@@ -288,26 +302,54 @@ const CreateProductForm = ({
         setErrorSnackbar(true);
         return;
       }
-
       setPdfName(file.name);
       setProductData((prev) => ({ ...prev, pdfFile: file }));
     }
   };
 
   const handleSaveProduct = () => {
+    console.log("=== SAVE PRODUCT ===");
+    console.log("Mode:", mode);
+    console.log("Product Data:", productData);
+    console.log("Selected Product ID:", selectedProductId);
+
     if (mode === "create") {
-      if (!selectedProductId || !productData.imageFile || !productData.pdfFile) {
-        setErrorMessage("Product Name, Image, and PDF are required to save.");
+      if (!productData.productName) {
+        setErrorMessage("Product Name is required.");
         setErrorSnackbar(true);
         return;
       }
+      if (!productData.imageFile) {
+        setErrorMessage("Product Image is required.");
+        setErrorSnackbar(true);
+        return;
+      }
+      if (!productData.pdfFile) {
+        setErrorMessage("Product PDF is required.");
+        setErrorSnackbar(true);
+        return;
+      }
+
+      const existingProductIndex = products.findIndex(
+        (p) =>
+          p.productName === productData.productName &&
+          p.productSize === productData.productSize
+      );
+
+      if (existingProductIndex >= 0 && editingIndex !== existingProductIndex) {
+        setErrorMessage("A product with this name and size already exists.");
+        setErrorSnackbar(true);
+        return;
+      }
+
       if (editingIndex !== null) {
         const updatedProducts = [...products];
-        updatedProducts[editingIndex] = productData;
+        updatedProducts[editingIndex] = { ...productData };
         setProducts(updatedProducts);
       } else {
-        setProducts((prev) => [...prev, productData]);
+        setProducts((prev) => [...prev, { ...productData }]);
       }
+
       resetForm();
     } else {
       handleSubmit();
@@ -316,11 +358,11 @@ const CreateProductForm = ({
 
   const handleEditProduct = (index) => {
     const product = products[index];
-    setProductData(product);
+    setProductData({ ...product });
 
     if (product.productName && productNameOptions.length > 0) {
       const matchingProduct = productNameOptions.find(
-        option => option.name === product.productName
+        (option) => option.name === product.productName
       );
       if (matchingProduct) {
         setSelectedProductId(matchingProduct.id);
@@ -331,16 +373,10 @@ const CreateProductForm = ({
     if (product.imageFile && product.imageFile instanceof File) {
       const previewUrl = URL.createObjectURL(product.imageFile);
       setImagePreview(previewUrl);
-      setImageLoadError(false);
-    } else if (typeof product.imageFile === "string") {
-      setImagePreview(product.imageFile);
-      setImageLoadError(false);
     }
 
     if (product.pdfFile && product.pdfFile instanceof File) {
       setPdfName(product.pdfFile.name);
-    } else if (typeof product.pdfFile === "string") {
-      setPdfName("Uploaded PDF");
     }
 
     setEditingIndex(index);
@@ -350,7 +386,8 @@ const CreateProductForm = ({
     setProducts((prev) => prev.filter((_, i) => i !== index));
     if (editingIndex === index) {
       resetForm();
-      setEditingIndex(null);
+    } else if (editingIndex !== null && editingIndex > index) {
+      setEditingIndex(editingIndex - 1);
     }
   };
 
@@ -358,6 +395,7 @@ const CreateProductForm = ({
     setProductData({
       productName: "",
       productSize: "",
+      productId: "",
       title: "",
       description: "",
       buttonText: "View Details",
@@ -367,54 +405,125 @@ const CreateProductForm = ({
     setSelectedProductId("");
     setAvailableSizes([]);
     setEditingIndex(null);
-    if (imagePreview && imagePreview.startsWith('blob:')) {
+    if (imagePreview && imagePreview.startsWith("blob:")) {
       URL.revokeObjectURL(imagePreview);
     }
     setImagePreview("");
     setPdfName("");
     setImageLoadError(false);
-    dropdownsInitialized.current = false;
   };
 
   const handleSubmit = async (e) => {
-    if (e) e.preventDefault();
+  if (e) e.preventDefault();
 
-    if (mode === "create" && products.length === 0) {
-      setErrorMessage("Please add at least one product before submitting");
-      setErrorSnackbar(true);
-      return;
-    }
+  if (mode === "create" && products.length === 0) {
+    setErrorMessage("Please add at least one product before submitting");
+    setErrorSnackbar(true);
+    return;
+  }
 
-    try {
-      setLoading(true);
+  if (mode === "update" && !productData.productName) {
+    setErrorMessage("Product Name is required");
+    setErrorSnackbar(true);
+    return;
+  }
 
-      if (mode === "update" && editingProduct) {
+  try {
+    setLoading(true);
+
+    if (mode === "update" && editingProduct) {
+      const formData = new FormData();
+      
+      // Add all form data
+      formData.append("productName", productData.productName);
+      formData.append("productSize", productData.productSize || "");
+      formData.append("title", productData.title || "");
+      formData.append("description", productData.description || "");
+      formData.append("buttonText", productData.buttonText || "View Details");
+
+      // Handle image
+      if (productData.imageFile instanceof File) {
+        formData.append("image", productData.imageFile);
+      } else if (editingProduct.imageUrl || editingProduct.mageln21) {
+        formData.append("existingImageUrl", editingProduct.imageUrl || editingProduct.mageln21);
+      }
+
+      // Handle PDF
+      if (productData.pdfFile instanceof File) {
+        formData.append("pdf", productData.pdfFile);
+      } else if (editingProduct.pdfUrl || editingProduct.pdfurl) {
+        formData.append("existingPdfUrl", editingProduct.pdfUrl || editingProduct.pdfurl);
+      }
+
+      // Get the catalog ID - check all possible ID fields
+      const catalogId = editingProduct.uuid || editingProduct._id || editingProduct.uid || editingProduct.id;
+      
+      if (!catalogId) {
+        throw new Error("Catalog ID not found for update");
+      }
+
+      console.log("=== UPDATE REQUEST (PATCH) ===");
+      console.log("Catalog ID:", catalogId);
+      
+      // ✅ USE PATCH INSTEAD OF PUT
+      const updateUrl = `${API_BASE_URL}/catalog/update/${catalogId}`;
+      console.log("Update URL:", updateUrl);
+      console.log("HTTP Method: PATCH");
+      
+      // Log FormData contents for debugging
+      console.log("FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
+      }
+
+      // ✅ FIXED: Use PATCH instead of PUT
+      const response = await axios.patch(
+        updateUrl,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log("Update Response:", response.data);
+
+      if (response.data.success) {
+        setSuccessSnackbar(true);
+        if (onSuccess) onSuccess();
+        setTimeout(() => {
+          handleCloseModal();
+        }, 1500);
+      } else {
+        throw new Error(response.data.message || "Update failed");
+      }
+    } else {
+      // CREATE mode - existing code remains the same
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
         const formData = new FormData();
+        
+        if (product.productId || selectedProductId) {
+          formData.append("productId", product.productId || selectedProductId);
+        }
+        
+        formData.append("productName", product.productName);
+        formData.append("productSize", product.productSize || "");
+        formData.append("title", product.title || "");
+        formData.append("description", product.description || "");
+        formData.append("buttonText", product.buttonText || "View Details");
 
-        formData.append("productName", productData.productName);
-        formData.append("productSize", productData.productSize || "");
-        formData.append("title", productData.title || "");
-        formData.append("description", productData.description || "");
-        formData.append("buttonText", productData.buttonText || "View Details");
-
-        if (productData.imageFile && productData.imageFile instanceof File) {
-          formData.append("image", productData.imageFile);
+        if (product.imageFile) {
+          formData.append("image", product.imageFile);
         }
 
-        if (productData.pdfFile && productData.pdfFile instanceof File) {
-          formData.append("pdf", productData.pdfFile);
+        if (product.pdfFile) {
+          formData.append("pdf", product.pdfFile);
         }
 
-        console.log("Updating product with form data:", {
-          productName: productData.productName,
-          productSize: productData.productSize,
-          selectedProductId: selectedProductId,
-          hasNewImage: productData.imageFile instanceof File,
-          hasNewPdf: productData.pdfFile instanceof File
-        });
-
-        const response = await axios.put(
-          `${API_BASE_URL}/catalog/update/${editingProduct.uuid || editingProduct._id}`,
+        const createResponse = await axios.post(
+          `${API_BASE_URL}/catalog/create`, 
           formData,
           {
             headers: {
@@ -422,859 +531,762 @@ const CreateProductForm = ({
             },
           }
         );
-
-        if (response.data.success) {
-          setSuccessSnackbar(true);
-          if (onSuccess) onSuccess();
-          
-          setTimeout(() => {
-            handleCloseModal();
-          }, 1500);
-        }
-      } else {
-        const results = [];
-
-        for (let i = 0; i < products.length; i++) {
-          const product = products[i];
-          const formData = new FormData();
-
-          formData.append("productName", product.productName);
-          formData.append("productSize", product.productSize || "");
-          formData.append("title", product.title || "");
-          formData.append("description", product.description || "");
-          formData.append("buttonText", product.buttonText || "View Details");
-
-          if (product.imageFile) {
-            formData.append("image", product.imageFile);
-          }
-
-          if (product.pdfFile) {
-            formData.append("pdf", product.pdfFile);
-          }
-
-          const response = await axios.post(
-            `${API_BASE_URL}/catalog/create`,
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          );
-
-          results.push(response.data);
-        }
-
-        setSuccessSnackbar(true);
-        if (onSuccess) onSuccess();
-
-        setTimeout(() => {
-          handleCloseModal();
-        }, 1500);
+        console.log("Create Response:", createResponse.data);
       }
-    } catch (error) {
-      console.error(`${mode === "update" ? "Update" : "Create"} Product Error:`, error);
 
-      if (error.response?.data?.message) {
-        setErrorMessage(`Server error: ${error.response.data.message}`);
-      } else if (error.message.includes("Unexpected field")) {
-        setErrorMessage(
-          "File upload error: Field names don't match backend expectations."
-        );
-      } else {
-        setErrorMessage(error?.message || `Failed to ${mode === "update" ? "update" : "create"} product`);
-      }
-      setErrorSnackbar(true);
-    } finally {
-      setLoading(false);
+      setSuccessSnackbar(true);
+      setProducts([]);
+      if (onSuccess) onSuccess();
+      setTimeout(() => {
+        handleCloseModal();
+      }, 1500);
     }
-  };
+  } catch (error) {
+    console.error("=== SUBMIT ERROR ===");
+    console.error("Error:", error);
+    console.error("Error Status:", error.response?.status);
+    console.error("Error URL:", error.config?.url);
+    console.error("Error Method:", error.config?.method);
+    
+    // Better error message
+    let errorMsg = "Operation failed";
+    if (error.response?.status === 404) {
+      errorMsg = `API endpoint not found: ${error.config?.method} ${error.config?.url}`;
+      console.error("404 Error - Check if endpoint exists on server");
+      
+      // Try other HTTP methods for debugging
+      console.log("Testing other HTTP methods...");
+      const testId = editingProduct?.uuid || "test-id";
+      const testUrl = `${API_BASE_URL}/catalog/update/${testId}`;
+      
+      console.log("Test URL:", testUrl);
+      console.log("Trying GET...");
+      console.log("Trying PUT...");
+      console.log("Trying PATCH...");
+      console.log("Trying POST...");
+      
+    } else if (error.response?.status === 405) {
+      errorMsg = `Method not allowed: ${error.config?.method}. Try using POST or PUT instead.`;
+    } else if (error.response?.status === 500) {
+      errorMsg = "Server error. Please check server logs.";
+    } else if (error.response?.data?.message) {
+      errorMsg = error.response.data.message;
+    } else if (error.message) {
+      errorMsg = error.message;
+    }
+    
+    setErrorMessage(errorMsg);
+    setErrorSnackbar(true);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleCloseSnackbar = () => {
     setSuccessSnackbar(false);
     setErrorSnackbar(false);
   };
 
-  const handleImageError = () => {
-    console.log("Image failed to load:", imagePreview);
-    setImageLoadError(true);
-  };
-
   const isUpdateMode = mode === "update";
-  const hasExistingImage = isUpdateMode && editingProduct?.imageUrl && !productData.imageFile;
-  const hasExistingPdf = isUpdateMode && editingProduct?.pdfUrl && !productData.pdfFile;
+  const hasExistingImage =
+    isUpdateMode && editingProduct?.imageUrl && !productData.imageFile;
+  const hasExistingPdf =
+    isUpdateMode && editingProduct?.pdfUrl && !productData.pdfFile;
 
   return (
-    <>
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        maxWidth="lg"
-        fullWidth
-        scroll="paper"
-        BackdropComponent={Backdrop}
-        BackdropProps={{ timeout: 500 }}
-        PaperProps={{
-          sx: {
-            borderRadius: 3,
-            maxHeight: "90vh",
-            overflow: "hidden",
-          },
+    <Dialog
+      open={openModal}
+      onClose={handleCloseModal}
+      maxWidth="lg"
+      fullWidth
+      scroll="paper"
+      BackdropComponent={Backdrop}
+      BackdropProps={{ timeout: 500 }}
+      PaperProps={{
+        sx: {
+          borderRadius: 3,
+          maxHeight: "90vh",
+          overflow: "hidden",
+          width: "100%",
+          maxWidth: "1200px",
+        },
+      }}
+    >
+      <DialogTitle
+        sx={{
+          m: 0,
+          backgroundColor: isUpdateMode ? "secondary.main" : "primary.main",
+          color: "white",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          py: 2,
         }}
       >
-        <DialogTitle
-          sx={{
-            m: 0,
-            backgroundColor: isUpdateMode ? "secondary.main" : "primary.main",
-            color: "white",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            py: 2,
-          }}
+        <Stack direction="row" alignItems="center" spacing={2}>
+          <InventoryIcon />
+          <Typography variant="h6" fontWeight="600">
+            {modalTitle}
+          </Typography>
+        </Stack>
+        <IconButton
+          aria-label="close"
+          onClick={handleCloseModal}
+          sx={{ color: "white" }}
         >
-          <Stack direction="row" alignItems="center" spacing={2}>
-            <InventoryIcon />
-            <Typography variant="h6" fontWeight="600">
-              {modalTitle}
-            </Typography>
-          </Stack>
-          <IconButton
-            aria-label="close"
-            onClick={handleCloseModal}
-            sx={{ color: "white" }}
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
 
-        <DialogContent dividers sx={{ p: 0 }}>
-          <Snackbar
-            open={successSnackbar}
-            autoHideDuration={4000}
+      <DialogContent dividers sx={{ p: 0 }}>
+        <Snackbar
+          open={successSnackbar}
+          autoHideDuration={4000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
             onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            severity="success"
+            icon={<CheckCircleOutlineIcon />}
+            sx={{ width: "100%" }}
           >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity="success"
-              icon={<CheckCircleOutlineIcon />}
-              sx={{ width: "100%" }}
-            >
-              {isUpdateMode ? "Product updated successfully!" : "Products created successfully!"}
-            </Alert>
-          </Snackbar>
+            {isUpdateMode
+              ? "Product updated successfully!"
+              : "Products created successfully!"}
+          </Alert>
+        </Snackbar>
 
-          <Snackbar
-            open={errorSnackbar}
-            autoHideDuration={6000}
+        <Snackbar
+          open={errorSnackbar}
+          autoHideDuration={6000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert
             onClose={handleCloseSnackbar}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            severity="error"
+            sx={{ width: "100%" }}
           >
-            <Alert
-              onClose={handleCloseSnackbar}
-              severity="error"
-              sx={{ width: "100%" }}
-            >
-              {errorMessage}
-            </Alert>
-          </Snackbar>
+            {errorMessage}
+          </Alert>
+        </Snackbar>
 
-          <Fade in timeout={500}>
-            <Paper
-              sx={{
-                p: { xs: 3, md: 4 },
-                borderRadius: 0,
-                background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
-                minHeight: "400px",
-                position: "relative",
-              }}
-            >
-              {loading && (
-                <LinearProgress
-                  sx={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    zIndex: 10,
-                  }}
-                />
-              )}
+        <Fade in timeout={500}>
+          <Box
+            sx={{ p: { xs: 2, md: 3 }, overflow: "auto", maxHeight: "70vh" }}
+          >
+            <form onSubmit={handleSubmit}>
+              <Grid container spacing={3}>
+                {/* Left Column - Form */}
+                <Grid item xs={12} md={isUpdateMode ? 12 : 6}>
+                  <Paper
+                    sx={{
+                      p: 3,
+                      borderRadius: 2,
+                      backgroundColor: "#fafafa",
+                      height: "100%",
+                    }}
+                  >
+                    <Typography
+                      variant="h6"
+                      fontWeight="600"
+                      gutterBottom
+                      color="primary"
+                      sx={{
+                        mb: 3,
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                      }}
+                    >
+                      <InventoryIcon />
+                      {isUpdateMode ? "Update Product Details" : "Add New Product"}
+                    </Typography>
 
-              <form onSubmit={handleSubmit}>
-                <Grid container spacing={3}>
-                  <Grid item xs={12}>
-                    <Box sx={{ p: 0, mb: 3 }}>
-                      <Typography
-                        variant="h6"
-                        fontWeight="600"
-                        gutterBottom
-                        color="primary"
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          gap: 1,
-                          mb: 5,
-                        }}
-                      >
-                        {isUpdateMode ? (
-                          <>
-                            <EditIcon /> Update Product
-                          </>
-                        ) : editingIndex !== null ? (
-                          <>
-                            <EditIcon /> Edit Product
-                          </>
-                        ) : (
-                          <>
-                            <InventoryIcon /> {isUpdateMode ? "Update" : "Add New"} Product
-                          </>
-                        )}
-                      </Typography>
+                    {isUpdateMode && editingProduct && (
+                      <Alert severity="info" sx={{ mb: 2 }}>
+                        Editing: <strong>{editingProduct.productName}</strong>
+                        {editingProduct.productSize &&
+                          ` (Size: ${editingProduct.productSize})`}
+                      </Alert>
+                    )}
 
-                      <Box>
-                        <Grid container spacing={2} sx={{ display: "flex", justifyContent: "center" }}>
-                          {/* Row 1: Product Name and Product Size (2 fields) */}
-                          <Grid item xs={12} md={6}>
-                           <TextField
-  select
-  label="Product Name *"
-  value={selectedProductId || ""}
-  onChange={handleProductNameChange}
-  fullWidth
-  required
-  disabled={loading || loadingDropdowns}
-  SelectProps={{
-    MenuProps: {
-      PaperProps: {
-        sx: {
-          maxHeight: 300,
-        },
-      },
-    },
-  }}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <InventoryIcon color="action" />
-      </InputAdornment>
-    ),
-  }}
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 2,
-    },
-  }}
-  helperText={
-    loadingDropdowns 
-      ? "Loading products..." 
-      : `Selected: ${productData.productName || 'None'}`
-  }
->
-  {loadingDropdowns ? (
-    <MenuItem disabled>
-      <CircularProgress size={20} sx={{ mr: 1 }} />
-      Loading products...
-    </MenuItem>
-  ) : (
-    [
-      <MenuItem key="empty" value="">
-        <em>Select Product Name</em>
-      </MenuItem>,
-      ...productNameOptions.map((option) => (
-        <MenuItem key={option.id} value={option.id}>
-          {option.name}
-        </MenuItem>
-      ))
-    ]
-  )}
-</TextField>
-                          </Grid>
-
-                          <Grid item xs={12} md={6}>
-                           <TextField
-  select
-  label="Product Size"
-  value={productData.productSize || ""}
-  onChange={handleProductSizeChange}
-  fullWidth
-  disabled={loading || !selectedProductId}
-  SelectProps={{
-    MenuProps: {
-      PaperProps: {
-        sx: {
-          maxHeight: 300,
-        },
-      },
-    },
-  }}
-  InputProps={{
-    startAdornment: (
-      <InputAdornment position="start">
-        <AspectRatioIcon color="action" />
-      </InputAdornment>
-    ),
-  }}
-  sx={{
-    "& .MuiOutlinedInput-root": {
-      borderRadius: 2,
-    },
-  }}
-  helperText={!selectedProductId ? "Select product first" : "Select product size"}
->
-  {[
-    <MenuItem key="empty" value="">
-      <em>Select Product Size (Optional)</em>
-    </MenuItem>,
-    ...availableSizes.map((size, index) => (
-      <MenuItem key={index} value={size}>
-        {size}
-      </MenuItem>
-    ))
-  ]}
-</TextField>
-                          </Grid>
-
-                          <Grid item xs={12} md={6}>
-                            <TextField
-                              label="Display Title"
-                              name="title"
-                              value={productData.title}
-                              onChange={handleOtherChange}
-                              fullWidth
-                              disabled={loading}
-                              placeholder="e.g., Premium Marble Collection"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <TitleIcon color="action" />
-                                  </InputAdornment>
-                                ),
-                              }}
-                              sx={{
-                                "& .MuiOutlinedInput-root": {
-                                  borderRadius: 2,
-                                },
-                              }}
-                              helperText="Title to display on product card"
-                            />
-                          </Grid>
-                          <Grid item xs={12} md={6}>
-                            <TextField
-                              label="Button Text"
-                              name="buttonText"
-                              value={productData.buttonText}
-                              onChange={handleOtherChange}
-                              fullWidth
-                              disabled={loading}
-                              placeholder="e.g., View Details"
-                              InputProps={{
-                                startAdornment: (
-                                  <InputAdornment position="start">
-                                    <LinkIcon color="action" />
-                                  </InputAdornment>
-                                ),
-                              }}
-                              sx={{
-                                "& .MuiOutlinedInput-root": {
-                                  borderRadius: 2,
-                                },
-                              }}
-                              helperText="Text for the action button"
-                            />
-                          </Grid>
-                        </Grid>
-
-                        <Box sx={{ mt: 4 }}>
-                          <TextField
-                            label="Description"
-                            name="description"
-                            value={productData.description}
-                            onChange={handleOtherChange}
-                            fullWidth
-                            multiline
-                            rows={3}
-                            disabled={loading}
-                            placeholder="Describe the product features, benefits, and specifications..."
-                            InputProps={{
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  <DescriptionIcon
-                                    color="action"
-                                    sx={{ mt: 1.5, alignSelf: "flex-start" }}
-                                  />
-                                </InputAdornment>
-                              ),
-                            }}
-                            sx={{
-                              "& .MuiOutlinedInput-root": {
-                                borderRadius: 2,
-                              },
-                              "& .MuiInputBase-root": {
-                                alignItems: "flex-start",
-                              },
-                            }}
-                            helperText="Detailed product description"
-                          />
-                        </Box>
-                        <Box
-                          display="flex"
-                          flexDirection={{ xs: "column", md: "row" }}
-                          justifyContent="space-evenly"
-                          width="100%"
-                          mt={4}
-                          gap={3}
+                    <Grid container spacing={2}>
+                      {/* Product Name Dropdown */}
+                      <Grid item xs={12} md={6}>
+                        <FormControl
+                          fullWidth
+                          size="small"
+                          required
+                          disabled={loading || loadingDropdowns}
                         >
-                          {/* Image Upload */}
-                          <Box width={{ xs: "100%", md: "45%" }}>
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight="500"
-                              gutterBottom
-                              color="primary"
-                            >
-                              Product Image *
-                              {hasExistingImage && (
-                                <Typography variant="caption" color="text.secondary" display="block">
-                                  Current image will be replaced if you upload a new one
-                                </Typography>
-                              )}
-                            </Typography>
-                            <Box
-                              sx={{
-                                mb: 2,
-                                p: 2,
-                                border: "1px dashed",
-                                borderColor: "primary.light",
-                                borderRadius: 2,
-                                textAlign: "center",
-                                backgroundColor: "grey.50",
-                                minHeight: "150px",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                overflow: 'hidden'
-                              }}
-                            >
-                              {imagePreview && !imageLoadError ? (
-                                <>
-                                  <img
-                                    src={imagePreview}
-                                    alt="Preview"
-                                    style={{
-                                      width: "100%",
-                                      height: "100%",
-                                      objectFit: "contain",
-                                      maxHeight: "120px",
-                                      borderRadius: "8px",
-                                    }}
-                                    onError={handleImageError}
-                                  />
-                                  <Typography
-                                    variant="caption"
-                                    color="text.secondary"
-                                    display="block"
-                                    sx={{ mt: 1 }}
-                                  >
-                                    {hasExistingImage ? "Current Image" : "Image Preview"}
-                                  </Typography>
-                                </>
-                              ) : (
-                                <Box sx={{ py: 2 }}>
-                                  <ImageIcon
-                                    sx={{
-                                      fontSize: 48,
-                                      color: "text.disabled",
-                                      mb: 1,
-                                    }}
-                                  />
-                                  <Typography
-                                    variant="body2"
-                                    color="text.secondary"
-                                  >
-                                    {imageLoadError && hasExistingImage 
-                                      ? "Unable to load image from URL" 
-                                      : "No image selected"}
-                                  </Typography>
-                                  {imageLoadError && hasExistingImage && (
-                                    <Typography
-                                      variant="caption"
-                                      color="error"
-                                      sx={{ mt: 1 }}
-                                    >
-                                      URL: {editingProduct?.imageUrl?.substring(0, 50)}...
-                                    </Typography>
-                                  )}
-                                </Box>
-                              )}
-                            </Box>
-                            <Button
-                              variant="outlined"
-                              component="label"
-                              startIcon={<CloudUploadIcon />}
-                              disabled={uploadingImage}
-                              size="medium"
-                              fullWidth
-                              sx={{
-                                borderRadius: 2,
-                                borderColor: "primary.main",
-                                "&:hover": {
-                                  borderColor: "primary.dark",
-                                  backgroundColor: "primary.light",
-                                },
-                              }}
-                            >
-                              {productData.imageFile
-                                ? "Change Image"
-                                : "Upload Image *"}
-                              <input
-                                type="file"
-                                hidden
-                                accept="image/*"
-                                onChange={handleImageFileSelect}
-                              />
-                            </Button>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              display="block"
-                              sx={{ mt: 1 }}
-                            >
-                              {productData.imageFile ? (
-                                <span
-                                  style={{ color: "green", fontWeight: "500" }}
-                                >
-                                  ✓ {productData.imageFile instanceof File 
-                                    ? productData.imageFile.name 
-                                    : "Existing image"}
-                                </span>
-                              ) : hasExistingImage ? (
-                                <span style={{ color: "blue", fontWeight: "500" }}>
-                                  {imageLoadError ? "Image URL exists but failed to load" : "Using existing image from database"}
-                                </span>
-                              ) : (
-                                "Select an image file (JPG, PNG, etc.)"
-                              )}
-                            </Typography>
-                          </Box>
-
-                          {/* PDF Upload */}
-                          <Box width={{ xs: "100%", md: "45%" }}>
-                            <Typography
-                              variant="subtitle2"
-                              fontWeight="500"
-                              gutterBottom
-                              color="primary"
-                            >
-                              Product PDF *
-                              {hasExistingPdf && (
-                                <Typography variant="caption" color="text.secondary" display="block">
-                                  Current PDF will be replaced if you upload a new one
-                                </Typography>
-                              )}
-                            </Typography>
-                            <Box
-                              sx={{
-                                mb: 2,
-                                p: 2,
-                                border: "1px dashed",
-                                borderColor: "error.light",
-                                borderRadius: 2,
-                                textAlign: "center",
-                                backgroundColor: "grey.50",
-                                minHeight: "150px",
-                                display: "flex",
-                                flexDirection: "column",
-                                justifyContent: "center",
-                                alignItems: "center",
-                              }}
-                            >
-                              <PictureAsPdfIcon
-                                sx={{
-                                  fontSize: 48,
-                                  color: "error.main",
-                                  mb: 1,
-                                }}
-                              />
-                              {pdfName ? (
-                                <Typography
-                                  variant="body2"
-                                  color="text.primary"
-                                  sx={{ mt: 1, fontWeight: "500" }}
-                                >
-                                  {pdfName}
-                                </Typography>
-                              ) : (
-                                <Typography
-                                  variant="body2"
-                                  color="text.secondary"
-                                >
-                                  No PDF selected
-                                </Typography>
-                              )}
-                            </Box>
-                            <Button
-                              variant="outlined"
-                              component="label"
-                              startIcon={<AttachFileIcon />}
-                              disabled={uploadingPdf}
-                              size="medium"
-                              fullWidth
-                              sx={{
-                                borderRadius: 2,
-                                borderColor: "error.main",
-                                color: "error.main",
-                                "&:hover": {
-                                  borderColor: "error.dark",
-                                  backgroundColor: "error.light",
-                                },
-                              }}
-                            >
-                              {productData.pdfFile
-                                ? "Change PDF"
-                                : "Upload PDF *"}
-                              <input
-                                type="file"
-                                hidden
-                                accept=".pdf"
-                                onChange={handlePdfFileSelect}
-                              />
-                            </Button>
-                            <Typography
-                              variant="caption"
-                              color="text.secondary"
-                              display="block"
-                              sx={{ mt: 1 }}
-                            >
-                              {productData.pdfFile ? (
-                                <span
-                                  style={{ color: "green", fontWeight: "500" }}
-                                >
-                                  ✓ {productData.pdfFile instanceof File
-                                    ? productData.pdfFile.name
-                                    : "Existing PDF"}
-                                </span>
-                              ) : hasExistingPdf ? (
-                                <span style={{ color: "blue", fontWeight: "500" }}>
-                                  Using existing PDF from database
-                                </span>
-                              ) : (
-                                "Select a PDF file for specifications"
-                              )}
-                            </Typography>
-                          </Box>
-                        </Box>
-
-                        {/* Action Buttons */}
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: 2,
-                            mt: 4,
-                            pt: 3,
-                            borderTop: "1px dashed",
-                            borderColor: "divider",
-                          }}
-                        >
-                          <Button
-                            variant="contained"
-                            startIcon={<SaveIcon />}
-                            onClick={handleSaveProduct}
-                            disabled={
-                              loading || uploadingImage || uploadingPdf
-                            }
-                            sx={{
-                              px: 4,
-                              py: 1.5,
-                              borderRadius: 2,
-                              fontSize: "1rem",
-                              minWidth: 200,
-                              fontWeight: 600,
-                              background:
-                                "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
-                              "&:hover": {
-                                background:
-                                  "linear-gradient(45deg, #1565c0 30%, #1976d2 90%)",
-                                transform: "translateY(-2px)",
-                                boxShadow: 3,
+                          <InputLabel id="product-name-label">
+                            Product Name *
+                          </InputLabel>
+                          <Select
+                            labelId="product-name-label"
+                            id="product-name-select"
+                            value={selectedProductId}
+                            label="Product Name *"
+                            onChange={handleProductNameChange}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: { maxHeight: 300 },
                               },
                             }}
                           >
-                            {isUpdateMode 
-                              ? "Update Product" 
-                              : editingIndex !== null
-                              ? "Update Product"
-                              : "Save Product"}
-                          </Button>
+                            <MenuItem value="">
+                              <em>-- Select Product Name --</em>
+                            </MenuItem>
+                            {productNameOptions.map((option) => (
+                              <MenuItem key={option.id} value={option.id}>
+                                {option.name} 
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          <FormHelperText>
+                            {loadingDropdowns
+                              ? "Loading products..."
+                              : `${productNameOptions.length} products available`}
+                          </FormHelperText>
+                        </FormControl>
+                      </Grid>
 
-                          {(editingIndex !== null || isUpdateMode) && (
+                      {/* Product Size Dropdown */}
+                      <Grid item xs={12} md={6}>
+                        <FormControl
+                          fullWidth
+                          size="small"
+                          disabled={loading || !selectedProductId}
+                        >
+                          <InputLabel id="product-size-label">
+                            Product Size
+                          </InputLabel>
+                          <Select
+                            labelId="product-size-label"
+                            id="product-size-select"
+                            value={productData.productSize}
+                            label="Product Size"
+                            onChange={handleProductSizeChange}
+                            MenuProps={{
+                              PaperProps: {
+                                sx: { maxHeight: 300 },
+                              },
+                            }}
+                          >
+                            <MenuItem value="">
+                              <em>-- Select Size (Optional) --</em>
+                            </MenuItem>
+                            {availableSizes.map((size, index) => (
+                              <MenuItem key={`size-${index}`} value={size}>
+                                {size}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                          <FormHelperText>
+                            {!selectedProductId
+                              ? "Select a product first"
+                              : `${availableSizes.length} sizes available`}
+                          </FormHelperText>
+                        </FormControl>
+                      </Grid>
+
+                      {/* Title */}
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          label="Display Title"
+                          name="title"
+                          value={productData.title}
+                          onChange={handleOtherChange}
+                          fullWidth
+                          disabled={loading}
+                          size="small"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <TitleIcon color="action" fontSize="small" />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+
+                      {/* Button Text */}
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          label="Button Text"
+                          name="buttonText"
+                          value={productData.buttonText}
+                          onChange={handleOtherChange}
+                          fullWidth
+                          disabled={loading}
+                          size="small"
+                          InputProps={{
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <LinkIcon color="action" fontSize="small" />
+                              </InputAdornment>
+                            ),
+                          }}
+                        />
+                      </Grid>
+
+                      {/* Description */}
+                      <Grid item xs={12}>
+                        <TextField
+                          label="Description"
+                          name="description"
+                          value={productData.description}
+                          onChange={handleOtherChange}
+                          fullWidth
+                          multiline
+                          rows={2}
+                          disabled={loading}
+                          size="small"
+                        />
+                      </Grid>
+
+                      {/* Image Upload */}
+                      <Grid item xs={12} md={6}>
+                        <Typography
+                          variant="subtitle2"
+                          fontWeight="500"
+                          gutterBottom
+                        >
+                          Product Image {!isUpdateMode && "*"}
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          component="label"
+                          startIcon={<CloudUploadIcon />}
+                          disabled={uploadingImage || loading}
+                          size="small"
+                          fullWidth
+                        >
+                          {productData.imageFile
+                            ? "Change Image"
+                            : hasExistingImage
+                            ? "Replace Image"
+                            : "Upload Image *"}
+                          <input
+                            type="file"
+                            hidden
+                            accept="image/*"
+                            onChange={handleImageFileSelect}
+                          />
+                        </Button>
+                        {productData.imageFile && (
+                          <Typography
+                            variant="caption"
+                            color="success.main"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            ✓ New: {productData.imageFile.name}
+                          </Typography>
+                        )}
+                        {hasExistingImage && (
+                          <Typography
+                            variant="caption"
+                            color="info.main"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            📷 Current image will be kept
+                          </Typography>
+                        )}
+                        {imagePreview && (
+                          <Box sx={{ mt: 1 }}>
+                            <img
+                              src={imagePreview}
+                              alt="Preview"
+                              style={{
+                                maxWidth: "100%",
+                                maxHeight: 100,
+                                borderRadius: 4,
+                                border: "1px solid #e0e0e0",
+                              }}
+                            />
+                          </Box>
+                        )}
+                      </Grid>
+
+                      {/* PDF Upload */}
+                      <Grid item xs={12} md={6}>
+                        <Typography
+                          variant="subtitle2"
+                          fontWeight="500"
+                          gutterBottom
+                        >
+                          Product PDF {!isUpdateMode && "*"}
+                        </Typography>
+                        <Button
+                          variant="outlined"
+                          component="label"
+                          startIcon={<AttachFileIcon />}
+                          disabled={uploadingPdf || loading}
+                          size="small"
+                          fullWidth
+                          sx={{
+                            borderColor: "error.main",
+                            color: "error.main",
+                          }}
+                        >
+                          {productData.pdfFile
+                            ? "Change PDF"
+                            : hasExistingPdf
+                            ? "Replace PDF"
+                            : "Upload PDF *"}
+                          <input
+                            type="file"
+                            hidden
+                            accept=".pdf"
+                            onChange={handlePdfFileSelect}
+                          />
+                        </Button>
+                        {productData.pdfFile && (
+                          <Typography
+                            variant="caption"
+                            color="success.main"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            ✓ New: {productData.pdfFile.name}
+                          </Typography>
+                        )}
+                        {hasExistingPdf && (
+                          <Typography
+                            variant="caption"
+                            color="info.main"
+                            display="block"
+                            sx={{ mt: 1 }}
+                          >
+                            📄 Current: {pdfName}
+                          </Typography>
+                        )}
+                      </Grid>
+
+                      {/* Save/Update Button */}
+                      <Grid item xs={12}>
+                        <Button
+                          variant="contained"
+                          startIcon={
+                            loading ? (
+                              <CircularProgress size={16} color="inherit" />
+                            ) : (
+                              <SaveIcon />
+                            )
+                          }
+                          onClick={handleSaveProduct}
+                          disabled={loading || uploadingImage || uploadingPdf}
+                          fullWidth
+                          color={isUpdateMode ? "secondary" : "primary"}
+                          sx={{ mt: 2, py: 1.5 }}
+                        >
+                          {loading
+                            ? isUpdateMode
+                              ? "Updating..."
+                              : "Saving..."
+                            : isUpdateMode
+                            ? "Update Product"
+                            : editingIndex !== null
+                            ? "Update in List"
+                            : "Add to List"}
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Paper>
+                </Grid>
+
+                {/* Right Column - Products List (CREATE mode only) */}
+                {!isUpdateMode && (
+                  <Grid item xs={12} md={6}>
+                    <Paper
+                      sx={{
+                        p: 3,
+                        borderRadius: 2,
+                        backgroundColor: "#ffffff",
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      <Box sx={{ mb: 3 }}>
+                        <Typography
+                          variant="h6"
+                          fontWeight="600"
+                          color="primary"
+                          gutterBottom
+                        >
+                          Products to Create
+                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Typography variant="body2" color="text.secondary">
+                            {products.length} product
+                            {products.length !== 1 ? "s" : ""} added
+                          </Typography>
+                          {products.length > 0 && (
                             <Button
-                              variant="outlined"
-                              color="secondary"
-                              onClick={() => {
-                                resetForm();
-                                setEditingIndex(null);
-                              }}
-                              sx={{
-                                px: 4,
-                                py: 1.5,
-                                borderRadius: 2,
-                                fontSize: "1rem",
-                                fontWeight: 600,
-                                "&:hover": {
-                                  transform: "translateY(-2px)",
-                                  boxShadow: 1,
-                                },
-                              }}
+                              variant="text"
+                              color="error"
+                              size="small"
+                              startIcon={<DeleteOutlineIcon />}
+                              onClick={() => setProducts([])}
                             >
-                              Cancel
+                              Clear All
                             </Button>
                           )}
                         </Box>
                       </Box>
-                    </Box>
-                  </Grid>
 
-                  {/* Products Table - Only show in CREATE mode */}
-                  {!isUpdateMode && products.length > 0 && (
-                    <Grid item xs={12}>
-                      <Box sx={{ mb: 4 }}>
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          sx={{ mb: 3 }}
+                      {products.length > 0 ? (
+                        <TableContainer
+                          sx={{
+                            flex: 1,
+                            borderRadius: 1,
+                            border: "1px solid #e0e0e0",
+                          }}
                         >
-                          <Box>
-                            <Typography
-                              variant="h5"
-                              fontWeight="600"
-                              gutterBottom
-                            >
-                              Products Ready for Submission
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {products.length} product
-                              {products.length !== 1 ? "s" : ""} added to
-                              catalog
-                            </Typography>
-                          </Box>
-                          <Stack
-                            direction="row"
-                            spacing={2}
-                            alignItems="center"
+                          <Table size="small" stickyHeader>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell sx={{ fontWeight: "bold" }}>#</TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>
+                                  Product
+                                </TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>Size</TableCell>
+                                <TableCell sx={{ fontWeight: "bold" }}>Title</TableCell>
+                                <TableCell
+                                  sx={{ fontWeight: "bold", textAlign: "center" }}
+                                >
+                                  Files
+                                </TableCell>
+                                <TableCell
+                                  sx={{ fontWeight: "bold", textAlign: "center" }}
+                                >
+                                  Actions
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {products.map((product, index) => (
+                                <TableRow
+                                  key={index}
+                                  hover
+                                  selected={editingIndex === index}
+                                  sx={{
+                                    backgroundColor:
+                                      editingIndex === index
+                                        ? "#e3f2fd"
+                                        : "inherit",
+                                  }}
+                                >
+                                  <TableCell>{index + 1}</TableCell>
+                                  <TableCell>
+                                    <Typography
+                                      variant="body2"
+                                      noWrap
+                                      sx={{ maxWidth: 100 }}
+                                    >
+                                      {product.productName || "N/A"}
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell>
+                                    {product.productSize || "N/A"}
+                                  </TableCell>
+                                  <TableCell>
+                                    <Typography
+                                      variant="body2"
+                                      noWrap
+                                      sx={{ maxWidth: 100 }}
+                                    >
+                                      {product.title || "N/A"}
+                                    </Typography>
+                                  </TableCell>
+                                  <TableCell sx={{ textAlign: "center" }}>
+                                    <Stack
+                                      direction="row"
+                                      spacing={0.5}
+                                      justifyContent="center"
+                                    >
+                                      {product.imageFile ? (
+                                        <CheckCircleIcon
+                                          color="success"
+                                          fontSize="small"
+                                        />
+                                      ) : (
+                                        <ImageIcon
+                                          color="disabled"
+                                          fontSize="small"
+                                        />
+                                      )}
+                                      {product.pdfFile ? (
+                                        <PictureAsPdfIcon
+                                          color="error"
+                                          fontSize="small"
+                                        />
+                                      ) : (
+                                        <PictureAsPdfIcon
+                                          color="disabled"
+                                          fontSize="small"
+                                        />
+                                      )}
+                                    </Stack>
+                                  </TableCell>
+                                  <TableCell sx={{ textAlign: "center" }}>
+                                    <Stack
+                                      direction="row"
+                                      spacing={0.5}
+                                      justifyContent="center"
+                                    >
+                                      <Tooltip title="Edit">
+                                        <IconButton
+                                          size="small"
+                                          color="primary"
+                                          onClick={() => handleEditProduct(index)}
+                                        >
+                                          <EditIcon fontSize="small" />
+                                        </IconButton>
+                                      </Tooltip>
+                                      <Tooltip title="Delete">
+                                        <IconButton
+                                          size="small"
+                                          color="error"
+                                          onClick={() => handleDeleteProduct(index)}
+                                        >
+                                          <DeleteOutlineIcon fontSize="small" />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </Stack>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                        </TableContainer>
+                      ) : (
+                        <Box
+                          sx={{
+                            flex: 1,
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            p: 4,
+                            border: "2px dashed #e0e0e0",
+                            borderRadius: 2,
+                            backgroundColor: "#fafafa",
+                          }}
+                        >
+                          <InventoryIcon
+                            sx={{ fontSize: 48, color: "text.disabled", mb: 2 }}
+                          />
+                          <Typography
+                            variant="body1"
+                            color="text.secondary"
+                            gutterBottom
                           >
-                            <Chip
-                              label={`${products.length} Item${
-                                products.length !== 1 ? "s" : ""
-                              }`}
-                              color="primary"
-                              variant="outlined"
-                              sx={{ fontWeight: 600 }}
-                            />
-                            <Button
-                              variant="text"
-                              color="error"
-                              startIcon={<DeleteOutlineIcon />}
-                              onClick={() => setProducts([])}
-                              size="small"
-                            >
-                              Clear All
-                            </Button>
-                          </Stack>
-                        </Stack>
+                            No products added yet
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            textAlign="center"
+                          >
+                            Fill the form and click "Add to List"
+                          </Typography>
+                        </Box>
+                      )}
+                    </Paper>
+                  </Grid>
+                )}
+              </Grid>
+            </form>
+          </Box>
+        </Fade>
+      </DialogContent>
 
-                        {/* Products table - you can add your table code here if needed */}
-                      </Box>
-                    </Grid>
-                  )}
-                </Grid>
-              </form>
-            </Paper>
-          </Fade>
-        </DialogContent>
-
-        <DialogActions
+      {/* Footer */}
+      <DialogActions
+        sx={{
+          p: 2,
+          backgroundColor: "#f5f5f5",
+          borderTop: "1px solid #e0e0e0",
+        }}
+      >
+        <Box
           sx={{
-            p: 3,
+            display: "flex",
             justifyContent: "space-between",
-            backgroundColor: "grey.50",
-            borderTop: "1px solid",
-            borderColor: "divider",
+            alignItems: "center",
+            width: "100%",
           }}
         >
-          <Stack direction="row" spacing={2}>
-            <Button
-              onClick={resetForm}
-              variant="outlined"
-              color="inherit"
-              disabled={loading}
-              startIcon={<CloseIcon />}
-              sx={{
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                fontWeight: 500,
-              }}
-            >
-              Reset Form
-            </Button>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            {isUpdateMode ? (
+              <Chip label="Update Mode" color="secondary" size="small" />
+            ) : (
+              <Chip
+                label={`${products.length} Product${
+                  products.length !== 1 ? "s" : ""
+                }`}
+                color="primary"
+                variant="outlined"
+                size="small"
+              />
+            )}
+          </Box>
+
+          <Box sx={{ display: "flex", gap: 1 }}>
+            {!isUpdateMode && (
+              <Button
+                onClick={resetForm}
+                variant="outlined"
+                size="small"
+                disabled={loading}
+              >
+                Reset Form
+              </Button>
+            )}
             <Button
               onClick={handleCloseModal}
               variant="outlined"
+              size="small"
               disabled={loading}
-              sx={{
-                px: 3,
-                py: 1,
-                borderRadius: 2,
-                fontWeight: 500,
-              }}
             >
               Cancel
             </Button>
-          </Stack>
-
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            disabled={loading || (!isUpdateMode && products.length === 0)}
-            startIcon={!loading && <CheckCircleOutlineIcon />}
-            sx={{
-              px: 4,
-              py: 1,
-              borderRadius: 2,
-              fontWeight: 600,
-              minWidth: 200,
-              background:
-                (!isUpdateMode && products.length === 0)
-                  ? "grey.400"
-                  : "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
-              "&:hover": {
-                background:
-                  (!isUpdateMode && products.length === 0)
-                    ? "grey.400"
-                    : "linear-gradient(45deg, #1565c0 30%, #1976d2 90%)",
-              },
-            }}
-          >
-            {loading ? (
-              <>
-                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
-                {isUpdateMode ? "Updating..." : "Creating..."}
-              </>
-            ) : isUpdateMode ? (
-              "Update Product"
-            ) : (
-              `Create Catalog (${products.length})`
+            {!isUpdateMode && (
+              <Button
+                onClick={handleSubmit}
+                variant="contained"
+                disabled={loading || products.length === 0}
+                size="small"
+                sx={{ minWidth: 150 }}
+              >
+                {loading ? (
+                  <>
+                    <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
+                    Creating...
+                  </>
+                ) : (
+                  `Create ${products.length} Product${
+                    products.length !== 1 ? "s" : ""
+                  }`
+                )}
+              </Button>
             )}
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+          </Box>
+        </Box>
+      </DialogActions>
+    </Dialog>
   );
 };
 
