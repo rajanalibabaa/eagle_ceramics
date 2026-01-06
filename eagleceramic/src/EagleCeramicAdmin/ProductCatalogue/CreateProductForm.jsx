@@ -413,7 +413,7 @@ const CreateProductForm = ({
     setImageLoadError(false);
   };
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
   if (e) e.preventDefault();
 
   if (mode === "create" && products.length === 0) {
@@ -434,14 +434,7 @@ const handleSubmit = async (e) => {
     if (mode === "update" && editingProduct) {
       const formData = new FormData();
       
-      // ✅ FIX: Don't append the catalog UUID to formData
-      // It should only be in the URL path
-      // productId is the reference to the product master, not the catalog ID
-      
-      if (productData.productId || selectedProductId) {
-        formData.append("productId", productData.productId || selectedProductId);
-      }
-      
+      // Add all form data
       formData.append("productName", productData.productName);
       formData.append("productSize", productData.productSize || "");
       formData.append("title", productData.title || "");
@@ -451,39 +444,41 @@ const handleSubmit = async (e) => {
       // Handle image
       if (productData.imageFile instanceof File) {
         formData.append("image", productData.imageFile);
-      } else if (editingProduct.imageUrl) {
-        formData.append("existingImageUrl", editingProduct.imageUrl);
+      } else if (editingProduct.imageUrl || editingProduct.mageln21) {
+        formData.append("existingImageUrl", editingProduct.imageUrl || editingProduct.mageln21);
       }
 
       // Handle PDF
       if (productData.pdfFile instanceof File) {
         formData.append("pdf", productData.pdfFile);
-      } else if (editingProduct.pdfUrl) {
-        formData.append("existingPdfUrl", editingProduct.pdfUrl);
+      } else if (editingProduct.pdfUrl || editingProduct.pdfurl) {
+        formData.append("existingPdfUrl", editingProduct.pdfUrl || editingProduct.pdfurl);
       }
 
-      // ✅ FIX: Use the correct UUID field
-      const catalogId = editingProduct.uuid || editingProduct._id;
+      // Get the catalog ID - check all possible ID fields
+      const catalogId = editingProduct.uuid || editingProduct._id || editingProduct.uid || editingProduct.id;
       
-      console.log("=== UPDATE REQUEST ===");
-      console.log("Catalog UUID:", catalogId);
-      console.log("URL:", `${API_BASE_URL}/catalog/update/${catalogId}`);
-      console.log("Product Data:", {
-        productId: productData.productId || selectedProductId,
-        productName: productData.productName,
-        productSize: productData.productSize,
-        hasNewImage: !!productData.imageFile,
-        hasNewPdf: !!productData.pdfFile,
-      });
+      if (!catalogId) {
+        throw new Error("Catalog ID not found for update");
+      }
 
-      // Debug FormData contents
+      console.log("=== UPDATE REQUEST (PATCH) ===");
+      console.log("Catalog ID:", catalogId);
+      
+      // ✅ USE PATCH INSTEAD OF PUT
+      const updateUrl = `${API_BASE_URL}/catalog/update/${catalogId}`;
+      console.log("Update URL:", updateUrl);
+      console.log("HTTP Method: PATCH");
+      
+      // Log FormData contents for debugging
       console.log("FormData contents:");
       for (let [key, value] of formData.entries()) {
         console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
       }
 
-      const response = await axios.put(
-        `${API_BASE_URL}/catalog/update/${catalogId}`, // ✅ Use catalogId here
+      // ✅ FIXED: Use PATCH instead of PUT
+      const response = await axios.patch(
+        updateUrl,
         formData,
         {
           headers: {
@@ -509,7 +504,10 @@ const handleSubmit = async (e) => {
         const product = products[i];
         const formData = new FormData();
         
-        formData.append("productId", product.productId || selectedProductId);
+        if (product.productId || selectedProductId) {
+          formData.append("productId", product.productId || selectedProductId);
+        }
+        
         formData.append("productName", product.productName);
         formData.append("productSize", product.productSize || "");
         formData.append("title", product.title || "");
@@ -524,11 +522,16 @@ const handleSubmit = async (e) => {
           formData.append("pdf", product.pdfFile);
         }
 
-        await axios.post(`${API_BASE_URL}/catalog/create`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const createResponse = await axios.post(
+          `${API_BASE_URL}/catalog/create`, 
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        console.log("Create Response:", createResponse.data);
       }
 
       setSuccessSnackbar(true);
@@ -539,13 +542,40 @@ const handleSubmit = async (e) => {
       }, 1500);
     }
   } catch (error) {
-    console.error("Submit Error:", error);
-    console.error("Error Response:", error.response?.data);
-    setErrorMessage(
-      error.response?.data?.message ||
-        error.message ||
-        "Operation failed"
-    );
+    console.error("=== SUBMIT ERROR ===");
+    console.error("Error:", error);
+    console.error("Error Status:", error.response?.status);
+    console.error("Error URL:", error.config?.url);
+    console.error("Error Method:", error.config?.method);
+    
+    // Better error message
+    let errorMsg = "Operation failed";
+    if (error.response?.status === 404) {
+      errorMsg = `API endpoint not found: ${error.config?.method} ${error.config?.url}`;
+      console.error("404 Error - Check if endpoint exists on server");
+      
+      // Try other HTTP methods for debugging
+      console.log("Testing other HTTP methods...");
+      const testId = editingProduct?.uuid || "test-id";
+      const testUrl = `${API_BASE_URL}/catalog/update/${testId}`;
+      
+      console.log("Test URL:", testUrl);
+      console.log("Trying GET...");
+      console.log("Trying PUT...");
+      console.log("Trying PATCH...");
+      console.log("Trying POST...");
+      
+    } else if (error.response?.status === 405) {
+      errorMsg = `Method not allowed: ${error.config?.method}. Try using POST or PUT instead.`;
+    } else if (error.response?.status === 500) {
+      errorMsg = "Server error. Please check server logs.";
+    } else if (error.response?.data?.message) {
+      errorMsg = error.response.data.message;
+    } else if (error.message) {
+      errorMsg = error.message;
+    }
+    
+    setErrorMessage(errorMsg);
     setErrorSnackbar(true);
   } finally {
     setLoading(false);
