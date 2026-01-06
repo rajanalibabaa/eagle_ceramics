@@ -20,6 +20,9 @@ import {
   LinearProgress,
   Paper,
   Grid,
+  Chip,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -32,8 +35,12 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import ImageIcon from "@mui/icons-material/Image";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import SearchIcon from "@mui/icons-material/Search";
+import FilterListIcon from "@mui/icons-material/FilterList";
+import ClearIcon from "@mui/icons-material/Clear";
 import CreateProductForm from "./CreateProductForm";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom"; // If using React Router
 
 const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
 
@@ -42,6 +49,7 @@ const CreateProductPage = () => {
   const [modalMode, setModalMode] = useState("create");
   const [editingProduct, setEditingProduct] = useState(null);
   const [catalogData, setCatalogData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]); // Filtered data for display
   const [loading, setLoading] = useState(true);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState(null);
@@ -50,7 +58,28 @@ const CreateProductPage = () => {
     message: "",
     severity: "success",
   });
-  const [expanded, setExpanded] = useState(null); // Track expanded accordion
+  const [expanded, setExpanded] = useState(null);
+  
+  // State for query parameters
+  const [queryParams, setQueryParams] = useState({
+    productName: "",
+    productSize: "",
+  });
+  const [searchInput, setSearchInput] = useState({
+    productName: "",
+    productSize: "",
+  });
+
+  // Extract query parameters from URL (if using React Router)
+  // If not using React Router, you can extract from window.location
+  const getQueryParamsFromURL = () => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const params = {
+      productName: searchParams.get('productName') || '',
+      productSize: searchParams.get('productSize') || '',
+    };
+    return params;
+  };
 
   // Modal handlers
   const handleOpenCreateModal = () => {
@@ -61,16 +90,6 @@ const CreateProductPage = () => {
   
   const handleOpenUpdateModal = (product) => {
     console.log("Opening update modal with product:", product);
-    console.log("Product fields:", {
-      productName: product.productName,
-      productSize: product.productSize,
-      title: product.title,
-      buttonText: product.buttonText,
-      description: product.description,
-      imageUrl: product.imageUrl,
-      pdfUrl: product.pdfUrl,
-    });
-    
     setModalMode("update");
     setEditingProduct(product);
     setOpenModal(true);
@@ -86,17 +105,23 @@ const CreateProductPage = () => {
     setExpanded(isExpanded ? panel : null);
   };
 
-  // Fetch catalog data from API - ONLY catalogData, NOT filterdata
-  const fetchCatalogData = async () => {
+  // Fetch catalog data from API with query parameters
+  const fetchCatalogData = async (params = {}) => {
     setLoading(true);
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/catalog/get-by-product`
-      );
+      // Build query string from params
+      const queryString = new URLSearchParams(params).toString();
+      const url = queryString 
+        ? `${API_BASE_URL}/catalog/api-by-product?${queryString}`
+        : `${API_BASE_URL}/catalog/get-by-product`;
+      
+      console.log("Fetching from URL:", url);
+      
+      const response = await axios.get(url);
       
       console.log("API Response:", response.data);
       
-      // Extract ONLY the catalogData array from the response
+      // Extract the catalogData array from the response
       let dataArray = [];
       
       if (response.data && response.data.data && response.data.data.catalogData && 
@@ -107,10 +132,19 @@ const CreateProductPage = () => {
         // Alternative structure
         dataArray = response.data.catalogData;
         console.log("Using response.data.catalogData array, found:", dataArray.length, "products");
+      } else if (Array.isArray(response.data?.data)) {
+        // Another alternative structure
+        dataArray = response.data.data;
+        console.log("Using response.data.data array, found:", dataArray.length, "products");
+      } else if (Array.isArray(response.data)) {
+        // Direct array response
+        dataArray = response.data;
+        console.log("Using direct response.data array, found:", dataArray.length, "products");
       }
       
-      console.log("Catalog data to display (catalogData only):", dataArray);
+      console.log("Catalog data received:", dataArray);
       setCatalogData(dataArray);
+      setFilteredData(dataArray); // Initialize filtered data with all data
       
       if (dataArray.length === 0) {
         showSnackbar("No catalog data found", "info");
@@ -134,14 +168,98 @@ const CreateProductPage = () => {
       
       showSnackbar(errorMessage, "error");
       setCatalogData([]);
+      setFilteredData([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Apply filter based on query parameters
+  const applyFilter = () => {
+    if (!queryParams.productName && !queryParams.productSize) {
+      // No filters, show all
+      setFilteredData(catalogData);
+      return;
+    }
+    
+    const filtered = catalogData.filter(item => {
+      const nameMatch = queryParams.productName 
+        ? item.productName?.toLowerCase().includes(queryParams.productName.toLowerCase())
+        : true;
+      
+      const sizeMatch = queryParams.productSize 
+        ? item.productSize?.toString() === queryParams.productSize.toString()
+        : true;
+      
+      return nameMatch && sizeMatch;
+    });
+    
+    setFilteredData(filtered);
+    
+    if (filtered.length === 0) {
+      showSnackbar(`No products found for productName: ${queryParams.productName || 'any'} and productSize: ${queryParams.productSize || 'any'}`, "info");
+    }
+  };
+
+  // Handle search input changes
+  const handleSearchChange = (field, value) => {
+    setSearchInput(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  // Apply search/filter
+  const handleApplyFilter = () => {
+    setQueryParams(searchInput);
+    // If we have search criteria, fetch from API with query params
+    if (searchInput.productName || searchInput.productSize) {
+      fetchCatalogData({
+        productName: searchInput.productName || undefined,
+        productSize: searchInput.productSize || undefined
+      });
+    } else {
+      // If no criteria, fetch all
+      fetchCatalogData();
+    }
+  };
+
+  // Clear filters
+  const handleClearFilter = () => {
+    setSearchInput({
+      productName: "",
+      productSize: "",
+    });
+    setQueryParams({
+      productName: "",
+      productSize: "",
+    });
+    fetchCatalogData(); // Fetch all data
+  };
+
+  // Extract query params from URL on component mount
   useEffect(() => {
-    fetchCatalogData();
+    const urlParams = getQueryParamsFromURL();
+    console.log("URL Query Params:", urlParams);
+    
+    if (urlParams.productName || urlParams.productSize) {
+      setQueryParams(urlParams);
+      setSearchInput(urlParams);
+      // Fetch with URL params
+      fetchCatalogData({
+        productName: urlParams.productName || undefined,
+        productSize: urlParams.productSize || undefined
+      });
+    } else {
+      // Fetch all data
+      fetchCatalogData();
+    }
   }, []);
+
+  // Apply filter when queryParams change
+  useEffect(() => {
+    applyFilter();
+  }, [catalogData, queryParams]);
 
   // Delete handlers
   const handleDeleteClick = (product, e) => {
@@ -161,7 +279,12 @@ const CreateProductPage = () => {
 
       if (response.data.success) {
         showSnackbar("Product deleted successfully", "success");
-        fetchCatalogData(); // Refresh the list
+        // Re-fetch with current filters
+        if (queryParams.productName || queryParams.productSize) {
+          fetchCatalogData(queryParams);
+        } else {
+          fetchCatalogData();
+        }
       } else {
         showSnackbar(response.data.message || "Failed to delete product", "error");
       }
@@ -204,8 +327,22 @@ const CreateProductPage = () => {
         : "Product created successfully",
       "success"
     );
-    fetchCatalogData(); // Refresh the list
+    // Re-fetch with current filters
+    if (queryParams.productName || queryParams.productSize) {
+      fetchCatalogData(queryParams);
+    } else {
+      fetchCatalogData();
+    }
     handleCloseModal();
+  };
+
+  // Refresh data
+  const handleRefresh = () => {
+    if (queryParams.productName || queryParams.productSize) {
+      fetchCatalogData(queryParams);
+    } else {
+      fetchCatalogData();
+    }
   };
 
   return (
@@ -296,9 +433,46 @@ const CreateProductPage = () => {
           <Typography variant="h4" fontWeight="bold" color="primary" gutterBottom>
             Product Catalogue
           </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {queryParams.productName || queryParams.productSize ? (
+              <>
+                Filtered by: 
+                {queryParams.productName && (
+                  <Chip 
+                    label={`Product: ${queryParams.productName}`} 
+                    size="small" 
+                    sx={{ ml: 1 }}
+                  />
+                )}
+                {queryParams.productSize && (
+                  <Chip 
+                    label={`Size: ${queryParams.productSize}`} 
+                    size="small" 
+                    sx={{ ml: 1 }}
+                  />
+                )}
+              </>
+            ) : (
+              "Showing all products"
+            )}
+          </Typography>
         </Box>
 
         <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="outlined"
+            size="large"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+            disabled={loading}
+            sx={{
+              px: 3,
+              py: 1.5,
+              borderRadius: 2,
+            }}
+          >
+            Refresh
+          </Button>
           <Button
             variant="contained"
             size="large"
@@ -325,19 +499,100 @@ const CreateProductPage = () => {
         </Box>
       </Box>
 
+      {/* Search/Filter Section */}
+      <Paper
+        elevation={1}
+        sx={{
+          p: 3,
+          mb: 4,
+          borderRadius: 2,
+          backgroundColor: "#f8f9fa",
+        }}
+      >
+        <Typography variant="h6" gutterBottom sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <FilterListIcon /> Filter Products
+        </Typography>
+        
+        <Grid container spacing={2} alignItems="center">
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              label="Product Name"
+              placeholder="e.g., Menu, Product A"
+              value={searchInput.productName}
+              onChange={(e) => handleSearchChange('productName', e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+              size="small"
+            />
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <TextField
+              fullWidth
+              label="Product Size"
+              placeholder="e.g., 543, 256"
+              value={searchInput.productSize}
+              onChange={(e) => handleSearchChange('productSize', e.target.value)}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <InventoryIcon fontSize="small" />
+                  </InputAdornment>
+                ),
+              }}
+              size="small"
+            />
+          </Grid>
+          
+          <Grid item xs={12} md={4}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                variant="contained"
+                onClick={handleApplyFilter}
+                disabled={loading}
+                startIcon={<SearchIcon />}
+                fullWidth
+              >
+                Apply Filter
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handleClearFilter}
+                disabled={loading}
+                startIcon={<ClearIcon />}
+              >
+                Clear
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+        
+        {filteredData.length > 0 && (
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+            Showing {filteredData.length} of {catalogData.length} products
+          </Typography>
+        )}
+      </Paper>
+
       {/* Loading indicator */}
       {loading && (
         <Box sx={{ width: "100%", mt: 2 }}>
           <LinearProgress />
           <Typography variant="body2" color="text.secondary" sx={{ textAlign: "center", mt: 1 }}>
-            Loading products...
+            {queryParams.productName || queryParams.productSize ? "Loading filtered products..." : "Loading products..."}
           </Typography>
         </Box>
       )}
 
-      {/* Catalog List - Displaying ONLY catalogData */}
+      {/* Catalog List - Displaying filtered data */}
       <Box sx={{ mt: 3 }}>
-        {!loading && catalogData.length === 0 ? (
+        {!loading && filteredData.length === 0 ? (
           <Paper
             elevation={0}
             sx={{
@@ -350,27 +605,46 @@ const CreateProductPage = () => {
           >
             <InventoryIcon sx={{ fontSize: 60, color: "text.secondary", mb: 2 }} />
             <Typography variant="h6" color="text.secondary" gutterBottom>
-              No Product Catalogues Found
+              {queryParams.productName || queryParams.productSize
+                ? "No Products Match Your Filter"
+                : "No Product Catalogues Found"}
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Start by creating your first product catalogue
+              {queryParams.productName || queryParams.productSize
+                ? `No products found for productName: "${queryParams.productName}" and productSize: "${queryParams.productSize}"`
+                : "Start by creating your first product catalogue"}
             </Typography>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={handleOpenCreateModal}
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 2,
-              }}
-            >
-              Create First Catalogue
-            </Button>
+            {(queryParams.productName || queryParams.productSize) ? (
+              <Button
+                variant="outlined"
+                startIcon={<ClearIcon />}
+                onClick={handleClearFilter}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                }}
+              >
+                Clear Filter
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                startIcon={<AddIcon />}
+                onClick={handleOpenCreateModal}
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  borderRadius: 2,
+                }}
+              >
+                Create First Catalogue
+              </Button>
+            )}
           </Paper>
         ) : (
-          catalogData.map((product, index) => {
-            const panelId = product.uuid || `product-${index}`;
+          filteredData.map((product, index) => {
+            const panelId = product.uuid || product.uid || `product-${index}`;
             return (
               <Accordion
                 key={panelId}
@@ -400,14 +674,23 @@ const CreateProductPage = () => {
                     width: "100%",
                     pr: 2
                   }}>
-                    <Box sx={{ display: "flex", alignItems: "center", }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <Box>
                         <Typography variant="h6" fontWeight="bold">
                           {product.productName || `Product ${index + 1}`}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          ID: {product.uuid?.substring(0, 8) || "N/A"}
-                        </Typography>
+                        <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+                          <Typography variant="body2" color="text.secondary">
+                            ID: {product.uuid?.substring(0, 8) || product.uid?.substring(0, 8) || "N/A"}
+                          </Typography>
+                          {product.productSize && (
+                            <Chip 
+                              label={`Size: ${product.productSize}`} 
+                              size="small" 
+                              variant="outlined"
+                            />
+                          )}
+                        </Box>
                       </Box>
                     </Box>
                     
@@ -444,7 +727,7 @@ const CreateProductPage = () => {
                 </AccordionSummary>
 
                 <AccordionDetails sx={{ p: 3 }}>
-                  {/* Row 1: Product Information Section */}
+                  {/* Product Information Section */}
                   <Box sx={{ mb: 3 }}>
                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ 
                       display: "flex", 
@@ -511,7 +794,7 @@ const CreateProductPage = () => {
                       )}
                     </Box>
                     
-                    {/* Second Line: Description */}
+                    {/* Description */}
                     {product.description && (
                       <Box sx={{ display: "flex", alignItems: "flex-start" }}>
                         <Typography variant="body2" component="span" fontWeight="bold" sx={{ mr: 1, minWidth: "90px", mt: 0.5 }}>
@@ -524,7 +807,7 @@ const CreateProductPage = () => {
                     )}
                   </Box>
 
-                  {/* Row 2: Media Files Section */}
+                  {/* Media Files Section */}
                   <Box>
                     <Typography variant="subtitle1" fontWeight="bold" gutterBottom sx={{ 
                       display: "flex", 
@@ -544,7 +827,7 @@ const CreateProductPage = () => {
                             Product Image:
                           </Typography>
                           
-                          {product.imageUrl ? (
+                          {product.imageUrl || product.mageln21 ? (
                             <>
                               <Box
                                 sx={{
@@ -561,7 +844,7 @@ const CreateProductPage = () => {
                                 }}
                               >
                                 <img
-                                  src={product.imageUrl}
+                                  src={product.imageUrl || product.mageln21}
                                   alt={product.productName || "Product Image"}
                                   style={{
                                     width: "100%",
@@ -577,7 +860,7 @@ const CreateProductPage = () => {
                               <Button
                                 size="small"
                                 startIcon={<ImageIcon />}
-                                href={product.imageUrl}
+                                href={product.imageUrl || product.mageln21}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variant="outlined"
@@ -617,7 +900,7 @@ const CreateProductPage = () => {
                             Product PDF:
                           </Typography>
                           
-                          {product.pdfUrl ? (
+                          {product.pdfUrl || product.pdfurl ? (
                             <>
                               <Box
                                 sx={{
@@ -645,7 +928,7 @@ const CreateProductPage = () => {
                               <Button
                                 size="small"
                                 startIcon={<PictureAsPdfIcon />}
-                                href={product.pdfUrl}
+                                href={product.pdfUrl || product.pdfurl}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 variant="outlined"
