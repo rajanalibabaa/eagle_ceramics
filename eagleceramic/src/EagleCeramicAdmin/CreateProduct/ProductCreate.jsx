@@ -40,6 +40,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ImageIcon from "@mui/icons-material/Image";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
+import {getAdminToken} from "../../EagleCeramicAdmin/utils/auth";
 
 const ProductCreate = ({ 
     openModal, 
@@ -47,7 +48,8 @@ const ProductCreate = ({
     mode = 'create', 
     editingProduct = null,
     onSuccess,
-    onClose 
+    onClose ,
+    token
 }) => {
     // State management
     const [productData, setProductData] = useState({
@@ -198,19 +200,15 @@ const ProductCreate = ({
     };
 
 const handleSaveSize = () => {
-    console.log('Checkpoint: Attempting to save size. Current size:', currentSize, 'Editing index:', editingIndex);
     
-    // Validate required fields
     if (!currentSize.size || !currentSize.title || !currentSize.description) {
         alert("Please fill all size fields before saving");
         return;
     }
 
     if (editingIndex !== null) {
-        // UPDATE EXISTING SIZE
         const updatedSizes = [...savedSizes];
         
-        // Create updated size object - CRITICAL: Preserve existing image if no new file
         const updatedSize = {
             _id: currentSize._id,
             size: currentSize.size.trim(),
@@ -342,12 +340,22 @@ const handleSubmit = async (e) => {
 
     try {
         setLoading(true);
+        
+        // Get the token directly
+        const token = getAdminToken();
+        console.log('Checkpoint: Retrieved admin token for submission:', token);
+        if (!token) {
+            setErrorMessage('Authentication token not found. Please login again.');
+            setErrorSnackbar(true);
+            setLoading(false);
+            return;
+        }
 
         const formData = new FormData();
         formData.append('productName', productData.productName.trim());
 
         if (mode === 'create') {
-            // FOR CREATE MODE - No changes needed
+            // FOR CREATE MODE
             savedSizes.forEach((size, index) => {
                 formData.append(`productSizes[${index}][size]`, size.size.trim());
                 formData.append(`productSizes[${index}][title]`, size.title.trim());
@@ -359,23 +367,21 @@ const handleSubmit = async (e) => {
             });
         } 
         else if (mode === 'update' && editingProduct) {
-            // FOR UPDATE MODE - Fixed version
+            // FOR UPDATE MODE
             const productSizesData = savedSizes.map((size, index) => {
                 const sizeData = {
                     size: size.size.trim(),
                     title: size.title.trim(),
                     description: size.description.trim(),
-                    hasNewImage: !!size.imageFile, // ✅ Flag to indicate new image
+                    hasNewImage: !!size.imageFile,
                 };
                 
-                // Include _id only for existing sizes (MongoDB ObjectId is 24 chars)
                 if (size._id && typeof size._id === 'string' && size._id.length === 24) {
                     sizeData._id = size._id;
                 } else if (size._id && typeof size._id === 'object') {
                     sizeData._id = size._id.toString();
                 }
                 
-                // ✅ If no new image file, include existing image URL
                 if (!size.imageFile && size.image) {
                     sizeData.existingImage = size.image;
                 }
@@ -385,14 +391,12 @@ const handleSubmit = async (e) => {
             
             formData.append('productSizes', JSON.stringify(productSizesData));
             
-            // ✅ Append only NEW image files (in order)
             savedSizes.forEach((size) => {
                 if (size.imageFile) {
                     formData.append('image', size.imageFile);
                 }
             });
             
-            // Append sizesToDelete if any
             if (sizesToDelete.length > 0) {
                 formData.append('sizesToDelete', JSON.stringify(sizesToDelete));
             }
@@ -418,25 +422,24 @@ const handleSubmit = async (e) => {
         console.log("=========================");
 
         let response;
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`  // Add authorization header
+            }
+        };
+
         if (mode === 'update' && editingProduct) {
             response = await axios.put(
                 `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
                 formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }
+                config  // Use config with headers
             );
         } else {
             response = await axios.post(
                 "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
                 formData,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data'
-                    }
-                }
+                config  // Use config with headers
             );
         }
 
@@ -455,10 +458,17 @@ const handleSubmit = async (e) => {
         console.error(`Error:`, error);
         console.error('Error details:', error.response?.data);
         
-        setErrorMessage(
-            error?.response?.data?.message || 
-            `Failed to ${mode === 'update' ? 'update' : 'create'} product`
-        );
+        // Handle authentication errors
+        if (error.response?.status === 401) {
+            setErrorMessage('Session expired. Please login again.');
+            // Optionally redirect to login
+            // window.location.href = '/login';
+        } else {
+            setErrorMessage(
+                error?.response?.data?.message || 
+                `Failed to ${mode === 'update' ? 'update' : 'create'} product`
+            );
+        }
         setErrorSnackbar(true);
     } finally {
         setLoading(false);
