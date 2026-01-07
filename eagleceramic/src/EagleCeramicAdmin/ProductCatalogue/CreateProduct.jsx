@@ -42,6 +42,7 @@ import ImageIcon from "@mui/icons-material/Image";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ClearIcon from "@mui/icons-material/Clear";
+import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 
 import CreateProductForm from "./CreateProductForm";
 import axios from "axios";
@@ -351,191 +352,219 @@ const CreateProductPage = () => {
     setDeleteTarget(null);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
+ const handleDeleteConfirm = async () => {
+  if (!deleteTarget) return;
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
+    
+    // Get the token for authorization
+    const token = getAdminToken();
+    if (!token) {
+      showSnackbar('Authentication token not found. Please login again.', 'error');
+      setLoading(false);
+      return;
+    }
 
-      if (deleteTarget.type === "item") {
-        const deleteUrl = `${API_BASE_URL}/catalog/delete/${deleteTarget.itemId}`;
-        const res = await axios.delete(deleteUrl);
+    // Create axios config with authorization header
+    const axiosConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    };
 
-        if (res?.data?.success) {
-          showSnackbar("Item deleted successfully", "success");
-          
-          const productName = deleteTarget.product.productName;
-          const size = deleteTarget.size;
-          
-          // Clear cache for this specific product and size
-          const cacheKey = `${productName}::${size}`;
-          setCatalogCache(prev => {
-            const newCache = { ...prev };
-            delete newCache[cacheKey];
-            return newCache;
-          });
-          
-          // Also clear the "all" cache for this product
-          const allCacheKey = `${productName}::all`;
-          setCatalogCache(prev => {
-            const newCache = { ...prev };
-            delete newCache[allCacheKey];
-            return newCache;
-          });
-          
-          await fetchFilterData();
-          
-          // Re-fetch if this size is currently expanded
-          if (expandedSizes[`${productName}-${size}`]) {
-            await fetchCatalogForProduct(productName, size);
-          }
-        } else {
-          showSnackbar(res?.data?.message || "Failed to delete item", "error");
-        }
-      } else if (deleteTarget.type === "size") {
+    if (deleteTarget.type === "item") {
+      const deleteUrl = `${API_BASE_URL}/catalog/delete/${deleteTarget.itemId}`;
+      console.log("DELETE request URL:", deleteUrl);
+      console.log("Authorization token:", token ? "Present" : "Missing");
+      
+      const res = await axios.delete(deleteUrl, axiosConfig);
+
+      if (res?.data?.success) {
+        showSnackbar("Item deleted successfully", "success");
+        
         const productName = deleteTarget.product.productName;
         const size = deleteTarget.size;
         
-        // Get items for this size from cache
+        // Clear cache for this specific product and size
         const cacheKey = `${productName}::${size}`;
-        const catalogItems = catalogCache[cacheKey] || [];
-
-        if (catalogItems.length === 0) {
-          showSnackbar("No items found to delete", "warning");
-          setLoading(false);
-          setDeleteDialogOpen(false);
-          setDeleteTarget(null);
-          return;
-        }
-
-        const deletePromises = catalogItems.map((item) =>
-          axios.delete(`${API_BASE_URL}/catalog/delete/${item.uuid}`)
-        );
-
-        const results = await Promise.allSettled(deletePromises);
-
-        const successCount = results.filter(
-          (r) => r.status === "fulfilled" && r.value?.data?.success
-        ).length;
-        const failCount = catalogItems.length - successCount;
-
-        if (failCount === 0) {
-          showSnackbar(
-            `Successfully deleted size "${size}" with ${successCount} item${
-              successCount !== 1 ? "s" : ""
-            }`,
-            "success"
-          );
-        } else if (successCount > 0) {
-          showSnackbar(
-            `Partially deleted: ${successCount} succeeded, ${failCount} failed`,
-            "warning"
-          );
-        } else {
-          showSnackbar("Failed to delete items", "error");
-        }
-
-        // Clear cache for this product and size
         setCatalogCache(prev => {
           const newCache = { ...prev };
           delete newCache[cacheKey];
-          
-          // Also clear the "all" cache
-          const allCacheKey = `${productName}::all`;
-          delete newCache[allCacheKey];
-          
           return newCache;
         });
-
-        await fetchFilterData();
         
-        // Remove this size from expanded state
-        setExpandedSizes(prev => {
-          const newState = { ...prev };
-          delete newState[`${productName}-${size}`];
-          return newState;
-        });
-      } else if (deleteTarget.type === "product") {
-        const productName = deleteTarget.product.productName;
-        
-        // Get all catalog items for this product from all cache entries
-        const allItems = Object.entries(catalogCache)
-          .filter(([key]) => key.startsWith(productName))
-          .flatMap(([_, items]) => items);
-
-        if (allItems.length === 0) {
-          showSnackbar("No items found to delete", "warning");
-          setLoading(false);
-          setDeleteDialogOpen(false);
-          setDeleteTarget(null);
-          return;
-        }
-
-        const deletePromises = allItems.map((item) =>
-          axios.delete(`${API_BASE_URL}/catalog/delete/${item.uuid}`)
-        );
-
-        const results = await Promise.allSettled(deletePromises);
-
-        const successCount = results.filter(
-          (r) => r.status === "fulfilled" && r.value?.data?.success
-        ).length;
-        const failCount = allItems.length - successCount;
-
-        if (failCount === 0) {
-          showSnackbar(
-            `Successfully deleted product "${productName}" with ${successCount} item${
-              successCount !== 1 ? "s" : ""
-            }`,
-            "success"
-          );
-        } else if (successCount > 0) {
-          showSnackbar(
-            `Partially deleted: ${successCount} succeeded, ${failCount} failed`,
-            "warning"
-          );
-        } else {
-          showSnackbar("Failed to delete product", "error");
-        }
-
-        // Clear all cache entries for this product
+        // Also clear the "all" cache for this product
+        const allCacheKey = `${productName}::all`;
         setCatalogCache(prev => {
           const newCache = { ...prev };
-          Object.keys(newCache).forEach(key => {
-            if (key.startsWith(productName)) {
-              delete newCache[key];
-            }
-          });
+          delete newCache[allCacheKey];
           return newCache;
         });
-
+        
         await fetchFilterData();
         
-        // Clear expanded state for this product
-        setExpandedSizes(prev => {
-          const newState = { ...prev };
-          Object.keys(newState).forEach(key => {
-            if (key.startsWith(productName)) {
-              delete newState[key];
-            }
-          });
-          return newState;
-        });
-        
-        // Collapse the product accordion
-        setExpanded(null);
+        // Re-fetch if this size is currently expanded
+        if (expandedSizes[`${productName}-${size}`]) {
+          await fetchCatalogForProduct(productName, size);
+        }
       } else {
-        throw new Error("Unknown delete type");
+        showSnackbar(res?.data?.message || "Failed to delete item", "error");
       }
-    } catch (error) {
-      console.error("Delete error:", error);
-      showSnackbar(error.response?.data?.message || "Error deleting", "error");
-    } finally {
-      setLoading(false);
-      setDeleteDialogOpen(false);
-      setDeleteTarget(null);
+    } else if (deleteTarget.type === "size") {
+      const productName = deleteTarget.product.productName;
+      const size = deleteTarget.size;
+      
+      // Get items for this size from cache
+      const cacheKey = `${productName}::${size}`;
+      const catalogItems = catalogCache[cacheKey] || [];
+
+      if (catalogItems.length === 0) {
+        showSnackbar("No items found to delete", "warning");
+        setLoading(false);
+        setDeleteDialogOpen(false);
+        setDeleteTarget(null);
+        return;
+      }
+
+      const deletePromises = catalogItems.map((item) =>
+        axios.delete(`${API_BASE_URL}/catalog/delete/${item.uuid}`, axiosConfig)
+      );
+
+      const results = await Promise.allSettled(deletePromises);
+
+      const successCount = results.filter(
+        (r) => r.status === "fulfilled" && r.value?.data?.success
+      ).length;
+      const failCount = catalogItems.length - successCount;
+
+      if (failCount === 0) {
+        showSnackbar(
+          `Successfully deleted size "${size}" with ${successCount} item${
+            successCount !== 1 ? "s" : ""
+          }`,
+          "success"
+        );
+      } else if (successCount > 0) {
+        showSnackbar(
+          `Partially deleted: ${successCount} succeeded, ${failCount} failed`,
+          "warning"
+        );
+      } else {
+        showSnackbar("Failed to delete items", "error");
+      }
+
+      // Clear cache for this product and size
+      setCatalogCache(prev => {
+        const newCache = { ...prev };
+        delete newCache[cacheKey];
+        
+        // Also clear the "all" cache
+        const allCacheKey = `${productName}::all`;
+        delete newCache[allCacheKey];
+        
+        return newCache;
+      });
+
+      await fetchFilterData();
+      
+      // Remove this size from expanded state
+      setExpandedSizes(prev => {
+        const newState = { ...prev };
+        delete newState[`${productName}-${size}`];
+        return newState;
+      });
+    } else if (deleteTarget.type === "product") {
+      const productName = deleteTarget.product.productName;
+      
+      // Get all catalog items for this product from all cache entries
+      const allItems = Object.entries(catalogCache)
+        .filter(([key]) => key.startsWith(productName))
+        .flatMap(([_, items]) => items);
+
+      if (allItems.length === 0) {
+        showSnackbar("No items found to delete", "warning");
+        setLoading(false);
+        setDeleteDialogOpen(false);
+        setDeleteTarget(null);
+        return;
+      }
+
+      const deletePromises = allItems.map((item) =>
+        axios.delete(`${API_BASE_URL}/catalog/delete/${item.uuid}`, axiosConfig)
+      );
+
+      const results = await Promise.allSettled(deletePromises);
+
+      const successCount = results.filter(
+        (r) => r.status === "fulfilled" && r.value?.data?.success
+      ).length;
+      const failCount = allItems.length - successCount;
+
+      if (failCount === 0) {
+        showSnackbar(
+          `Successfully deleted product "${productName}" with ${successCount} item${
+            successCount !== 1 ? "s" : ""
+          }`,
+          "success"
+        );
+      } else if (successCount > 0) {
+        showSnackbar(
+          `Partially deleted: ${successCount} succeeded, ${failCount} failed`,
+          "warning"
+        );
+      } else {
+        showSnackbar("Failed to delete product", "error");
+      }
+
+      // Clear all cache entries for this product
+      setCatalogCache(prev => {
+        const newCache = { ...prev };
+        Object.keys(newCache).forEach(key => {
+          if (key.startsWith(productName)) {
+            delete newCache[key];
+          }
+        });
+        return newCache;
+      });
+
+      await fetchFilterData();
+      
+      // Clear expanded state for this product
+      setExpandedSizes(prev => {
+        const newState = { ...prev };
+        Object.keys(newState).forEach(key => {
+          if (key.startsWith(productName)) {
+            delete newState[key];
+          }
+        });
+        return newState;
+      });
+      
+      // Collapse the product accordion
+      setExpanded(null);
+    } else {
+      throw new Error("Unknown delete type");
     }
-  };
+  } catch (error) {
+    console.error("Delete error:", error);
+    console.error("Error status:", error.response?.status);
+    console.error("Error data:", error.response?.data);
+    
+    if (error.response?.status === 401) {
+      showSnackbar('Session expired. Please login again.', 'error');
+    } else if (error.response?.data?.message) {
+      showSnackbar(error.response.data.message, "error");
+    } else {
+      showSnackbar(error.message || "Error deleting", "error");
+    }
+  } finally {
+    setLoading(false);
+    setDeleteDialogOpen(false);
+    setDeleteTarget(null);
+  }
+};
 
   const productCount = filteredData.length;
   const totalItems = Object.values(catalogCache).reduce((sum, items) => {
@@ -952,18 +981,7 @@ const CreateProductPage = () => {
                                     <Typography variant="body2" color="text.secondary">
                                       No catalog items found for this size.
                                     </Typography>
-                                    <Button
-                                      variant="outlined"
-                                      size="small"
-                                      startIcon={<AddIcon />}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleOpenUpdateModal(product, { size: sizeLabel });
-                                      }}
-                                      sx={{ mt: 2 }}
-                                    >
-                                      Add Item to this Size
-                                    </Button>
+                                   
                                   </Box>
                                 ) : (
                                   <Box>
@@ -1108,6 +1126,7 @@ const CreateProductPage = () => {
             editingProduct={editingProduct}
             onSuccess={handleFormSuccess}
             onClose={handleCloseModal}
+            token={getAdminToken()}
           />
         </DialogContent>
       </Dialog>

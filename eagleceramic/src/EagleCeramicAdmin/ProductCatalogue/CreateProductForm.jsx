@@ -48,6 +48,8 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
+import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
+
 
 const API_BASE_URL = "http://localhost:5050/api/v1";
 
@@ -58,7 +60,9 @@ const CreateProductForm = ({
   editingProduct = null,
   onSuccess,
   onClose,
+  token,
 }) => {
+
   const modalTitle =
     mode === "update"
       ? "Update Product Catalogue"
@@ -93,6 +97,8 @@ const CreateProductForm = ({
   const [selectedProductId, setSelectedProductId] = useState("");
   const [availableSizes, setAvailableSizes] = useState([]);
   const [loadingDropdowns, setLoadingDropdowns] = useState(false);
+  // Add this function after your state declarations
+
 
   // Track if dropdowns have been initialized for edit mode
   const dropdownsInitialized = useRef(false);
@@ -203,8 +209,19 @@ const CreateProductForm = ({
     try {
       setLoadingDropdowns(true);
       console.log("=== FETCHING DROPDOWN DATA ===");
+        const token = getAdminToken();
+    if (!token) {
+      setErrorMessage('Authentication token not found. Please login again.');
+      setErrorSnackbar(true);
+      setLoadingDropdowns(false);
+      return;
+    }
 
-      const response = await axios.get(`${API_BASE_URL}/eagle-ceramic/product-sizes/dropdown`);
+      const response = await axios.get(`${API_BASE_URL}/eagle-ceramic/product-sizes/dropdown`,
+        {
+          headers: {'Content-Type' : 'application/json', 'Authorization': `Bearer ${token}` }
+        }
+      );
 
       console.log("API Response:", response.data);
 
@@ -236,13 +253,19 @@ const CreateProductForm = ({
         setProductNameOptions(productNames);
       }
     } catch (error) {
-      console.error("Error fetching dropdown data:", error);
+    console.error("Error fetching dropdown data:", error);
+    
+    // Handle authentication errors
+    if (error.response?.status === 401) {
+      setErrorMessage('Session expired. Please login again.');
+    } else {
       setErrorMessage("Failed to load dropdown options");
-      setErrorSnackbar(true);
-    } finally {
-      setLoadingDropdowns(false);
     }
-  };
+    setErrorSnackbar(true);
+  } finally {
+    setLoadingDropdowns(false);
+  }
+};
 
   const handleProductNameChange = (event) => {
     const productId = event.target.value;
@@ -438,6 +461,12 @@ const CreateProductForm = ({
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
 
+const token = getAdminToken(); // Use the imported function
+  if (!token) {
+    setErrorMessage('Authentication token not found. Please login again.');
+    setErrorSnackbar(true);
+    return;
+  }
     // Validation
     if (mode === "create" && products.length === 0) {
       setErrorMessage("Please add at least one product before submitting");
@@ -515,7 +544,8 @@ const CreateProductForm = ({
               formData,
               {
                 headers: {
-                  "Content-Type": "multipart/form-data",
+                  'Content-Type': 'multipart/form-data',
+                  'Authorization': `Bearer ${token}`,
                 },
               }
             );
@@ -567,7 +597,8 @@ const CreateProductForm = ({
             formData,
             {
               headers: {
-                "Content-Type": "multipart/form-data",
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`,
               },
             }
           );
