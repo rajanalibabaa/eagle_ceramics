@@ -862,7 +862,7 @@ const CreateProductForm = ({
           borderRadius: 3,
           maxHeight: "90vh",
           overflow: "hidden",
-          width: "100%",
+          // width: "100%",
           // maxWidth: "1200px",
         },
       }}
@@ -974,6 +974,7 @@ const CreateProductForm = ({
     size="small"
     required
     disabled={loading || loadingDropdowns}
+    // sx={{maxWidth:'100px'}}
   >
     <InputLabel>Product Name *</InputLabel>
     <Select
