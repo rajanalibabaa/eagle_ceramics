@@ -863,7 +863,7 @@ const CreateProductForm = ({
           maxHeight: "90vh",
           overflow: "hidden",
           width: "100%",
-          maxWidth: "1200px",
+          // maxWidth: "1200px",
         },
       }}
     >
@@ -940,15 +940,9 @@ const CreateProductForm = ({
             >
               <Grid container spacing={3}>
                 {/* Single Column - Form (full width for both create & update) */}
-                <Grid item xs={12} md={12}>
-                  <Paper
-                    sx={{
-                      p: 3,
-                      borderRadius: 2,
-                      backgroundColor: "#fafafa",
-                      height: "100%",
-                    }}
-                  >
+                <Grid item xs={12} md={12}   >
+         
+
                     {isUpdateMode && loadingDropdowns && (
                       <Alert severity="info" sx={{ mb: 2 }}>
                         Loading dropdowns... Current values:
@@ -963,129 +957,112 @@ const CreateProductForm = ({
                       </Alert>
                     )}
 
-                    <Grid container spacing={2}>
-                      {/* Product Name Dropdown */}
-                      <Grid item xs={12} md={6}>
-                        <FormControl
-                          fullWidth
-                          size="small"
-                          required
-                          disabled={loading || loadingDropdowns}
-                        >
-                          <InputLabel id="product-name-label">
-                            Product Name *
-                          </InputLabel>
-                          <Select
-                            labelId="product-name-label"
-                            id="product-name-select"
-                            value={selectedProductId}
-                            label="Product Name *"
-                            onChange={handleProductNameChange}
-                            MenuProps={{
-                              PaperProps: {
-                                sx: { maxHeight: 300 },
-                              },
-                            }}
-                          >
-                           
-                            {productNameOptions.map((option) => (
-                              <MenuItem key={option.id} value={option.id}>
-                                {option.name}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
+<Box
+  sx={{
+    width: "100%",
+    display: "grid",
+    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, // 2 columns for md and up, 1 column for xs% 100% " },
+    gap: 2,
+    alignItems: "center",
+  
+  }}
+>
 
-                      {/* Product Size Dropdown */}
-                      <Grid item xs={12} md={6}>
-                        <FormControl
-                          fullWidth
-                          size="small"
-                          disabled={loading || !selectedProductId}
-                        >
-                          <InputLabel id="product-size-label">
-                            Product Size
-                          </InputLabel>
-                          <Select
-                            labelId="product-size-label"
-                            id="product-size-select"
-                            value={productData.productSize}
-                            label="Product Size"
-                            onChange={handleProductSizeChange}
-                            MenuProps={{
-                              PaperProps: {
-                                sx: { maxHeight: 300 },
-                              },
-                            }}
-                          >
-                          
-                            {availableSizes.map((size, index) => (
-                              <MenuItem key={`size-${index}`} value={size}>
-                                {size}
-                              </MenuItem>
-                            ))}
-                          </Select>
-                        </FormControl>
-                      </Grid>
+  {/* Row 1: Product Name */}
+  <FormControl
+    fullWidth
+    size="small"
+    required
+    disabled={loading || loadingDropdowns}
+  >
+    <InputLabel>Product Name *</InputLabel>
+    <Select
+      value={selectedProductId}
+      label="Product Name *"
+      onChange={handleProductNameChange}
+      MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+    >
+      {productNameOptions.map((option) => (
+        <MenuItem key={option.id} value={option.id}>
+          {option.name}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
 
-                      {/* Title */}
-                      <Grid item xs={12} md={6}>
-                        <TextField
-                          label="Display Title"
-                          name="title"
-                          value={productData.title}
-                          onChange={handleOtherChange}
-                          fullWidth
-                          disabled={loading}
-                          size="small"
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <TitleIcon color="action" fontSize="small" />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
+  {/* Row 1: Product Size */}
+  <FormControl
+    fullWidth
+    size="small"
+    disabled={loading || !selectedProductId}
+  >
+    <InputLabel>Product Size</InputLabel>
+    <Select
+      value={productData.productSize}
+      label="Product Size"
+      onChange={handleProductSizeChange}
+    >
+      {availableSizes.map((size, index) => (
+        <MenuItem key={index} value={size}>
+          {size}
+        </MenuItem>
+      ))}
+    </Select>
+  </FormControl>
 
-                      {/* Button Text */}
-                      <Grid item xs={12} md={6}>
-                        <TextField
-                          label="Button Text"
-                          name="buttonText"
-                          value={productData.buttonText}
-                          onChange={handleOtherChange}
-                          fullWidth
-                          disabled={loading}
-                          size="small"
-                          InputProps={{
-                            startAdornment: (
-                              <InputAdornment position="start">
-                                <LinkIcon color="action" fontSize="small" />
-                              </InputAdornment>
-                            ),
-                          }}
-                        />
-                      </Grid>
+  {/* Row 2: Title */}
+  <TextField
+    label="Display Title"
+    name="title"
+    value={productData.title}
+    onChange={handleOtherChange}
+    fullWidth
+    size="small"
+    disabled={loading}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <TitleIcon fontSize="small" />
+        </InputAdornment>
+      ),
+    }}
+  />
 
-                      {/* Description */}
-                      <Grid item xs={12}>
-                        <TextField
-                          label="Description"
-                          name="description"
-                          value={productData.description}
-                          onChange={handleOtherChange}
-                          fullWidth
-                          multiline
-                          rows={2}
-                          disabled={loading}
-                          size="small"
-                        />
-                      </Grid>
+  {/* Row 2: Button Text */}
+  <TextField
+    label="Button Text"
+    name="buttonText"
+    value={productData.buttonText}
+    onChange={handleOtherChange}
+    fullWidth
+    size="small"
+    disabled={loading}
+    InputProps={{
+      startAdornment: (
+        <InputAdornment position="start">
+          <LinkIcon fontSize="small" />
+        </InputAdornment>
+      ),
+    }}
+  />
+
+  {/* Row 3: Description (Full Width) */}
+  <Box sx={{ gridColumn: "1 / span 2" }}>
+    <TextField
+      label="Description"
+      name="description"
+      value={productData.description}
+      onChange={handleOtherChange}
+      fullWidth
+      multiline
+      rows={4}
+      size="small"
+      disabled={loading}
+    />
+  </Box>
 
                       {/* Image Upload */}
-                      <Grid item xs={12} md={6}>
+                      <Box>
                         <Box>
                           <Typography
                             variant="subtitle2"
@@ -1190,6 +1167,7 @@ const CreateProductForm = ({
                                 style={{
                                   maxWidth: "100%",
                                   maxHeight: 100,
+                               
                                   borderRadius: 4,
                                   border: "1px solid #e0e0e0",
                                 }}
@@ -1197,10 +1175,10 @@ const CreateProductForm = ({
                             </Box>
                           )}
                         </Box>
-                      </Grid>
+                      </Box>
 
                       {/* PDF Upload */}
-                      <Grid item xs={12} md={6}>
+                      < Box>
                         <Box>
                           <Typography
                             variant="subtitle2"
@@ -1300,36 +1278,32 @@ const CreateProductForm = ({
                             </Typography>
                           )}
                         </Box>
-                      </Grid>
+                      </Box>
 
                       {/* Save/Update Button */}
-                      <Grid item xs={12}>
-                        <Button
-                          variant="contained"
-                          startIcon={
-                            loading ? (
-                              <CircularProgress size={16} color="inherit" />
-                            ) : (
-                              <SaveIcon />
-                            )
-                          }
-                          onClick={handleSaveProduct}
-                          disabled={loading || uploadingImage || uploadingPdf}
-                          fullWidth
-                          color={isUpdateMode ? "secondary" : "primary"}
-                          sx={{ mt: 2, py: 1.5 }}
-                        >
-                          {loading
-                            ? isUpdateMode
-                              ? "Updating..."
-                              : "Creating..."
-                            : isUpdateMode
-                            ? "Update Product"
-                            : "Create Product"}
-                        </Button>
-                      </Grid>
-                    </Grid>
-                  </Paper>
+                      <Box sx={{ gridColumn: "1 / -1" }}>
+    <Button
+      variant="contained"
+      fullWidth
+      startIcon={
+        loading ? <CircularProgress size={16} /> : <SaveIcon />
+      }
+      onClick={handleSaveProduct}
+      disabled={loading || uploadingImage || uploadingPdf}
+      color={isUpdateMode ? "secondary" : "primary"}
+      sx={{ py: 1.5 }}
+    >
+      {loading
+        ? isUpdateMode
+          ? "Updating..."
+          : "Creating..."
+        : isUpdateMode
+        ? "Update Product"
+        : "Create Product"}
+    </Button>
+  </Box>
+                    </Box>
+                
                 </Grid>
               </Grid>
             </form>
