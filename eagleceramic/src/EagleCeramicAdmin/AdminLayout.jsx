@@ -168,7 +168,7 @@ const AdminLayout = () => {
     };
 
     verifyAndInitializeAdmin();
-  }, [token, location.pathname, navigate]);
+  }, [token]);
 
   // Show loading state
   if (loading) {
