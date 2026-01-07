@@ -323,23 +323,28 @@ const ProductAndSize = () => {
                                 </Stack>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Typography component="div">
-                                    {item.productSizes && item.productSizes.length > 0 ? (
-                                        <Grid container spacing={2}>
-                                            {item.productSizes.map((data, index) => (
-                                                <Grid item xs={12} sm={6} md={4} key={index}>
-                                                    <Card
-                                                        sx={{
-                                                            height: '100%',
-                                                            display: 'flex',
-                                                            flexDirection: 'column',
-                                                            transition: 'transform 0.2s',
-                                                            '&:hover': {
-                                                                transform: 'translateY(-4px)',
-                                                                boxShadow: 3
-                                                            }
-                                                        }}
-                                                    >
+                               <Typography component="div">
+    {item.productSizes && item.productSizes.length > 0 ? (
+       <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(3, 1fr)', // Fixed 3 columns
+            gap: 2 // Spacing between cards
+        }}>
+            {item.productSizes.map((data, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                    <Card
+                        sx={{
+                            height: '100%',
+                            display: 'flex',
+                            // width:"50%",
+                            flexDirection: 'column',
+                            transition: 'transform 0.2s',
+                            '&:hover': {
+                                transform: 'translateY(-4px)',
+                                boxShadow: 3
+                            }
+                        }}
+                    >
                                                         <Box sx={{ p: 2, textAlign: 'center', flexGrow: 1 }}>
                                                             {data.image ? (
                                                                 <Avatar
@@ -386,7 +391,7 @@ const ProductAndSize = () => {
                                                     </Card>
                                                 </Grid>
                                             ))}
-                                        </Grid>
+                                        </Box>
                                     ) : (
                                         <Typography color="text.secondary" sx={{ textAlign: 'center', py: 2 }}>
                                             No sizes added for this product

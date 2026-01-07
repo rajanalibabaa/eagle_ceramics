@@ -621,45 +621,68 @@ const CreateProductPage = () => {
   };
 
   const handleFormSuccess = async () => {
-    showSnackbar(
-      modalMode === "update" ? "Updated successfully" : "Created successfully",
-      "success"
-    );
-    
-    if (editingProduct?.productName) {
-      // Clear cache for this product
-      const keysToDelete = Object.keys(catalogCache).filter(key => 
-        key.startsWith(editingProduct.productName)
-      );
-      keysToDelete.forEach(key => {
-        setCatalogCache(prev => {
-          const newCache = { ...prev };
-          delete newCache[key];
-          return newCache;
-        });
-      });
-    }
-    
-    await fetchFilterData();
-    
-    // Re-fetch if expanded
-    if (expanded && editingProduct?.productName) {
-      const product = filteredData.find(p => p.productName === editingProduct.productName);
-      if (product) {
-        // Check if any size is expanded for this product
-        const expandedSizeKey = Object.keys(expandedSizes).find(key => 
-          key.startsWith(editingProduct.productName) && expandedSizes[key]
-        );
-        
-        if (expandedSizeKey) {
-          const size = expandedSizeKey.split('-')[1];
-          await fetchCatalogForProduct(editingProduct.productName, size);
-        }
-      }
-    }
-    
+  showSnackbar(
+    modalMode === "update" ? "Updated successfully" : "Created successfully",
+    "success"
+  );
+
+  if (!editingProduct?.productName) {
     handleCloseModal();
-  };
+    return;
+  }
+
+  const productName = editingProduct.productName;
+  const targetSize = editingProduct.targetSize; // Size of the updated item (if single-item edit)
+
+  // 1️⃣ Clear ALL cache entries for this product
+  setCatalogCache(prev => {
+    const newCache = { ...prev };
+    Object.keys(newCache).forEach(key => {
+      if (key.startsWith(productName)) delete newCache[key];
+    });
+    return newCache;
+  });
+
+  // 2️⃣ Re‑fetch filter data (product list)
+  await fetchFilterData();
+
+  // 3️⃣ Re‑fetch catalogue data for this product
+  //    • If editing a SINGLE item → fetch THAT size
+  //    • If bulk edit/create → fetch ALL sizes of the product
+  try {
+    if (editingProduct.editingSingleItem && targetSize) {
+      // Fetch ONLY the affected size
+      await fetchCatalogForProduct(productName, targetSize);
+    } else {
+      // Fetch ALL sizes for the product (no size filter)
+      await fetchCatalogForProduct(productName);
+    }
+
+    // 4️⃣ If the product's accordion is OPEN, ensure sizes are expanded correctly
+    const productPanelId = filteredData.find(p => p.productName === productName)?.uuid || "";
+    
+    // ✅ Refresh expanded sizes for this product
+    if (expanded === productPanelId) {
+      // Get all sizes currently expanded for this product
+      const expandedSizeKeys = Object.keys(expandedSizes).filter(
+        key => key.startsWith(productName) && expandedSizes[key]
+      );
+
+      // Re‑fetch data for each expanded size
+      const fetchPromises = expandedSizeKeys.map(key => {
+        const size = key.split('-')[1];
+        return fetchCatalogForProduct(productName, size);
+      });
+
+      await Promise.all(fetchPromises);
+    }
+  } catch (error) {
+    console.error("❌ Error refreshing catalogue:", error);
+    showSnackbar("Failed to refresh data", "error");
+  }
+
+  handleCloseModal();
+};
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
@@ -971,10 +994,11 @@ const CreateProductPage = () => {
                                   </Box>
                                 ) : (
                                   <Box>
-                                 
-                                    
-                                    <Grid container spacing={2}>
-                                      {items.map((item, itemIndex) => (
+<Box sx={{ 
+    display: 'grid', 
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: 2
+}}>                                      {items.map((item, itemIndex) => (
                                         <Grid item xs={12} sm={6} md={4} key={item.uuid}>
                                           <Paper
                                             elevation={2}
@@ -1059,7 +1083,7 @@ const CreateProductPage = () => {
                                           </Paper>
                                         </Grid>
                                       ))}
-                                    </Grid>
+                                    </Box>
                                     
                                   
                                   </Box>
