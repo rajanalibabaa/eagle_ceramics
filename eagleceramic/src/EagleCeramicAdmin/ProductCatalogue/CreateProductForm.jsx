@@ -48,8 +48,84 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
+import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 
-const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
+const API_BASE_URL = "https://clientbackend.cholabiz.com/api/v1";
+
+// ==========================
+// FILE VALIDATION CONSTANTS
+// ==========================
+
+// File size constants (in bytes)
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+const MAX_PDF_SIZE = 7 * 1024 * 1024; // 7MB
+
+// Valid image MIME types
+const isValidImageType = (file) => {
+  const validTypes = [
+    "image/jpeg",
+    "image/jpg",
+    "image/png",
+    "image/gif",
+    "image/webp",
+    "image/svg+xml",
+  ];
+  return validTypes.includes(file.type);
+};
+
+// Valid PDF MIME type
+const isValidPdfType = (file) => {
+  return file.type === "application/pdf";
+};
+
+// Format file size for display
+const formatFileSize = (bytes) => {
+  if (bytes === 0) return "0 Bytes";
+  const k = 1024;
+  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+};
+
+// Validate image file (type + size)
+const validateImageFile = (file) => {
+  const errors = [];
+
+  if (!isValidImageType(file)) {
+    errors.push(
+      "Please select a valid image file (JPEG, PNG, GIF, WebP, SVG)"
+    );
+  }
+
+  if (file.size > MAX_IMAGE_SIZE) {
+    errors.push(
+      `Image size must be less than ${formatFileSize(
+        MAX_IMAGE_SIZE
+      )}. Current size: ${formatFileSize(file.size)}`
+    );
+  }
+
+  return errors;
+};
+
+// Validate PDF file (type + size)
+const validatePdfFile = (file) => {
+  const errors = [];
+
+  if (!isValidPdfType(file)) {
+    errors.push("Please select a valid PDF file");
+  }
+
+  if (file.size > MAX_PDF_SIZE) {
+    errors.push(
+      `PDF size must be less than ${formatFileSize(
+        MAX_PDF_SIZE
+      )}. Current size: ${formatFileSize(file.size)}`
+    );
+  }
+
+  return errors;
+};
 
 const CreateProductForm = ({
   openModal,
@@ -58,6 +134,7 @@ const CreateProductForm = ({
   editingProduct = null,
   onSuccess,
   onClose,
+  token,
 }) => {
   const modalTitle =
     mode === "update"
@@ -70,11 +147,12 @@ const CreateProductForm = ({
     productId: "",
     title: "",
     description: "",
-    buttonText: "View Details",
+    buttonText: "Explore Collection",
     imageFile: null,
     pdfFile: null,
   });
 
+  // products / editingIndex kept but no longer used in UI for create mode
   const [products, setProducts] = useState([]);
   const [editingIndex, setEditingIndex] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -88,6 +166,12 @@ const CreateProductForm = ({
   const [pdfName, setPdfName] = useState("");
   const [imageLoadError, setImageLoadError] = useState(false);
 
+  // For per-field file validation error messages
+  const [fileValidationErrors, setFileValidationErrors] = useState({
+    image: "",
+    pdf: "",
+  });
+
   // State for dropdowns
   const [productNameOptions, setProductNameOptions] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState("");
@@ -97,67 +181,79 @@ const CreateProductForm = ({
   // Track if dropdowns have been initialized for edit mode
   const dropdownsInitialized = useRef(false);
 
+  const isUpdateMode = mode === "update";
+
+  // Clear validation errors when component unmounts or modal closes
+  useEffect(() => {
+    return () => {
+      setFileValidationErrors({ image: "", pdf: "" });
+    };
+  }, []);
+
   // Fetch dropdown data when modal opens
   useEffect(() => {
     if (openModal) {
-      console.log("=== MODAL OPENED ===");
-      console.log("Mode:", mode);
-      console.log("Editing Product:", editingProduct);
-      dropdownsInitialized.current = false;
       fetchDropdownData();
     }
   }, [openModal]);
 
-  // Handle initial form setup for CREATE mode only
+  // Handle form setup based on mode
   useEffect(() => {
     if (!openModal) return;
 
     if (mode === "create") {
       resetForm();
-    }
-  }, [mode, openModal]);
-
-  // Handle form setup for UPDATE mode
-  useEffect(() => {
-    if (!openModal || mode !== "update" || !editingProduct) return;
-
-    console.log("=== SETTING UP UPDATE MODE ===");
-    console.log("Editing Product:", editingProduct);
-
-    setProductData({
-      productName: editingProduct.productName || "",
-      productSize: editingProduct.productSize || "",
-      productId: editingProduct.productId || "",
-      title: editingProduct.title || "",
-      description: editingProduct.description || "",
-      buttonText: editingProduct.buttonText || "View Details",
-      imageFile: null,
-      pdfFile: null,
-    });
-
-    if (editingProduct.imageUrl) {
-      setImagePreview(editingProduct.imageUrl);
-      setImageLoadError(false);
-    } else {
-      setImagePreview("");
+      return;
     }
 
-    if (editingProduct.pdfUrl) {
-      const pdfFilename =
-        editingProduct.pdfUrl.split("/").pop() || "Existing PDF";
-      setPdfName(pdfFilename);
-    } else {
-      setPdfName("");
+    if (mode === "update" && editingProduct) {
+      console.log("=== SETTING UP UPDATE MODE ===");
+      console.log("Editing Product:", editingProduct);
+      console.log("Mode:", mode);
+
+      // Reset dropdown initialization flag
+      dropdownsInitialized.current = false;
+
+      const formData = {
+        productName: editingProduct.productName || "",
+        productSize: editingProduct.productSize || "",
+        productId: editingProduct.productId || editingProduct.uuid || "",
+        title: editingProduct.title || "",
+        description: editingProduct.description || "",
+        buttonText: editingProduct.buttonText || "Explore Collection",
+        imageFile: null,
+        pdfFile: null,
+      };
+
+      console.log("Form Data to set:", formData);
+      setProductData(formData);
+
+      if (editingProduct.imageUrl) {
+        setImagePreview(editingProduct.imageUrl);
+        setImageLoadError(false);
+      } else {
+        setImagePreview("");
+      }
+
+      if (editingProduct.pdfUrl) {
+        const pdfFilename =
+          editingProduct.pdfUrl.split("/").pop() || "Existing PDF";
+        setPdfName(pdfFilename);
+      } else {
+        setPdfName("");
+      }
+
+      setFileValidationErrors({ image: "", pdf: "" });
     }
   }, [editingProduct, mode, openModal]);
 
-  // Handle dropdown initialization for UPDATE mode AFTER dropdowns are loaded
+  // Handle dropdown initialization AFTER data is loaded for UPDATE mode
   useEffect(() => {
     if (mode !== "update" || !editingProduct || !openModal) return;
     if (productNameOptions.length === 0 || dropdownsInitialized.current) return;
 
     console.log("=== INITIALIZING DROPDOWNS FOR UPDATE ===");
-    console.log("Looking for product:", editingProduct.productName);
+    console.log("Editing product name:", editingProduct.productName);
     console.log("Available options:", productNameOptions);
 
     const matchingProduct = productNameOptions.find(
@@ -169,11 +265,33 @@ const CreateProductForm = ({
       setSelectedProductId(matchingProduct.id);
       setAvailableSizes(matchingProduct.sizes || []);
       dropdownsInitialized.current = true;
+
+      setProductData((prev) => ({
+        ...prev,
+        productId: matchingProduct.id,
+        productName: matchingProduct.name,
+        productSize: prev.productSize || editingProduct.productSize || "",
+      }));
     } else {
-      console.warn("❌ No matching product found for:", editingProduct.productName);
-      console.log("Available names:", productNameOptions.map((o) => o.name));
-      setSelectedProductId("");
+      console.warn(
+        "❌ No matching product found for:",
+        editingProduct.productName
+      );
+      console.log(
+        "Available names:",
+        productNameOptions.map((o) => o.name)
+      );
+
+      setSelectedProductId(
+        editingProduct.productId || editingProduct.uuid || ""
+      );
       setAvailableSizes([]);
+
+      setProductData((prev) => ({
+        ...prev,
+        productName: editingProduct.productName || "",
+        productSize: editingProduct.productSize || "",
+      }));
     }
   }, [editingProduct, mode, openModal, productNameOptions]);
 
@@ -181,17 +299,31 @@ const CreateProductForm = ({
     try {
       setLoadingDropdowns(true);
       console.log("=== FETCHING DROPDOWN DATA ===");
+      const token = getAdminToken();
+      if (!token) {
+        setErrorMessage("Authentication token not found. Please login again.");
+        setErrorSnackbar(true);
+        setLoadingDropdowns(false);
+        return;
+      }
 
-      const response = await axios.get(`${API_BASE_URL}/product-sizes/dropdown`);
+      const response = await axios.get(
+        `${API_BASE_URL}/eagle-ceramic/product-sizes/dropdown`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       console.log("API Response:", response.data);
 
       if (response.data.success) {
         const responseData = response.data.data;
-        
-        // Handle different response structures
+
         let filterData = [];
-        
+
         if (Array.isArray(responseData)) {
           filterData = responseData;
         } else if (responseData.filterdata) {
@@ -215,7 +347,12 @@ const CreateProductForm = ({
       }
     } catch (error) {
       console.error("Error fetching dropdown data:", error);
-      setErrorMessage("Failed to load dropdown options");
+
+      if (error.response?.status === 401) {
+        setErrorMessage("Session expired. Please login again.");
+      } else {
+        setErrorMessage("Failed to load dropdown options");
+      }
       setErrorSnackbar(true);
     } finally {
       setLoadingDropdowns(false);
@@ -276,37 +413,101 @@ const CreateProductForm = ({
     if (onClose) onClose();
   };
 
+  // ==========================
+  // IMAGE FILE SELECT + VALIDATION
+  // ==========================
   const handleImageFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (!file.type.startsWith("image/")) {
-        setErrorMessage("Please select a valid image file.");
-        setErrorSnackbar(true);
-        return;
-      }
-      if (imagePreview && imagePreview.startsWith("blob:")) {
-        URL.revokeObjectURL(imagePreview);
-      }
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-      setProductData((prev) => ({ ...prev, imageFile: file }));
-      setImageLoadError(false);
+    if (!file) return;
+
+    // Clear previous validation error
+    setFileValidationErrors((prev) => ({ ...prev, image: "" }));
+
+    // Validate image file (type + size)
+    const imageErrors = validateImageFile(file);
+
+    if (imageErrors.length > 0) {
+      const message = imageErrors.join(". ");
+      setFileValidationErrors((prev) => ({
+        ...prev,
+        image: message,
+      }));
+      setErrorMessage(message);
+      setErrorSnackbar(true);
+      e.target.value = ""; // Clear file input
+      return;
     }
+
+    // Clean up previous preview if blob
+    if (imagePreview && imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
+    }
+
+    const previewUrl = URL.createObjectURL(file);
+    setImagePreview(previewUrl);
+    setProductData((prev) => ({ ...prev, imageFile: file }));
+    setImageLoadError(false);
+
+    setErrorMessage("");
+    setFileValidationErrors((prev) => ({ ...prev, image: "" }));
   };
 
+  // ==========================
+  // PDF FILE SELECT + VALIDATION
+  // ==========================
   const handlePdfFileSelect = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (file.type !== "application/pdf") {
-        setErrorMessage("Please select a PDF file");
-        setErrorSnackbar(true);
-        return;
-      }
-      setPdfName(file.name);
-      setProductData((prev) => ({ ...prev, pdfFile: file }));
+    if (!file) return;
+
+    // Clear previous validation error
+    setFileValidationErrors((prev) => ({ ...prev, pdf: "" }));
+
+    // Validate PDF file (type + size)
+    const pdfErrors = validatePdfFile(file);
+
+    if (pdfErrors.length > 0) {
+      const message = pdfErrors.join(". ");
+      setFileValidationErrors((prev) => ({
+        ...prev,
+        pdf: message,
+      }));
+      setErrorMessage(message);
+      setErrorSnackbar(true);
+      e.target.value = ""; // Clear file input
+      return;
     }
+
+    setPdfName(file.name);
+    setProductData((prev) => ({ ...prev, pdfFile: file }));
+
+    setErrorMessage("");
+    setFileValidationErrors((prev) => ({ ...prev, pdf: "" }));
   };
 
+  const removeImage = () => {
+    if (imagePreview && imagePreview.startsWith("blob:")) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview("");
+    setProductData((prev) => ({
+      ...prev,
+      imageFile: null,
+    }));
+    setFileValidationErrors((prev) => ({ ...prev, image: "" }));
+  };
+
+  const removePdf = () => {
+    setPdfName("");
+    setProductData((prev) => ({
+      ...prev,
+      pdfFile: null,
+    }));
+    setFileValidationErrors((prev) => ({ ...prev, pdf: "" }));
+  };
+
+  // ==========================
+  // SAVE PRODUCT (CREATE/UPDATE) + VALIDATION
+  // ==========================
   const handleSaveProduct = () => {
     console.log("=== SAVE PRODUCT ===");
     console.log("Mode:", mode);
@@ -314,44 +515,94 @@ const CreateProductForm = ({
     console.log("Selected Product ID:", selectedProductId);
 
     if (mode === "create") {
+      // Clear validation errors
+      setFileValidationErrors({ image: "", pdf: "" });
+
       if (!productData.productName) {
         setErrorMessage("Product Name is required.");
         setErrorSnackbar(true);
         return;
       }
+
+      // IMAGE VALIDATION (required + size)
       if (!productData.imageFile) {
         setErrorMessage("Product Image is required.");
         setErrorSnackbar(true);
+        setFileValidationErrors((prev) => ({
+          ...prev,
+          image: "Image is required",
+        }));
         return;
+      } else {
+        const imageErrors = validateImageFile(productData.imageFile);
+        if (imageErrors.length > 0) {
+          const message = imageErrors.join(". ");
+          setErrorMessage(message);
+          setErrorSnackbar(true);
+          setFileValidationErrors((prev) => ({
+            ...prev,
+            image: message,
+          }));
+          return;
+        }
       }
+
+      // PDF VALIDATION (required + size)
       if (!productData.pdfFile) {
         setErrorMessage("Product PDF is required.");
         setErrorSnackbar(true);
+        setFileValidationErrors((prev) => ({
+          ...prev,
+          pdf: "PDF is required",
+        }));
         return;
-      }
-
-      const existingProductIndex = products.findIndex(
-        (p) =>
-          p.productName === productData.productName &&
-          p.productSize === productData.productSize
-      );
-
-      if (existingProductIndex >= 0 && editingIndex !== existingProductIndex) {
-        setErrorMessage("A product with this name and size already exists.");
-        setErrorSnackbar(true);
-        return;
-      }
-
-      if (editingIndex !== null) {
-        const updatedProducts = [...products];
-        updatedProducts[editingIndex] = { ...productData };
-        setProducts(updatedProducts);
       } else {
-        setProducts((prev) => [...prev, { ...productData }]);
+        const pdfErrors = validatePdfFile(productData.pdfFile);
+        if (pdfErrors.length > 0) {
+          const message = pdfErrors.join(". ");
+          setErrorMessage(message);
+          setErrorSnackbar(true);
+          setFileValidationErrors((prev) => ({
+            ...prev,
+            pdf: message,
+          }));
+          return;
+        }
       }
 
-      resetForm();
+      // All good -> create directly
+      handleSubmit();
     } else {
+      // UPDATE MODE: validate only if new files are provided
+      if (productData.imageFile) {
+        const imageErrors = validateImageFile(productData.imageFile);
+        if (imageErrors.length > 0) {
+          const message = imageErrors.join(". ");
+          setErrorMessage(message);
+          setErrorSnackbar(true);
+          setFileValidationErrors((prev) => ({
+            ...prev,
+            image: message,
+          }));
+          return;
+        }
+      }
+
+      if (productData.pdfFile) {
+        const pdfErrors = validatePdfFile(productData.pdfFile);
+        if (pdfErrors.length > 0) {
+          const message = pdfErrors.join(". ");
+          setErrorMessage(message);
+          setErrorSnackbar(true);
+          setFileValidationErrors((prev) => ({
+            ...prev,
+            pdf: message,
+          }));
+          return;
+        }
+      }
+
+      // Proceed to submit update
       handleSubmit();
     }
   };
@@ -380,6 +631,7 @@ const CreateProductForm = ({
     }
 
     setEditingIndex(index);
+    setFileValidationErrors({ image: "", pdf: "" });
   };
 
   const handleDeleteProduct = (index) => {
@@ -398,7 +650,7 @@ const CreateProductForm = ({
       productId: "",
       title: "",
       description: "",
-      buttonText: "View Details",
+      buttonText: "Explore Collection",
       imageFile: null,
       pdfFile: null,
     });
@@ -411,183 +663,186 @@ const CreateProductForm = ({
     setImagePreview("");
     setPdfName("");
     setImageLoadError(false);
+    setFileValidationErrors({ image: "", pdf: "" });
   };
 
   const handleSubmit = async (e) => {
-  if (e) e.preventDefault();
+    if (e) e.preventDefault();
 
-  if (mode === "create" && products.length === 0) {
-    setErrorMessage("Please add at least one product before submitting");
-    setErrorSnackbar(true);
-    return;
-  }
+    const token = getAdminToken();
+    if (!token) {
+      setErrorMessage("Authentication token not found. Please login again.");
+      setErrorSnackbar(true);
+      return;
+    }
 
-  if (mode === "update" && !productData.productName) {
-    setErrorMessage("Product Name is required");
-    setErrorSnackbar(true);
-    return;
-  }
+    if (mode === "update" && (!productData.productName || !editingProduct?.uuid)) {
+      setErrorMessage("Product Name and Catalog ID are required");
+      setErrorSnackbar(true);
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    if (mode === "update" && editingProduct) {
-      const formData = new FormData();
-      
-      // Add all form data
-      formData.append("productName", productData.productName);
-      formData.append("productSize", productData.productSize || "");
-      formData.append("title", productData.title || "");
-      formData.append("description", productData.description || "");
-      formData.append("buttonText", productData.buttonText || "View Details");
-
-      // Handle image
-      if (productData.imageFile instanceof File) {
-        formData.append("image", productData.imageFile);
-      } else if (editingProduct.imageUrl || editingProduct.mageln21) {
-        formData.append("existingImageUrl", editingProduct.imageUrl || editingProduct.mageln21);
-      }
-
-      // Handle PDF
-      if (productData.pdfFile instanceof File) {
-        formData.append("pdf", productData.pdfFile);
-      } else if (editingProduct.pdfUrl || editingProduct.pdfurl) {
-        formData.append("existingPdfUrl", editingProduct.pdfUrl || editingProduct.pdfurl);
-      }
-
-      // Get the catalog ID - check all possible ID fields
-      const catalogId = editingProduct.uuid || editingProduct._id || editingProduct.uid || editingProduct.id;
-      
-      if (!catalogId) {
-        throw new Error("Catalog ID not found for update");
-      }
-
-      console.log("=== UPDATE REQUEST (PATCH) ===");
-      console.log("Catalog ID:", catalogId);
-      
-      // ✅ USE PATCH INSTEAD OF PUT
-      const updateUrl = `${API_BASE_URL}/catalog/update/${catalogId}`;
-      console.log("Update URL:", updateUrl);
-      console.log("HTTP Method: PATCH");
-      
-      // Log FormData contents for debugging
-      console.log("FormData contents:");
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
-      }
-
-      // ✅ FIXED: Use PATCH instead of PUT
-      const response = await axios.patch(
-        updateUrl,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      console.log("Update Response:", response.data);
-
-      if (response.data.success) {
-        setSuccessSnackbar(true);
-        if (onSuccess) onSuccess();
-        setTimeout(() => {
-          handleCloseModal();
-        }, 1500);
-      } else {
-        throw new Error(response.data.message || "Update failed");
-      }
-    } else {
-      // CREATE mode - existing code remains the same
-      for (let i = 0; i < products.length; i++) {
-        const product = products[i];
+      if (mode === "update" && editingProduct) {
         const formData = new FormData();
-        
-        if (product.productId || selectedProductId) {
-          formData.append("productId", product.productId || selectedProductId);
-        }
-        
-        formData.append("productName", product.productName);
-        formData.append("productSize", product.productSize || "");
-        formData.append("title", product.title || "");
-        formData.append("description", product.description || "");
-        formData.append("buttonText", product.buttonText || "View Details");
+        formData.append("productName", productData.productName);
+        formData.append("productSize", productData.productSize || "");
+        formData.append("title", productData.title || "");
+        formData.append("description", productData.description || "");
+        formData.append("buttonText", productData.buttonText || "Explore Collection");
 
-        if (product.imageFile) {
-          formData.append("image", product.imageFile);
+        const catalogId = editingProduct.uuid;
+
+        console.log("=== UPDATE REQUEST ===");
+        console.log("Catalog ID (uuid):", catalogId);
+        console.log("Editing Product:", editingProduct);
+        console.log("Product Data:", productData);
+
+        if (productData.imageFile instanceof File) {
+          console.log("Adding new image file:", productData.imageFile.name);
+          console.log("Image size:", formatFileSize(productData.imageFile.size));
+          formData.append("image", productData.imageFile);
+        } else {
+          console.log("Keeping existing image:", editingProduct.imageUrl);
         }
 
-        if (product.pdfFile) {
-          formData.append("pdf", product.pdfFile);
+        if (productData.pdfFile instanceof File) {
+          console.log("Adding new PDF file:", productData.pdfFile.name);
+          console.log("PDF size:", formatFileSize(productData.pdfFile.size));
+          formData.append("pdf", productData.pdfFile);
+        } else {
+          console.log("Keeping existing PDF:", editingProduct.pdfUrl);
+        }
+
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+          console.log(
+            `${key}:`,
+            value instanceof File
+              ? `File: ${value.name} (${formatFileSize(value.size)})`
+              : value
+          );
+        }
+
+        const endpoints = [
+          `${API_BASE_URL}/eagle-ceramic/catalog/update/${catalogId}`,
+          `${API_BASE_URL}/eagle-ceramic/catalog/delete/${catalogId}`,
+          `${API_BASE_URL}/eagle-ceramic/catalog/${catalogId}`,
+        ];
+
+        let response;
+        let lastError;
+
+        for (const endpoint of endpoints) {
+          try {
+            console.log(`Trying endpoint: ${endpoint}`);
+            response = await axios.patch(endpoint, formData, {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            console.log(`Success with endpoint: ${endpoint}`);
+            break;
+          } catch (error) {
+            lastError = error;
+            console.log(
+              `Failed with endpoint ${endpoint}:`,
+              error.response?.status
+            );
+          }
+        }
+
+        if (!response) {
+          throw lastError || new Error("All endpoints failed");
+        }
+
+        console.log("Update Response:", response.data);
+
+        if (response.data.success) {
+          setSuccessSnackbar(true);
+          if (onSuccess) onSuccess();
+          setTimeout(() => {
+            handleCloseModal();
+          }, 1500);
+        } else {
+          throw new Error(response.data.message || "Update failed");
+        }
+      } else {
+        // CREATE MODE - single product from productData
+        const formData = new FormData();
+        formData.append("productName", productData.productName);
+        formData.append("productSize", productData.productSize || "");
+        formData.append("title", productData.title || "");
+        formData.append("description", productData.description || "");
+        formData.append(
+          "buttonText",
+          productData.buttonText || "Explore Collection"
+        );
+
+        if (productData.imageFile) {
+          console.log(
+            `Image size:`,
+            formatFileSize(productData.imageFile.size)
+          );
+          formData.append("image", productData.imageFile);
+        }
+
+        if (productData.pdfFile) {
+          console.log(`PDF size:`, formatFileSize(productData.pdfFile.size));
+          formData.append("pdf", productData.pdfFile);
         }
 
         const createResponse = await axios.post(
-          `${API_BASE_URL}/catalog/create`, 
+          `${API_BASE_URL}/eagle-ceramic/catalog/create`,
           formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
             },
           }
         );
         console.log("Create Response:", createResponse.data);
+
+        if (createResponse.data.success) {
+          setSuccessSnackbar(true);
+          if (onSuccess) onSuccess();
+          setTimeout(() => {
+            handleCloseModal();
+          }, 1500);
+        } else {
+          throw new Error(createResponse.data.message || "Create failed");
+        }
+      }
+    } catch (error) {
+      console.error("=== SUBMIT ERROR ===");
+      console.error("Error:", error);
+      console.error("Error Response:", error.response?.data);
+      console.error("Error Status:", error.response?.status);
+      console.error("Error URL:", error.config?.url);
+
+      let errorMsg = "Operation failed. Please check the endpoint.";
+      if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.message) {
+        errorMsg = error.message;
       }
 
-      setSuccessSnackbar(true);
-      setProducts([]);
-      if (onSuccess) onSuccess();
-      setTimeout(() => {
-        handleCloseModal();
-      }, 1500);
+      setErrorMessage(`Error: ${errorMsg}`);
+      setErrorSnackbar(true);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("=== SUBMIT ERROR ===");
-    console.error("Error:", error);
-    console.error("Error Status:", error.response?.status);
-    console.error("Error URL:", error.config?.url);
-    console.error("Error Method:", error.config?.method);
-    
-    // Better error message
-    let errorMsg = "Operation failed";
-    if (error.response?.status === 404) {
-      errorMsg = `API endpoint not found: ${error.config?.method} ${error.config?.url}`;
-      console.error("404 Error - Check if endpoint exists on server");
-      
-      // Try other HTTP methods for debugging
-      console.log("Testing other HTTP methods...");
-      const testId = editingProduct?.uuid || "test-id";
-      const testUrl = `${API_BASE_URL}/catalog/update/${testId}`;
-      
-      console.log("Test URL:", testUrl);
-      console.log("Trying GET...");
-      console.log("Trying PUT...");
-      console.log("Trying PATCH...");
-      console.log("Trying POST...");
-      
-    } else if (error.response?.status === 405) {
-      errorMsg = `Method not allowed: ${error.config?.method}. Try using POST or PUT instead.`;
-    } else if (error.response?.status === 500) {
-      errorMsg = "Server error. Please check server logs.";
-    } else if (error.response?.data?.message) {
-      errorMsg = error.response.data.message;
-    } else if (error.message) {
-      errorMsg = error.message;
-    }
-    
-    setErrorMessage(errorMsg);
-    setErrorSnackbar(true);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleCloseSnackbar = () => {
     setSuccessSnackbar(false);
     setErrorSnackbar(false);
   };
 
-  const isUpdateMode = mode === "update";
   const hasExistingImage =
     isUpdateMode && editingProduct?.imageUrl && !productData.imageFile;
   const hasExistingPdf =
@@ -653,7 +908,7 @@ const CreateProductForm = ({
           >
             {isUpdateMode
               ? "Product updated successfully!"
-              : "Products created successfully!"}
+              : "Product created successfully!"}
           </Alert>
         </Snackbar>
 
@@ -676,10 +931,16 @@ const CreateProductForm = ({
           <Box
             sx={{ p: { xs: 2, md: 3 }, overflow: "auto", maxHeight: "70vh" }}
           >
-            <form onSubmit={handleSubmit}>
+            {/* IMPORTANT: submit goes through handleSaveProduct (validations) */}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSaveProduct();
+              }}
+            >
               <Grid container spacing={3}>
-                {/* Left Column - Form */}
-                <Grid item xs={12} md={isUpdateMode ? 12 : 6}>
+                {/* Single Column - Form (full width for both create & update) */}
+                <Grid item xs={12} md={12}>
                   <Paper
                     sx={{
                       p: 3,
@@ -688,27 +949,17 @@ const CreateProductForm = ({
                       height: "100%",
                     }}
                   >
-                    <Typography
-                      variant="h6"
-                      fontWeight="600"
-                      gutterBottom
-                      color="primary"
-                      sx={{
-                        mb: 3,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                      }}
-                    >
-                      <InventoryIcon />
-                      {isUpdateMode ? "Update Product Details" : "Add New Product"}
-                    </Typography>
-
-                    {isUpdateMode && editingProduct && (
+                    {isUpdateMode && loadingDropdowns && (
                       <Alert severity="info" sx={{ mb: 2 }}>
-                        Editing: <strong>{editingProduct.productName}</strong>
-                        {editingProduct.productSize &&
-                          ` (Size: ${editingProduct.productSize})`}
+                        Loading dropdowns... Current values:
+                        <Box
+                          component="span"
+                          sx={{ ml: 1, fontWeight: "bold" }}
+                        >
+                          {productData.productName}{" "}
+                          {productData.productSize &&
+                            `(${productData.productSize})`}
+                        </Box>
                       </Alert>
                     )}
 
@@ -736,20 +987,13 @@ const CreateProductForm = ({
                               },
                             }}
                           >
-                            <MenuItem value="">
-                              <em>-- Select Product Name --</em>
-                            </MenuItem>
+                           
                             {productNameOptions.map((option) => (
                               <MenuItem key={option.id} value={option.id}>
-                                {option.name} 
+                                {option.name}
                               </MenuItem>
                             ))}
                           </Select>
-                          <FormHelperText>
-                            {loadingDropdowns
-                              ? "Loading products..."
-                              : `${productNameOptions.length} products available`}
-                          </FormHelperText>
                         </FormControl>
                       </Grid>
 
@@ -775,20 +1019,13 @@ const CreateProductForm = ({
                               },
                             }}
                           >
-                            <MenuItem value="">
-                              <em>-- Select Size (Optional) --</em>
-                            </MenuItem>
+                          
                             {availableSizes.map((size, index) => (
                               <MenuItem key={`size-${index}`} value={size}>
                                 {size}
                               </MenuItem>
                             ))}
                           </Select>
-                          <FormHelperText>
-                            {!selectedProductId
-                              ? "Select a product first"
-                              : `${availableSizes.length} sizes available`}
-                          </FormHelperText>
                         </FormControl>
                       </Grid>
 
@@ -849,122 +1086,220 @@ const CreateProductForm = ({
 
                       {/* Image Upload */}
                       <Grid item xs={12} md={6}>
-                        <Typography
-                          variant="subtitle2"
-                          fontWeight="500"
-                          gutterBottom
-                        >
-                          Product Image {!isUpdateMode && "*"}
-                        </Typography>
-                        <Button
-                          variant="outlined"
-                          component="label"
-                          startIcon={<CloudUploadIcon />}
-                          disabled={uploadingImage || loading}
-                          size="small"
-                          fullWidth
-                        >
-                          {productData.imageFile
-                            ? "Change Image"
-                            : hasExistingImage
-                            ? "Replace Image"
-                            : "Upload Image *"}
-                          <input
-                            type="file"
-                            hidden
-                            accept="image/*"
-                            onChange={handleImageFileSelect}
-                          />
-                        </Button>
-                        {productData.imageFile && (
+                        <Box>
                           <Typography
-                            variant="caption"
-                            color="success.main"
-                            display="block"
-                            sx={{ mt: 1 }}
+                            variant="subtitle2"
+                            fontWeight="500"
+                            gutterBottom
                           >
-                            ✓ New: {productData.imageFile.name}
+                            Product Image {!isUpdateMode && "*"}
+                            <Typography
+                              component="span"
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ ml: 1 }}
+                            >
+                              (Max {formatFileSize(MAX_IMAGE_SIZE)})
+                            </Typography>
                           </Typography>
-                        )}
-                        {hasExistingImage && (
-                          <Typography
-                            variant="caption"
-                            color="info.main"
-                            display="block"
-                            sx={{ mt: 1 }}
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 1,
+                              alignItems: "center",
+                            }}
                           >
-                            📷 Current image will be kept
-                          </Typography>
-                        )}
-                        {imagePreview && (
-                          <Box sx={{ mt: 1 }}>
-                            <img
-                              src={imagePreview}
-                              alt="Preview"
-                              style={{
-                                maxWidth: "100%",
-                                maxHeight: 100,
-                                borderRadius: 4,
-                                border: "1px solid #e0e0e0",
-                              }}
-                            />
+                            <Button
+                              variant="outlined"
+                              component="label"
+                              startIcon={<CloudUploadIcon />}
+                              disabled={uploadingImage || loading}
+                              size="small"
+                              sx={{ flex: 1 }}
+                            >
+                              {productData.imageFile
+                                ? "Change Image"
+                                : hasExistingImage
+                                ? "Replace Image"
+                                : "Upload Image *"}
+                              <input
+                                type="file"
+                                hidden
+                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml"
+                                onChange={handleImageFileSelect}
+                              />
+                            </Button>
+
+                            {productData.imageFile && (
+                              <Tooltip title="Remove image">
+                                <IconButton
+                                  size="small"
+                                  color="error"
+                                  onClick={removeImage}
+                                  disabled={loading}
+                                >
+                                  <DeleteOutlineIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            )}
                           </Box>
-                        )}
+
+                          {/* File validation error */}
+                          {fileValidationErrors.image && (
+                            <Typography
+                              variant="caption"
+                              color="error"
+                              display="block"
+                              sx={{ mt: 0.5 }}
+                            >
+                              {fileValidationErrors.image}
+                            </Typography>
+                          )}
+
+                          {/* File info */}
+                          {productData.imageFile && (
+                            <Typography
+                              variant="caption"
+                              color="success.main"
+                              display="block"
+                              sx={{ mt: 0.5 }}
+                            >
+                              ✓ Selected: {productData.imageFile.name} (
+                              {formatFileSize(productData.imageFile.size)})
+                            </Typography>
+                          )}
+
+                          {hasExistingImage && (
+                            <Typography
+                              variant="caption"
+                              color="info.main"
+                              display="block"
+                              sx={{ mt: 0.5 }}
+                            >
+                              📷 Current image will be kept
+                            </Typography>
+                          )}
+
+                          {/* Image preview */}
+                          {imagePreview && (
+                            <Box sx={{ mt: 1 }}>
+                              <img
+                                src={imagePreview}
+                                alt="Preview"
+                                style={{
+                                  maxWidth: "100%",
+                                  maxHeight: 100,
+                                  borderRadius: 4,
+                                  border: "1px solid #e0e0e0",
+                                }}
+                              />
+                            </Box>
+                          )}
+                        </Box>
                       </Grid>
 
                       {/* PDF Upload */}
                       <Grid item xs={12} md={6}>
-                        <Typography
-                          variant="subtitle2"
-                          fontWeight="500"
-                          gutterBottom
-                        >
-                          Product PDF {!isUpdateMode && "*"}
-                        </Typography>
-                        <Button
-                          variant="outlined"
-                          component="label"
-                          startIcon={<AttachFileIcon />}
-                          disabled={uploadingPdf || loading}
-                          size="small"
-                          fullWidth
-                          sx={{
-                            borderColor: "error.main",
-                            color: "error.main",
-                          }}
-                        >
-                          {productData.pdfFile
-                            ? "Change PDF"
-                            : hasExistingPdf
-                            ? "Replace PDF"
-                            : "Upload PDF *"}
-                          <input
-                            type="file"
-                            hidden
-                            accept=".pdf"
-                            onChange={handlePdfFileSelect}
-                          />
-                        </Button>
-                        {productData.pdfFile && (
+                        <Box>
                           <Typography
-                            variant="caption"
-                            color="success.main"
-                            display="block"
-                            sx={{ mt: 1 }}
+                            variant="subtitle2"
+                            fontWeight="500"
+                            gutterBottom
                           >
-                            ✓ New: {productData.pdfFile.name}
+                            Product PDF {!isUpdateMode && "*"}
+                            <Typography
+                              component="span"
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ ml: 1 }}
+                            >
+                              (Max {formatFileSize(MAX_PDF_SIZE)})
+                            </Typography>
                           </Typography>
-                        )}
-                        {hasExistingPdf && (
-                          <Typography
-                            variant="caption"
-                            color="info.main"
-                            display="block"
-                            sx={{ mt: 1 }}
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 1,
+                              alignItems: "center",
+                            }}
                           >
-                            📄 Current: {pdfName}
-                          </Typography>
-                        )}
+                            <Button
+                              variant="outlined"
+                              component="label"
+                              startIcon={<AttachFileIcon />}
+                              disabled={uploadingPdf || loading}
+                              size="small"
+                              sx={{
+                                flex: 1,
+                                borderColor: "error.main",
+                                color: "error.main",
+                              }}
+                            >
+                              {productData.pdfFile
+                                ? "Change PDF"
+                                : hasExistingPdf
+                                ? "Replace PDF"
+                                : "Upload PDF *"}
+                              <input
+                                type="file"
+                                hidden
+                                accept=".pdf,application/pdf"
+                                onChange={handlePdfFileSelect}
+                              />
+                            </Button>
+
+                            {productData.pdfFile && (
+                              <Tooltip title="Remove PDF">
+                                <IconButton
+                                  size="small"
+                                  color="error"
+                                  onClick={removePdf}
+                                  disabled={loading}
+                                >
+                                  <DeleteOutlineIcon fontSize="small" />
+                                </IconButton>
+                              </Tooltip>
+                            )}
+                          </Box>
+
+                          {/* File validation error */}
+                          {fileValidationErrors.pdf && (
+                            <Typography
+                              variant="caption"
+                              color="error"
+                              display="block"
+                              sx={{ mt: 0.5 }}
+                            >
+                              {fileValidationErrors.pdf}
+                            </Typography>
+                          )}
+
+                          {/* File info */}
+                          {productData.pdfFile && (
+                            <Typography
+                              variant="caption"
+                              color="success.main"
+                              display="block"
+                              sx={{ mt: 0.5 }}
+                            >
+                              ✓ Selected: {productData.pdfFile.name} (
+                              {formatFileSize(productData.pdfFile.size)})
+                            </Typography>
+                          )}
+
+                          {hasExistingPdf && (
+                            <Typography
+                              variant="caption"
+                              color="info.main"
+                              display="block"
+                              sx={{ mt: 0.5 }}
+                            >
+                              📄 Current PDF: {pdfName}
+                            </Typography>
+                          )}
+                        </Box>
                       </Grid>
 
                       {/* Save/Update Button */}
@@ -987,226 +1322,15 @@ const CreateProductForm = ({
                           {loading
                             ? isUpdateMode
                               ? "Updating..."
-                              : "Saving..."
+                              : "Creating..."
                             : isUpdateMode
                             ? "Update Product"
-                            : editingIndex !== null
-                            ? "Update in List"
-                            : "Add to List"}
+                            : "Create Product"}
                         </Button>
                       </Grid>
                     </Grid>
                   </Paper>
                 </Grid>
-
-                {/* Right Column - Products List (CREATE mode only) */}
-                {!isUpdateMode && (
-                  <Grid item xs={12} md={6}>
-                    <Paper
-                      sx={{
-                        p: 3,
-                        borderRadius: 2,
-                        backgroundColor: "#ffffff",
-                        height: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Box sx={{ mb: 3 }}>
-                        <Typography
-                          variant="h6"
-                          fontWeight="600"
-                          color="primary"
-                          gutterBottom
-                        >
-                          Products to Create
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
-                          }}
-                        >
-                          <Typography variant="body2" color="text.secondary">
-                            {products.length} product
-                            {products.length !== 1 ? "s" : ""} added
-                          </Typography>
-                          {products.length > 0 && (
-                            <Button
-                              variant="text"
-                              color="error"
-                              size="small"
-                              startIcon={<DeleteOutlineIcon />}
-                              onClick={() => setProducts([])}
-                            >
-                              Clear All
-                            </Button>
-                          )}
-                        </Box>
-                      </Box>
-
-                      {products.length > 0 ? (
-                        <TableContainer
-                          sx={{
-                            flex: 1,
-                            borderRadius: 1,
-                            border: "1px solid #e0e0e0",
-                          }}
-                        >
-                          <Table size="small" stickyHeader>
-                            <TableHead>
-                              <TableRow>
-                                <TableCell sx={{ fontWeight: "bold" }}>#</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>
-                                  Product
-                                </TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Size</TableCell>
-                                <TableCell sx={{ fontWeight: "bold" }}>Title</TableCell>
-                                <TableCell
-                                  sx={{ fontWeight: "bold", textAlign: "center" }}
-                                >
-                                  Files
-                                </TableCell>
-                                <TableCell
-                                  sx={{ fontWeight: "bold", textAlign: "center" }}
-                                >
-                                  Actions
-                                </TableCell>
-                              </TableRow>
-                            </TableHead>
-                            <TableBody>
-                              {products.map((product, index) => (
-                                <TableRow
-                                  key={index}
-                                  hover
-                                  selected={editingIndex === index}
-                                  sx={{
-                                    backgroundColor:
-                                      editingIndex === index
-                                        ? "#e3f2fd"
-                                        : "inherit",
-                                  }}
-                                >
-                                  <TableCell>{index + 1}</TableCell>
-                                  <TableCell>
-                                    <Typography
-                                      variant="body2"
-                                      noWrap
-                                      sx={{ maxWidth: 100 }}
-                                    >
-                                      {product.productName || "N/A"}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell>
-                                    {product.productSize || "N/A"}
-                                  </TableCell>
-                                  <TableCell>
-                                    <Typography
-                                      variant="body2"
-                                      noWrap
-                                      sx={{ maxWidth: 100 }}
-                                    >
-                                      {product.title || "N/A"}
-                                    </Typography>
-                                  </TableCell>
-                                  <TableCell sx={{ textAlign: "center" }}>
-                                    <Stack
-                                      direction="row"
-                                      spacing={0.5}
-                                      justifyContent="center"
-                                    >
-                                      {product.imageFile ? (
-                                        <CheckCircleIcon
-                                          color="success"
-                                          fontSize="small"
-                                        />
-                                      ) : (
-                                        <ImageIcon
-                                          color="disabled"
-                                          fontSize="small"
-                                        />
-                                      )}
-                                      {product.pdfFile ? (
-                                        <PictureAsPdfIcon
-                                          color="error"
-                                          fontSize="small"
-                                        />
-                                      ) : (
-                                        <PictureAsPdfIcon
-                                          color="disabled"
-                                          fontSize="small"
-                                        />
-                                      )}
-                                    </Stack>
-                                  </TableCell>
-                                  <TableCell sx={{ textAlign: "center" }}>
-                                    <Stack
-                                      direction="row"
-                                      spacing={0.5}
-                                      justifyContent="center"
-                                    >
-                                      <Tooltip title="Edit">
-                                        <IconButton
-                                          size="small"
-                                          color="primary"
-                                          onClick={() => handleEditProduct(index)}
-                                        >
-                                          <EditIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                      <Tooltip title="Delete">
-                                        <IconButton
-                                          size="small"
-                                          color="error"
-                                          onClick={() => handleDeleteProduct(index)}
-                                        >
-                                          <DeleteOutlineIcon fontSize="small" />
-                                        </IconButton>
-                                      </Tooltip>
-                                    </Stack>
-                                  </TableCell>
-                                </TableRow>
-                              ))}
-                            </TableBody>
-                          </Table>
-                        </TableContainer>
-                      ) : (
-                        <Box
-                          sx={{
-                            flex: 1,
-                            display: "flex",
-                            flexDirection: "column",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            p: 4,
-                            border: "2px dashed #e0e0e0",
-                            borderRadius: 2,
-                            backgroundColor: "#fafafa",
-                          }}
-                        >
-                          <InventoryIcon
-                            sx={{ fontSize: 48, color: "text.disabled", mb: 2 }}
-                          />
-                          <Typography
-                            variant="body1"
-                            color="text.secondary"
-                            gutterBottom
-                          >
-                            No products added yet
-                          </Typography>
-                          <Typography
-                            variant="body2"
-                            color="text.secondary"
-                            textAlign="center"
-                          >
-                            Fill the form and click "Add to List"
-                          </Typography>
-                        </Box>
-                      )}
-                    </Paper>
-                  </Grid>
-                )}
               </Grid>
             </form>
           </Box>
@@ -1229,61 +1353,9 @@ const CreateProductForm = ({
             width: "100%",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            {isUpdateMode ? (
-              <Chip label="Update Mode" color="secondary" size="small" />
-            ) : (
-              <Chip
-                label={`${products.length} Product${
-                  products.length !== 1 ? "s" : ""
-                }`}
-                color="primary"
-                variant="outlined"
-                size="small"
-              />
-            )}
-          </Box>
+       
 
-          <Box sx={{ display: "flex", gap: 1 }}>
-            {!isUpdateMode && (
-              <Button
-                onClick={resetForm}
-                variant="outlined"
-                size="small"
-                disabled={loading}
-              >
-                Reset Form
-              </Button>
-            )}
-            <Button
-              onClick={handleCloseModal}
-              variant="outlined"
-              size="small"
-              disabled={loading}
-            >
-              Cancel
-            </Button>
-            {!isUpdateMode && (
-              <Button
-                onClick={handleSubmit}
-                variant="contained"
-                disabled={loading || products.length === 0}
-                size="small"
-                sx={{ minWidth: 150 }}
-              >
-                {loading ? (
-                  <>
-                    <CircularProgress size={16} color="inherit" sx={{ mr: 1 }} />
-                    Creating...
-                  </>
-                ) : (
-                  `Create ${products.length} Product${
-                    products.length !== 1 ? "s" : ""
-                  }`
-                )}
-              </Button>
-            )}
-          </Box>
+         
         </Box>
       </DialogActions>
     </Dialog>

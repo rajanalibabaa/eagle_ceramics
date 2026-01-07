@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useEffect } from "react";
 import "./App.css";
-import CircularProgress from "@mui/material/CircularProgress";
+// import CircularProgress from "@mui/material/CircularProgress";
 import Fab from "@mui/material/Fab";
 import ScrollToTop from "./ScrollToTop";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
@@ -9,20 +9,20 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import KeyboardDoubleArrowUpIcon from "@mui/icons-material/KeyboardDoubleArrowUp";
 import KeyboardDoubleArrowDownIcon from "@mui/icons-material/KeyboardDoubleArrowDown";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import MessageIcon from "@mui/icons-material/Message";
+// import MessageIcon from "@mui/icons-material/Message";
 
-import ElevationTiles300x450 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x450.jsx";
-import ElevationTiles300x600 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x600.jsx";
-import CoolRoofTiles9MM from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles9MM.jsx";
-import CoolRoofTiles10MM from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles10MM.jsx";
-import CoolRoofTiles600x600 from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles600x600.jsx";
-import KitchenSink from "./pages/ServicesContent/KitchenSink/KitchenSink.jsx";
+// import ElevationTiles300x450 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x450.jsx";
+// import ElevationTiles300x600 from "./pages/ServicesContent/ElevationTiles/ElevationTiles300x600.jsx";
+// import CoolRoofTiles9MM from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles9MM.jsx";
+// import CoolRoofTiles10MM from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles10MM.jsx";
+// import CoolRoofTiles600x600 from "./pages/ServicesContent/CoolRoofTiles/CoolRoofTiles600x600.jsx";
+// import KitchenSink from "./pages/ServicesContent/KitchenSink/KitchenSink.jsx";
 import AboutPageContent from "./pages/ServicesContent/AboutPageContent/AboutPageContent.jsx";
 import ContactPageFab from "./components/ContactPageFab.jsx";
 
-import logo from './assets/eagle_ceramics_logo.jpg';
-import logo1 from './assets/eaglelogo.jpg';
-import video1 from './assets/Homepageloading.mp4';
+// import logo from './assets/eagle_ceramics_logo.jpg';
+// import logo1 from './assets/eaglelogo.jpg';
+// import video1 from './assets/Homepageloading.mp4';
 import PageLoader from "./PageLoader.jsx";
 
 // Lazy load components

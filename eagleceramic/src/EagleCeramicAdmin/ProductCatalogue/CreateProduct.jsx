@@ -27,9 +27,7 @@ import {
   InputLabel,
   FormHelperText,
   Divider,
-  List,
-  ListItem,
-  ListItemText,
+  CircularProgress,
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -44,45 +42,28 @@ import ImageIcon from "@mui/icons-material/Image";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import ClearIcon from "@mui/icons-material/Clear";
+import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 
 import CreateProductForm from "./CreateProductForm";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
-
-/**
- * Expected data shape from API:
- * [
- *   {
- *     uuid,
- *     productName,
- *     productSizes: [
- *       {
- *         size: "12x18",
- *         items: [
- *           { _id, title, description, image },
- *           ...
- *         ]
- *       }
- *     ]
- *   }
- * ]
- */
+const API_BASE_URL = "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic";
 
 const CreateProductPage = () => {
   const [openModal, setOpenModal] = useState(false);
-  const [modalMode, setModalMode] = useState("create"); // "create" | "update"
+  const [modalMode, setModalMode] = useState("create");
   const [editingProduct, setEditingProduct] = useState(null);
 
   const [filterData, setFilterData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [catalogData, setCatalogData] = useState([]);
+  
+  const [catalogCache, setCatalogCache] = useState({});
+  const [loadingCatalog, setLoadingCatalog] = useState({});
 
   const [loading, setLoading] = useState(true);
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
-  // deleteTarget: { type: "product"|"size"|"item", product, size, itemId }
 
   const [snackbar, setSnackbar] = useState({
     open: false,
@@ -91,8 +72,8 @@ const CreateProductPage = () => {
   });
 
   const [expanded, setExpanded] = useState(null);
+  const [expandedSizes, setExpandedSizes] = useState({}); // Track expanded sizes
 
-  // Filter state
   const [searchInput, setSearchInput] = useState({
     productName: "",
     productSize: "",
@@ -100,30 +81,22 @@ const CreateProductPage = () => {
   const [availableSizes, setAvailableSizes] = useState([]);
   const [isFilterApplied, setIsFilterApplied] = useState(false);
 
-  // Product dialog
-  const [productDialogOpen, setProductDialogOpen] = useState(false);
-
-  // Snackbar helpers
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
   };
+  
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
-  // Accordion
-  const handleAccordionChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : null);
-  };
-
-  // Fetch
   const fetchFilterData = async () => {
     setLoading(true);
     try {
       const response = await axios.get(
         `${API_BASE_URL}/catalog/get-by-product`
       );
-console.log('res',response);
+      console.log("=== INITIAL FETCH ===");
+      console.log("API Response:", response.data);
 
       let arr = [];
       if (
@@ -133,13 +106,7 @@ console.log('res',response);
         arr = response.data.data.filterdata;
       }
 
-      let catArr = [];
-      if (
-        response?.data?.data?.catalogData &&
-        Array.isArray(response.data.data.catalogData)
-      ) {
-        catArr = response.data.data.catalogData;
-      }
+      console.log("Products loaded:", arr.map(p => p.productName));
 
       setFilterData(arr);
       setFilteredData(arr);
@@ -165,28 +132,135 @@ console.log('res',response);
     fetchFilterData();
   }, []);
 
-  // Derive product names
+  // Modified to accept both productName and productSize
+  const fetchCatalogForProduct = async (productName, productSize = null) => {
+    console.log("=== FETCH CATALOG ===");
+    console.log("Product:", productName);
+    console.log("Size:", productSize);
+    
+    // Create cache key based on both product name and size
+    const cacheKey = productSize 
+      ? `${productName}::${productSize}` 
+      : `${productName}::all`;
+    
+    // Check cache
+    if (catalogCache[cacheKey]) {
+      console.log("Using cached data for:", cacheKey);
+      return catalogCache[cacheKey];
+    }
+    
+    // Build the URL with both parameters
+    let url = `${API_BASE_URL}/catalog/get-by-product`;
+    const params = new URLSearchParams();
+    
+    if (productName) {
+      params.append('productName', productName);
+    }
+    
+    if (productSize && productSize.trim().length > 0) {
+      params.append('productSize', productSize.trim());
+    }
+    
+    if (params.toString()) {
+      url += `?${params.toString()}`;
+    }
+    
+    console.log("🌐 API URL:", url);
+    
+    try {
+      // Set loading state for this specific fetch
+      setLoadingCatalog(prev => ({ ...prev, [cacheKey]: true }));
+      
+      const response = await axios.get(url);
+      const catalogItems = response?.data?.data?.catalogData || [];
+      
+      console.log(`📦 Retrieved ${catalogItems.length} items for ${cacheKey}`);
+      
+      // Cache it
+      setCatalogCache(prev => ({ 
+        ...prev, 
+        [cacheKey]: catalogItems 
+      }));
+      
+      return catalogItems;
+    } catch (error) {
+      console.error("❌ Fetch error:", error);
+      return [];
+    } finally {
+      // Clear loading state
+      setLoadingCatalog(prev => {
+        const newState = { ...prev };
+        delete newState[cacheKey];
+        return newState;
+      });
+    }
+  };
+
+  // Handle product accordion expand/collapse
+  const handleAccordionChange = (panel, product) => async (event, isExpanded) => {
+    setExpanded(isExpanded ? panel : null);
+
+    if (isExpanded && product?.productName) {
+      // When product accordion expands, we don't fetch specific size data
+      // Just clear any expanded sizes
+      setExpandedSizes({});
+    }
+  };
+
+  // NEW: Handle size accordion expand/collapse
+  const handleSizeAccordionChange = (productName, sizeLabel) => async (event, isExpanded) => {
+    event.stopPropagation(); // Prevent event bubbling
+    
+    console.log(`Size accordion: ${productName} - ${sizeLabel}`, isExpanded);
+    
+    // Update expanded state for sizes
+    setExpandedSizes(prev => ({
+      ...prev,
+      [`${productName}-${sizeLabel}`]: isExpanded
+    }));
+
+    if (isExpanded && productName && sizeLabel) {
+      // Fetch catalog data for this specific product and size
+      console.log(`Fetching data for ${productName} - ${sizeLabel}`);
+      await fetchCatalogForProduct(productName, sizeLabel);
+    }
+  };
+
   const productNames = useMemo(() => {
     const set = new Set();
     filterData.forEach((p) => {
       if (p?.productName) set.add(p.productName);
     });
-    return Array.from(set).sort();
+    const names = Array.from(set).sort();
+    console.log("Available product names:", names);
+    return names;
   }, [filterData]);
 
+  // Get sizes for a product from filterData
   const getSizesForProduct = (productName) => {
     if (!productName) return [];
+    
     const product = filterData.find((p) => p.productName === productName);
     const groups = Array.isArray(product?.productSizes)
       ? product.productSizes
       : [];
-    return groups
-      .map((g) => g.size)
-      .filter(Boolean)
-      .sort();
+    const sizes = groups.map((g) => g.size).filter(Boolean).sort();
+    console.log(`Sizes for ${productName}:`, sizes);
+    return sizes;
   };
 
-  const handleProductNameChange = (value) => {
+  // Get catalog items for specific product and size
+  const getCatalogItemsForProductAndSize = (productName, productSize = null) => {
+    const cacheKey = productSize 
+      ? `${productName}::${productSize}` 
+      : `${productName}::all`;
+    
+    return catalogCache[cacheKey] || [];
+  };
+
+  const handleProductNameChange = async (value) => {
+    console.log("Product name changed to:", value);
+    
     setSearchInput((prev) => ({
       ...prev,
       productName: value,
@@ -194,7 +268,9 @@ console.log('res',response);
     }));
 
     if (value) {
-      setAvailableSizes(getSizesForProduct(value));
+      const sizes = getSizesForProduct(value);
+      console.log("Setting available sizes:", sizes);
+      setAvailableSizes(sizes);
     } else {
       setAvailableSizes([]);
     }
@@ -214,31 +290,19 @@ console.log('res',response);
       return;
     }
 
+    console.log("Applying filter:", searchInput);
     setLoading(true);
 
-    // no async background; just compute then set
     try {
       let arr = [...filterData];
 
-      // filter by product
       if (searchInput.productName) {
         arr = arr.filter((p) => p.productName === searchInput.productName);
       }
 
-      // filter by size group
-      if (searchInput.productSize) {
-        arr = arr
-          .map((p) => {
-            const groups = Array.isArray(p.productSizes) ? p.productSizes : [];
-            const filteredGroups = groups.filter(
-              (g) => g.size === searchInput.productSize
-            );
-            return { ...p, productSizes: filteredGroups };
-          })
-          .filter((p) => (p.productSizes || []).length > 0);
-      }
-
       setFilteredData(arr);
+      
+      // Set isFilterApplied to TRUE when user clicks Apply Filter
       setIsFilterApplied(true);
 
       if (arr.length === 0) {
@@ -267,62 +331,17 @@ console.log('res',response);
     showSnackbar("Showing all products", "info");
   };
 
-  // Counts (products + items)
-  const productCount = filteredData.length;
-  const totalItems = filteredData.reduce((sum, product) => {
-    const groups = Array.isArray(product?.productSizes)
-      ? product.productSizes
-      : [];
-    const itemsCount = groups.reduce(
-      (s, g) => s + (Array.isArray(g.items) ? g.items.length : 0),
-      0
-    );
-    return sum + itemsCount;
-  }, 0);
-
-  // Modal actions
-  const handleOpenCreateModal = () => {
-    setModalMode("create");
-    setEditingProduct(null);
-    setOpenModal(true);
+  // Get product sizes from filterData (static data)
+  const getProductSizesFromFilterData = (productName) => {
+    const product = filterData.find((p) => p.productName === productName);
+    if (!product || !product.productSizes) return [];
+    
+    return product.productSizes.map(sizeGroup => ({
+      size: sizeGroup.size
+    }));
   };
 
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setEditingProduct(null);
-  };
-
-  /**
-   * Update modal now supports editing a single ITEM:
-   * payload: { size, itemId, title, description, image }
-   */
-  const handleOpenUpdateModal = (product, payload = null) => {
-    if (payload?.itemId) {
-      setEditingProduct({
-        uuid: product.uuid,
-        productName: product.productName,
-        editingSingleItem: true,
-        targetSize: payload.size,
-        itemId: payload.itemId,
-        item: {
-          title: payload.title || "",
-          description: payload.description || "",
-          image: payload.image || "",
-        },
-      });
-    } else {
-      // Edit whole product (if your CreateProductForm supports it)
-      setEditingProduct({
-        ...product,
-        editingSingleItem: false,
-      });
-    }
-
-    setModalMode("update");
-    setOpenModal(true);
-  };
-
-  // Delete
+  // ADD THIS MISSING FUNCTION
   const handleDeleteClick = (target, e) => {
     e.stopPropagation();
     setDeleteTarget(target);
@@ -334,66 +353,316 @@ console.log('res',response);
     setDeleteTarget(null);
   };
 
-  const handleDeleteConfirm = async () => {
-    if (!deleteTarget) return;
-console.log('target',deleteTarget);
+ const handleDeleteConfirm = async () => {
+  if (!deleteTarget) return;
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
+    
+    // Get the token for authorization
+    const token = getAdminToken();
+    if (!token) {
+      showSnackbar('Authentication token not found. Please login again.', 'error');
+      setLoading(false);
+      return;
+    }
 
-      let deleteUrl = "";
-
-      if (deleteTarget.type === "product") {
-        deleteUrl = `${API_BASE_URL}/catalog/delete/${deleteTarget.product.id}`;
-      } else if (deleteTarget.type === "size") {
-        // YOU MUST implement this endpoint on backend if you want it
-        deleteUrl = `${API_BASE_URL}/catalog/${
-          deleteTarget.product.uuid
-        }/size/${encodeURIComponent(deleteTarget.size)}`;
-      } else if (deleteTarget.type === "item") {
-        // YOU MUST implement this endpoint on backend
-        deleteUrl = `${API_BASE_URL}/catalog/${
-          deleteTarget.product.uuid
-        }/size/${encodeURIComponent(deleteTarget.size)}/item/${
-          deleteTarget.itemId
-        }`;
-      } else {
-        throw new Error("Unknown delete type");
+    // Create axios config with authorization header
+    const axiosConfig = {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       }
+    };
 
-      const res = await axios.delete(deleteUrl);
+    if (deleteTarget.type === "item") {
+      const deleteUrl = `${API_BASE_URL}/catalog/delete/${deleteTarget.itemId}`;
+      console.log("DELETE request URL:", deleteUrl);
+      console.log("Authorization token:", token ? "Present" : "Missing");
+      
+      const res = await axios.delete(deleteUrl, axiosConfig);
 
       if (res?.data?.success) {
-        showSnackbar("Deleted successfully", "success");
+        showSnackbar("Item deleted successfully", "success");
+        
+        const productName = deleteTarget.product.productName;
+        const size = deleteTarget.size;
+        
+        // Clear cache for this specific product and size
+        const cacheKey = `${productName}::${size}`;
+        setCatalogCache(prev => {
+          const newCache = { ...prev };
+          delete newCache[cacheKey];
+          return newCache;
+        });
+        
+        // Also clear the "all" cache for this product
+        const allCacheKey = `${productName}::all`;
+        setCatalogCache(prev => {
+          const newCache = { ...prev };
+          delete newCache[allCacheKey];
+          return newCache;
+        });
+        
         await fetchFilterData();
-        if (isFilterApplied) handleApplyFilter();
+        
+        // Re-fetch if this size is currently expanded
+        if (expandedSizes[`${productName}-${size}`]) {
+          await fetchCatalogForProduct(productName, size);
+        }
       } else {
-        showSnackbar(res?.data?.message || "Failed to delete", "error");
+        showSnackbar(res?.data?.message || "Failed to delete item", "error");
       }
-    } catch (error) {
-      console.error("Delete error:", error);
-      showSnackbar(error.response?.data?.message || "Error deleting", "error");
-    } finally {
-      setLoading(false);
-      setDeleteDialogOpen(false);
-      setDeleteTarget(null);
+    } else if (deleteTarget.type === "size") {
+      const productName = deleteTarget.product.productName;
+      const size = deleteTarget.size;
+      
+      // Get items for this size from cache
+      const cacheKey = `${productName}::${size}`;
+      const catalogItems = catalogCache[cacheKey] || [];
+
+      if (catalogItems.length === 0) {
+        showSnackbar("No items found to delete", "warning");
+        setLoading(false);
+        setDeleteDialogOpen(false);
+        setDeleteTarget(null);
+        return;
+      }
+
+      const deletePromises = catalogItems.map((item) =>
+        axios.delete(`${API_BASE_URL}/catalog/delete/${item.uuid}`, axiosConfig)
+      );
+
+      const results = await Promise.allSettled(deletePromises);
+
+      const successCount = results.filter(
+        (r) => r.status === "fulfilled" && r.value?.data?.success
+      ).length;
+      const failCount = catalogItems.length - successCount;
+
+      if (failCount === 0) {
+        showSnackbar(
+          `Successfully deleted size "${size}" with ${successCount} item${
+            successCount !== 1 ? "s" : ""
+          }`,
+          "success"
+        );
+      } else if (successCount > 0) {
+        showSnackbar(
+          `Partially deleted: ${successCount} succeeded, ${failCount} failed`,
+          "warning"
+        );
+      } else {
+        showSnackbar("Failed to delete items", "error");
+      }
+
+      // Clear cache for this product and size
+      setCatalogCache(prev => {
+        const newCache = { ...prev };
+        delete newCache[cacheKey];
+        
+        // Also clear the "all" cache
+        const allCacheKey = `${productName}::all`;
+        delete newCache[allCacheKey];
+        
+        return newCache;
+      });
+
+      await fetchFilterData();
+      
+      // Remove this size from expanded state
+      setExpandedSizes(prev => {
+        const newState = { ...prev };
+        delete newState[`${productName}-${size}`];
+        return newState;
+      });
+    } else if (deleteTarget.type === "product") {
+      const productName = deleteTarget.product.productName;
+      
+      // Get all catalog items for this product from all cache entries
+      const allItems = Object.entries(catalogCache)
+        .filter(([key]) => key.startsWith(productName))
+        .flatMap(([_, items]) => items);
+
+      if (allItems.length === 0) {
+        showSnackbar("No items found to delete", "warning");
+        setLoading(false);
+        setDeleteDialogOpen(false);
+        setDeleteTarget(null);
+        return;
+      }
+
+      const deletePromises = allItems.map((item) =>
+        axios.delete(`${API_BASE_URL}/catalog/delete/${item.uuid}`, axiosConfig)
+      );
+
+      const results = await Promise.allSettled(deletePromises);
+
+      const successCount = results.filter(
+        (r) => r.status === "fulfilled" && r.value?.data?.success
+      ).length;
+      const failCount = allItems.length - successCount;
+
+      if (failCount === 0) {
+        showSnackbar(
+          `Successfully deleted product "${productName}" with ${successCount} item${
+            successCount !== 1 ? "s" : ""
+          }`,
+          "success"
+        );
+      } else if (successCount > 0) {
+        showSnackbar(
+          `Partially deleted: ${successCount} succeeded, ${failCount} failed`,
+          "warning"
+        );
+      } else {
+        showSnackbar("Failed to delete product", "error");
+      }
+
+      // Clear all cache entries for this product
+      setCatalogCache(prev => {
+        const newCache = { ...prev };
+        Object.keys(newCache).forEach(key => {
+          if (key.startsWith(productName)) {
+            delete newCache[key];
+          }
+        });
+        return newCache;
+      });
+
+      await fetchFilterData();
+      
+      // Clear expanded state for this product
+      setExpandedSizes(prev => {
+        const newState = { ...prev };
+        Object.keys(newState).forEach(key => {
+          if (key.startsWith(productName)) {
+            delete newState[key];
+          }
+        });
+        return newState;
+      });
+      
+      // Collapse the product accordion
+      setExpanded(null);
+    } else {
+      throw new Error("Unknown delete type");
     }
+  } catch (error) {
+    console.error("Delete error:", error);
+    console.error("Error status:", error.response?.status);
+    console.error("Error data:", error.response?.data);
+    
+    if (error.response?.status === 401) {
+      showSnackbar('Session expired. Please login again.', 'error');
+    } else if (error.response?.data?.message) {
+      showSnackbar(error.response.data.message, "error");
+    } else {
+      showSnackbar(error.message || "Error deleting", "error");
+    }
+  } finally {
+    setLoading(false);
+    setDeleteDialogOpen(false);
+    setDeleteTarget(null);
+  }
+};
+
+  const productCount = filteredData.length;
+  const totalItems = Object.values(catalogCache).reduce((sum, items) => {
+    return sum + (Array.isArray(items) ? items.length : 0);
+  }, 0);
+
+  const handleOpenCreateModal = () => {
+    setModalMode("create");
+    setEditingProduct(null);
+    setOpenModal(true);
   };
 
-  // Form success
-  const handleFormSuccess = () => {
+  const handleCloseModal = () => {
+    setOpenModal(false);
+    setEditingProduct(null);
+  };
+
+  const handleOpenUpdateModal = (product, payload = null) => {
+    console.log("📝 Opening update modal...");
+    console.log("Product:", product);
+    console.log("Payload:", payload);
+    
+    if (payload?.itemId) {
+      // Get the specific catalog item
+      const items = getCatalogItemsForProductAndSize(
+        product.productName, 
+        payload.size
+      );
+      const item = items.find((item) => item.uuid === payload.itemId);
+      
+      setEditingProduct({
+        uuid: item.uuid,
+        productName: item.productName || product.productName,
+        productSize: item.productSize || payload.size || "",
+        title: item.title || "",
+        description: item.description || "",
+        buttonText: item.buttonText || "View Details",
+        imageUrl: item.imageUrl || "",
+        pdfUrl: item.pdfUrl || "",
+        editingSingleItem: true,
+        targetSize: payload.size || item.productSize || "",
+        itemId: payload.itemId,
+      });
+    } else {
+      setEditingProduct({
+        productName: product.productName,
+        editingSingleItem: false,
+      });
+    }
+
+    setModalMode("update");
+    setOpenModal(true);
+  };
+
+  const handleFormSuccess = async () => {
     showSnackbar(
       modalMode === "update" ? "Updated successfully" : "Created successfully",
       "success"
     );
-    fetchFilterData();
-    if (isFilterApplied) handleApplyFilter();
+    
+    if (editingProduct?.productName) {
+      // Clear cache for this product
+      const keysToDelete = Object.keys(catalogCache).filter(key => 
+        key.startsWith(editingProduct.productName)
+      );
+      keysToDelete.forEach(key => {
+        setCatalogCache(prev => {
+          const newCache = { ...prev };
+          delete newCache[key];
+          return newCache;
+        });
+      });
+    }
+    
+    await fetchFilterData();
+    
+    // Re-fetch if expanded
+    if (expanded && editingProduct?.productName) {
+      const product = filteredData.find(p => p.productName === editingProduct.productName);
+      if (product) {
+        // Check if any size is expanded for this product
+        const expandedSizeKey = Object.keys(expandedSizes).find(key => 
+          key.startsWith(editingProduct.productName) && expandedSizes[key]
+        );
+        
+        if (expandedSizeKey) {
+          const size = expandedSizeKey.split('-')[1];
+          await fetchCatalogForProduct(editingProduct.productName, size);
+        }
+      }
+    }
+    
     handleCloseModal();
   };
 
   return (
     <Container maxWidth="xl" sx={{ py: 3 }}>
-      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={4000}
@@ -409,7 +678,6 @@ console.log('target',deleteTarget);
         </Alert>
       </Snackbar>
 
-      {/* Delete Dialog */}
       <Dialog
         open={deleteDialogOpen}
         onClose={handleDeleteCancel}
@@ -468,7 +736,6 @@ console.log('target',deleteTarget);
         </DialogActions>
       </Dialog>
 
-      {/* Header */}
       <Box
         sx={{
           mb: 4,
@@ -488,13 +755,7 @@ console.log('target',deleteTarget);
           >
             Product Catalogue
           </Typography>
-          {!loading && (
-            <Typography variant="body2" color="text.secondary">
-              Showing {productCount} product{productCount !== 1 ? "s" : ""} with{" "}
-              {totalItems} item
-              {totalItems !== 1 ? "s" : ""}
-            </Typography>
-          )}
+          
         </Box>
 
         <Button
@@ -515,141 +776,6 @@ console.log('target',deleteTarget);
         </Button>
       </Box>
 
-      {/* Filter */}
-      <Paper
-        elevation={1}
-        sx={{ p: 3, mb: 4, borderRadius: 2, backgroundColor: "#f8f9fa" }}
-      >
-        <Typography
-          variant="h6"
-          gutterBottom
-          sx={{ display: "flex", alignItems: "center", gap: 1 }}
-        >
-          <FilterListIcon /> Filter Catalog
-        </Typography>
-
-        <Grid container spacing={2} alignItems="center">
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Product Name</InputLabel>
-              <Select
-                value={searchInput.productName}
-                label="Product Name"
-                onChange={(e) => handleProductNameChange(e.target.value)}
-                disabled={loading || productNames.length === 0}
-              >
-                <MenuItem value="">
-                  <em>-- All Products --</em>
-                </MenuItem>
-                {productNames.map((name) => (
-                  <MenuItem key={name} value={name}>
-                    {name}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>
-                {productNames.length} product
-                {productNames.length !== 1 ? "s" : ""} available
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <FormControl fullWidth size="small">
-              <InputLabel>Product Size</InputLabel>
-              <Select
-                value={searchInput.productSize}
-                label="Product Size"
-                onChange={(e) =>
-                  handleSearchChange("productSize", e.target.value)
-                }
-                disabled={loading || !searchInput.productName}
-              >
-                <MenuItem value="">
-                  <em>-- All Sizes --</em>
-                </MenuItem>
-                {availableSizes.map((size) => (
-                  <MenuItem key={size} value={size}>
-                    {size}
-                  </MenuItem>
-                ))}
-              </Select>
-              <FormHelperText>
-                {searchInput.productName
-                  ? `${availableSizes.length} size${
-                      availableSizes.length !== 1 ? "s" : ""
-                    } available for ${searchInput.productName}`
-                  : "Select a product first to see available sizes"}
-              </FormHelperText>
-            </FormControl>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Box sx={{ display: "flex", gap: 2 }}>
-              <Button
-                variant="contained"
-                onClick={handleApplyFilter}
-                disabled={
-                  loading ||
-                  (!searchInput.productName && !searchInput.productSize)
-                }
-                startIcon={<SearchIcon />}
-                fullWidth
-              >
-                Apply Filter
-              </Button>
-              <Button
-                variant="outlined"
-                onClick={handleClearFilter}
-                disabled={loading || !isFilterApplied}
-                startIcon={<ClearIcon />}
-              >
-                Clear
-              </Button>
-            </Box>
-          </Grid>
-        </Grid>
-
-        <Box sx={{ mt: 2 }}>
-          {isFilterApplied && filteredData.length > 0 && (
-            <Typography
-              variant="body2"
-              color="success.main"
-              sx={{ fontWeight: "bold" }}
-            >
-              ✓ Found {filteredData.length} product
-              {filteredData.length !== 1 ? "s" : ""} matching filter
-            </Typography>
-          )}
-          {isFilterApplied && searchInput.productName && (
-            <Typography variant="body2" color="text.secondary">
-              Filtering by: <strong>{searchInput.productName}</strong>
-              {searchInput.productSize && (
-                <span>
-                  {" "}
-                  | Size: <strong>{searchInput.productSize}</strong>
-                </span>
-              )}
-            </Typography>
-          )}
-        </Box>
-      </Paper>
-
-      {/* Loading */}
-      {loading && (
-        <Box sx={{ width: "100%", mt: 2 }}>
-          <LinearProgress />
-          <Typography
-            variant="body2"
-            color="text.secondary"
-            sx={{ textAlign: "center", mt: 1 }}
-          >
-            {isFilterApplied ? "Applying filters..." : "Loading products..."}
-          </Typography>
-        </Box>
-      )}
-
-      {/* List */}
       <Box sx={{ mt: 3 }}>
         {!loading && filteredData.length === 0 ? (
           <Paper
@@ -698,21 +824,20 @@ console.log('target',deleteTarget);
           !loading &&
           filteredData.map((product, productIndex) => {
             const panelId = product.uuid || `product-${productIndex}`;
-            const groups = Array.isArray(product.productSizes)
-              ? product.productSizes
-              : [];
-
-            // count items in this product
-            const productItems = groups.reduce(
-              (sum, g) => sum + (Array.isArray(g.items) ? g.items.length : 0),
-              0
-            );
+            
+            // Get product sizes from filterData
+            const productSizes = getProductSizesFromFilterData(product.productName);
+            
+            // Filter sizes if needed
+            const filteredSizes = (searchInput.productSize && isFilterApplied)
+              ? productSizes.filter(g => g.size === searchInput.productSize)
+              : productSizes;
 
             return (
               <Accordion
                 key={panelId}
                 expanded={expanded === panelId}
-                onChange={handleAccordionChange(panelId)}
+                onChange={handleAccordionChange(panelId, product)}
                 sx={{
                   mb: 3,
                   borderRadius: 2,
@@ -756,365 +881,196 @@ console.log('target',deleteTarget);
                           mt: 0.5,
                         }}
                       >
-                        <Typography variant="body2" color="text.secondary">
-                          {groups.length} size group
-                          {groups.length !== 1 ? "s" : ""} • {productItems} item
-                          {productItems !== 1 ? "s" : ""}
-                        </Typography>
-                        {isFilterApplied && (
-                          <Chip
-                            label="Filtered"
-                            size="small"
-                            color="success"
-                            variant="filled"
-                            sx={{ fontSize: "0.7rem" }}
-                          />
-                        )}
+                      
                       </Box>
                     </Box>
-
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      <Tooltip title={`${groups.length} size group(s)`}>
-                        <Chip
-                          label={`${groups.length} Size${
-                            groups.length !== 1 ? "s" : ""
-                          }`}
-                          color="primary"
-                          variant="outlined"
-                          size="small"
-                        />
-                      </Tooltip>
-
-                      <Stack direction="row" spacing={0.5}>
-                        <Tooltip title="Edit Entire Product">
-                          <IconButton
-                            size="small"
-                            color="primary"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleOpenUpdateModal(product, null);
-                            }}
-                            sx={{
-                              backgroundColor: "rgba(25, 118, 210, 0.08)",
-                              "&:hover": {
-                                backgroundColor: "rgba(25, 118, 210, 0.15)",
-                              },
-                            }}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-
-                        <Tooltip title="Delete Entire Product">
-                          <IconButton
-                            size="small"
-                            color="error"
-                            onClick={(e) =>
-                              handleDeleteClick({ type: "product", product }, e)
-                            }
-                            sx={{
-                              backgroundColor: "rgba(244, 67, 54, 0.08)",
-                              "&:hover": {
-                                backgroundColor: "rgba(244, 67, 54, 0.15)",
-                              },
-                            }}
-                          >
-                            <DeleteOutlineIcon fontSize="small" />
-                          </IconButton>
-                        </Tooltip>
-                      </Stack>
-                    </Stack>
                   </Box>
                 </AccordionSummary>
 
-                {/* Size groups -> items */}
                 <AccordionDetails sx={{ p: 0 }}>
-                  {groups.map((sizeGroup, sizeIndex) => {
-                    const sizeLabel = sizeGroup.size;
-                    const items = catalogData.filter(
-                      (item) =>
-                        item.productName === product.productName &&
-                        item.productSize === sizeLabel
-                    );
-                    return (
-                      <Box key={`${product.uuid}-${sizeLabel}-${sizeIndex}`}>
-                        {/* Size Header */}
-                        <Box
-                          sx={{
-                            p: 3,
-                            backgroundColor: "#f5f5f5",
-                            borderBottom: "1px solid #e0e0e0",
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "flex-start",
-                            gap: 2,
-                          }}
-                        >
-                          <Box sx={{ flex: 1 }}>
-                            <Typography
-                              variant="h6"
-                              color="primary"
-                              sx={{
-                                display: "flex",
-                                alignItems: "center",
-                                gap: 1,
-                                mb: 1,
-                              }}
-                            >
-                              <span style={{ fontWeight: "bold" }}>Size:</span>{" "}
-                              {sizeLabel}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {items.length} item{items.length !== 1 ? "s" : ""}{" "}
-                              in this size
-                            </Typography>
-                          </Box>
+                  {filteredSizes.length === 0 ? (
+                    <Box sx={{ p: 3 }}>
+                      <Typography variant="body2" color="text.secondary">
+                        No sizes match your filter criteria for <strong>{product.productName}</strong>.
+                      </Typography>
+                    </Box>
+                  ) : (
+                    <Box sx={{ p: 2 }}>
+                      {filteredSizes.map((sizeGroup, sizeIndex) => {
+                        const sizeLabel = sizeGroup.size;
+                        const sizeAccordionId = `${product.productName}-${sizeLabel}`;
+                        const isSizeExpanded = expandedSizes[sizeAccordionId] || false;
+                        
+                        // Get items for this specific size (will be empty until fetched)
+                        const items = getCatalogItemsForProductAndSize(
+                          product.productName, 
+                          sizeLabel
+                        );
+                        
+                        const isLoading = loadingCatalog[`${product.productName}::${sizeLabel}`] || false;
 
-                          {/* Add item under same product+size */}
-                          <Button
-                            size="small"
-                            variant="contained"
-                            startIcon={<AddIcon />}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setModalMode("create");
-                              setEditingProduct({
-                                uuid: product.uuid,
-                                productName: product.productName,
-                                addItemToExistingSize: true,
-                                targetSize: sizeLabel,
-                              });
-                              setOpenModal(true);
+                        return (
+                          <Box 
+                            key={`size-${sizeIndex}`} 
+                            sx={{ 
+                              mb: 2,
+                              "&:last-child": { mb: 0 }
                             }}
                           >
-                            Add Item
-                          </Button>
-
-                          {/* Optional: delete size group */}
-                          <Tooltip title={`Delete size ${sizeLabel}`}>
-                            <IconButton
-                              size="small"
-                              color="error"
-                              onClick={(e) =>
-                                handleDeleteClick(
-                                  { type: "size", product, size: sizeLabel },
-                                  e
-                                )
-                              }
+                            <Accordion
+                              expanded={isSizeExpanded}
+                              onChange={handleSizeAccordionChange(product.productName, sizeLabel)}
                               sx={{
-                                backgroundColor: "rgba(244, 67, 54, 0.08)",
-                                "&:hover": {
-                                  backgroundColor: "rgba(244, 67, 54, 0.15)",
-                                },
-                                height: 36,
-                                width: 36,
+                                boxShadow: 'none',
+                                border: '1px solid #e0e0e0',
+                                '&:before': { display: 'none' },
+                                borderRadius: 1,
                               }}
                             >
-                              <DeleteOutlineIcon fontSize="small" />
-                            </IconButton>
-                          </Tooltip>
-                        </Box>
-
-                        {/* Items */}
-                        <Box sx={{ p: 3 }}>
-                          {items.length === 0 ? (
-                            <Typography variant="body2" color="text.secondary">
-                              No items in this size.
-                            </Typography>
-                          ) : (
-                            <Grid container spacing={2}>
-                              {items.map((item, idx) => {
-                                const itemId = item.uuid;
-                                return (
-                                  <Grid item xs={12} key={itemId}>
-                                    <Paper
-                                      variant="outlined"
-                                      sx={{ p: 2, borderRadius: 2 }}
-                                    >
-                                      <Box
-                                        sx={{
-                                          display: "flex",
-                                          justifyContent: "space-between",
-                                          alignItems: "flex-start",
-                                          gap: 2,
-                                        }}
-                                      >
-                                        <Box sx={{ flex: 1 }}>
-                                          <Typography
-                                            variant="subtitle1"
-                                            fontWeight="bold"
-                                          >
-                                            {item.title || "Untitled"}
-                                          </Typography>
-
-                                          <Typography
-                                            variant="body2"
+                              <AccordionSummary
+                                expandIcon={<ExpandMoreIcon />}
+                                sx={{
+                                  backgroundColor: '#f9f9f9',
+                                  minHeight: 56,
+                                  '&:hover': { backgroundColor: '#f0f0f0' },
+                                }}
+                              >
+                                <Box
+                                  sx={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    width: '100%',
+                                  }}
+                                >
+                                  <Typography variant="subtitle1" fontWeight="medium">
+                                    Size: {sizeLabel}
+                                  </Typography>
+                                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                    {isLoading && (
+                                      <CircularProgress size={20} />
+                                    )}
+                                  
+                                  </Box>
+                                </Box>
+                              </AccordionSummary>
+                              <AccordionDetails>
+                                {isLoading ? (
+                                  <Box sx={{ textAlign: 'center', py: 3 }}>
+                                    <CircularProgress />
+                                    <Typography variant="body2" sx={{ mt: 2 }}>
+                                      Loading items for {product.productName} - {sizeLabel}...
+                                    </Typography>
+                                  </Box>
+                                ) : items.length === 0 ? (
+                                  <Box sx={{ textAlign: 'center', py: 3 }}>
+                                    <Typography variant="body2" color="text.secondary">
+                                      No catalog items found for this size.
+                                    </Typography>
+                                   
+                                  </Box>
+                                ) : (
+                                  <Box>
+                                 
+                                    
+                                    <Grid container spacing={2}>
+                                      {items.map((item, itemIndex) => (
+                                        <Grid item xs={12} sm={6} md={4} key={item.uuid}>
+                                          <Paper
+                                            elevation={2}
                                             sx={{
-                                              mt: 1,
-                                              display: "flex",
-                                              gap: 1,
-                                              alignItems: "center",
+                                              p: 2,
+                                              borderRadius: 2,
+                                              border: '1px solid #e0e0e0',
+                                              height: '100%',
                                             }}
                                           >
-                                            <InfoIcon fontSize="small" />
-                                            {item.description ||
-                                              "No description available"}
-                                          </Typography>
-
-                                          <Typography
-                                            variant="body2"
-                                            sx={{
-                                              mt: 1,
-                                              display: "flex",
-                                              gap: 1,
-                                              alignItems: "center",
-                                            }}
-                                          >
-                                            <CategoryIcon fontSize="small" />
-                                            <strong>Product:</strong>{" "}
-                                            {product.productName} &nbsp;|&nbsp;
-                                            <strong>Size:</strong> {sizeLabel}
-                                          </Typography>
-
-                                          <Button
-                                            size="small"
-                                            variant="outlined"
-                                            onClick={() => setProductDialogOpen(true)}
-                                            sx={{ mt: 1 }}
-                                          >
-                                            View All Products
-                                          </Button>
-
-                                          <Box sx={{ mt: 2 }}>
-                                            <Typography
-                                              variant="body2"
-                                              sx={{
-                                                display: "flex",
-                                                alignItems: "center",
-                                                gap: 1,
-                                                fontWeight: 600,
-                                                color: "primary.main",
-                                                mb: 1,
-                                              }}
-                                            >
-                                              <ImageIcon fontSize="small" />{" "}
-                                              Image
-                                            </Typography>
-
-                                            {item.image ? (
+                                            {item.imageUrl && (
                                               <Box
                                                 sx={{
-                                                  width: "100%",
-                                                  maxWidth: 520,
-                                                  height: 220,
-                                                  borderRadius: 2,
-                                                  overflow: "hidden",
-                                                  border: "1px solid #e0e0e0",
-                                                  backgroundColor: "#fafafa",
+                                                  width: '100%',
+                                                  height: 120,
+                                                  mb: 2,
+                                                  borderRadius: 1,
+                                                  overflow: 'hidden',
+                                                  backgroundColor: '#f5f5f5',
                                                 }}
                                               >
                                                 <img
-                                                  src={item.image}
-                                                  alt={`${product.productName}-${sizeLabel}`}
+                                                  src={item.imageUrl}
+                                                  alt={item.title}
                                                   style={{
-                                                    width: "100%",
-                                                    height: "100%",
-                                                    objectFit: "cover",
-                                                  }}
-                                                  onError={(e) => {
-                                                    e.currentTarget.src =
-                                                      "https://via.placeholder.com/520x220?text=Image+Not+Found";
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    objectFit: 'cover',
                                                   }}
                                                 />
                                               </Box>
-                                            ) : (
-                                              <Typography
-                                                variant="body2"
-                                                color="text.secondary"
-                                              >
-                                                No image available
-                                              </Typography>
                                             )}
-                                          </Box>
-                                        </Box>
-
-                                        <Stack direction="row" spacing={1}>
-                                          <Tooltip title="Edit item">
-                                            <IconButton
-                                              size="small"
-                                              color="primary"
-                                              onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleOpenUpdateModal(product, {
-                                                  size: sizeLabel,
-                                                  itemId: item.uuid,
-                                                  title: item.title,
-                                                  description: item.description,
-                                                  image: item.image,
-                                                });
-                                              }}
-                                              sx={{
-                                                backgroundColor:
-                                                  "rgba(25, 118, 210, 0.08)",
-                                                "&:hover": {
-                                                  backgroundColor:
-                                                    "rgba(25, 118, 210, 0.15)",
-                                                },
-                                              }}
-                                            >
-                                              <EditIcon fontSize="small" />
-                                            </IconButton>
-                                          </Tooltip>
-
-                                          <Tooltip title="Delete item">
-                                            <IconButton
-                                              size="small"
-                                              color="error"
-                                              onClick={(e) =>
-                                                handleDeleteClick(
-                                                  {
-                                                    type: "item",
-                                                    product,
-                                                    size: sizeLabel,
-                                                    itemId: item.uuid,
-                                                  },
-                                                  e
-                                                )
-                                              }
-                                              sx={{
-                                                backgroundColor:
-                                                  "rgba(244, 67, 54, 0.08)",
-                                                "&:hover": {
-                                                  backgroundColor:
-                                                    "rgba(244, 67, 54, 0.15)",
-                                                },
-                                              }}
-                                            >
-                                              <DeleteOutlineIcon fontSize="small" />
-                                            </IconButton>
-                                          </Tooltip>
-                                        </Stack>
-                                      </Box>
-                                    </Paper>
-                                  </Grid>
-                                );
-                              })}
-                            </Grid>
-                          )}
-                        </Box>
-
-                        {sizeIndex < groups.length - 1 && (
-                          <Divider
-                            sx={{
-                              my: 0,
-                              borderColor: "#1976d2",
-                              borderWidth: 1,
-                            }}
-                          />
-                        )}
-                      </Box>
-                    );
-                  })}
+                                            <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
+                                              {item.title}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                                              {item.description}
+                                            </Typography>
+                                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                              <Button
+                                                size="small"
+                                                variant="outlined"
+                                                onClick={() => {
+                                                  if (item.pdfUrl) {
+                                                    window.open(item.pdfUrl, '_blank');
+                                                  }
+                                                }}
+                                                disabled={!item.pdfUrl}
+                                              >
+                                                {item.buttonText || 'View Details'}
+                                              </Button>
+                                              <Box>
+                                                <IconButton
+                                                  size="small"
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleOpenUpdateModal(product, {
+                                                      itemId: item.uuid,
+                                                      size: sizeLabel,
+                                                    });
+                                                  }}
+                                                >
+                                                  <EditIcon fontSize="small" />
+                                                </IconButton>
+                                                <IconButton
+                                                  size="small"
+                                                  color="error"
+                                                  onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDeleteClick({
+                                                      type: 'item',
+                                                      product,
+                                                      size: sizeLabel,
+                                                      itemId: item.uuid,
+                                                    }, e);
+                                                  }}
+                                                >
+                                                  <DeleteOutlineIcon fontSize="small" />
+                                                </IconButton>
+                                              </Box>
+                                            </Box>
+                                          </Paper>
+                                        </Grid>
+                                      ))}
+                                    </Grid>
+                                    
+                                  
+                                  </Box>
+                                )}
+                              </AccordionDetails>
+                            </Accordion>
+                          </Box>
+                        );
+                      })}
+                    </Box>
+                  )}
                 </AccordionDetails>
               </Accordion>
             );
@@ -1122,35 +1078,6 @@ console.log('target',deleteTarget);
         )}
       </Box>
 
-      {/* Product Names Dialog */}
-      <Dialog
-        open={productDialogOpen}
-        onClose={() => setProductDialogOpen(false)}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>Select a Product</DialogTitle>
-        <DialogContent>
-          <List>
-            {productNames.map((name) => (
-              <ListItem button key={name} onClick={() => {
-                const product = filterData.find(p => p.productName === name);
-                if (product) {
-                  setExpanded(product.uuid || `product-${filterData.indexOf(product)}`);
-                }
-                setProductDialogOpen(false);
-              }}>
-                <ListItemText primary={name} />
-              </ListItem>
-            ))}
-          </List>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setProductDialogOpen(false)}>Cancel</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Create/Update Modal */}
       <Dialog
         open={openModal}
         onClose={handleCloseModal}
@@ -1163,37 +1090,9 @@ console.log('target',deleteTarget);
           sx: { borderRadius: 3, maxHeight: "90vh", overflow: "hidden" },
         }}
       >
-        <DialogTitle
-          sx={{
-            m: 0,
-            backgroundColor:
-              modalMode === "update" ? "secondary.main" : "primary.main",
-            color: "white",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            py: 2.5,
-          }}
-        >
-          <Typography variant="h6" fontWeight="600">
-            {modalMode === "update"
-              ? editingProduct?.editingSingleItem
-                ? `Update Item (${editingProduct?.targetSize || ""})`
-                : "Update Product Catalogue"
-              : editingProduct?.addItemToExistingSize
-              ? `Add Item (${editingProduct?.targetSize || ""})`
-              : "Create New Product Catalogue"}
-          </Typography>
-
-          <IconButton
-            aria-label="close"
-            onClick={handleCloseModal}
-            sx={{ color: "white" }}
-          >
-            <CloseIcon />
-          </IconButton>
+        <DialogTitle>
+          {modalMode === "create" ? "Create New Catalogue" : "Update Catalogue"}
         </DialogTitle>
-
         <DialogContent dividers sx={{ p: 0 }}>
           <CreateProductForm
             openModal={openModal}
@@ -1202,6 +1101,7 @@ console.log('target',deleteTarget);
             editingProduct={editingProduct}
             onSuccess={handleFormSuccess}
             onClose={handleCloseModal}
+            token={getAdminToken()}
           />
         </DialogContent>
       </Dialog>

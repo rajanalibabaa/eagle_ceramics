@@ -148,7 +148,7 @@ export default function ServiceSideBar() {
       try {
         setLoading(true);
         const response = await axios.get(
-          "http://localhost:5050/api/v1/eagle-ceramic/catalog/get-by-product"
+          "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/catalog/get-by-product"
         );
 
         if (response.status !== 200) {
@@ -202,7 +202,7 @@ export default function ServiceSideBar() {
       if (productSize) params.append("productSize", productSize);
 
       const response = await axios.get(
-        `http://localhost:5050/api/v1/eagle-ceramic/catalog/get-by-product?${params.toString()}`
+        `https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/catalog/get-by-product?${params.toString()}`
       );
 
       if (response.status !== 200) {

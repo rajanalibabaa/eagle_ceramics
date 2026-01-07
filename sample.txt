@@ -48,7 +48,7 @@ import ClearIcon from "@mui/icons-material/Clear";
 import CreateProductForm from "./CreateProductForm";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
+const API_BASE_URL = "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic";
 
 /**
  * Expected data shape from API:

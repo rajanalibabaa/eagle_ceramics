@@ -63,6 +63,14 @@ export const getAdminData = () => {
   }
 };
 
+// Store admin data
+export const setAdminData = (data) => {
+  if (typeof window !== 'undefined') {
+    localStorage.setItem('adminData', JSON.stringify(data));
+  }
+};
+
+// utils/auth.js
 export const getAdminToken = () => {
   return localStorage.getItem('adminAccessToken') || getAdminData()?.adminAccessToken || null;
 };
@@ -153,7 +161,7 @@ export const isTokenValid = () => {
       return parsed.exp > now;
     }
     
-    return true; // No expiration in token
+    return true; 
   } catch (e) {
     return false;
   }

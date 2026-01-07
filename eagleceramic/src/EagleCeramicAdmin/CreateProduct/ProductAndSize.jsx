@@ -28,6 +28,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CloseIcon from "@mui/icons-material/Close";
 import ImageIcon from "@mui/icons-material/Image";
 import axios from "axios";
+import {getAdminToken} from "../../EagleCeramicAdmin/utils/auth";
 
 const ProductAndSize = () => {
     const [openModal, setOpenModal] = useState(false);
@@ -67,18 +68,36 @@ const ProductAndSize = () => {
         setEditingProduct(null);
     };
 
-    const fetchData = async () => {
-        console.log('Checkpoint: Fetching product data');
-        try {
-            const response = await fetch('http://localhost:5050/api/v1/eagle-ceramic/product-sizes/get-all');
-            const res = await response.json();
-            console.log('Checkpoint: Fetched data:', res.data);
-            setGetData(res.data);
-        } catch (error) {
-            console.error('Checkpoint: Error fetching data:', error);
-            showSnackbar('Error fetching products', 'error');
+   const fetchData = async () => {
+    console.log('Checkpoint: Fetching product data');
+    try {
+        const token = getAdminToken();
+        const response = await fetch('https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/product-sizes/get-all', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token && { 'Authorization': `Bearer ${token}` })
+            }
+        });
+        
+        if (response.status === 401) {
+            showSnackbar('Session expired. Please login again.', 'error');
+            return;
         }
+        
+        const res = await response.json();
+        console.log('Checkpoint: Fetched data:', res.data);
+        
+        if (res.success) {
+            setGetData(res.data);
+        } else {
+            showSnackbar(res.message || 'Failed to fetch products', 'error');
+        }
+    } catch (error) {
+        console.error('Checkpoint: Error fetching data:', error);
+        showSnackbar('Error fetching products', 'error');
     }
+}
 
     useEffect(() => {
         fetchData();
@@ -97,8 +116,20 @@ const ProductAndSize = () => {
 
         try {
             setLoading(true);
+            const token = getAdminToken();
+        if (!token) {
+            showSnackbar('Authentication token not found. Please login again.', 'error');
+            setLoading(false);
+            return;
+        }
             const response = await axios.delete(
-                `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/deletebyID/${productToDelete.uuid}`
+                `https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/product-sizes/deletebyID/${productToDelete.uuid}`,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`
+                    }
+                }
             );
 
             console.log('Checkpoint: Delete response:', response.data);
@@ -418,6 +449,7 @@ const ProductAndSize = () => {
                             editingProduct={editingProduct}
                             onSuccess={handleUpdateSuccess}
                             onClose={handleCloseModal}
+                            token={getAdminToken()}
                         />
                     )}
                 </DialogContent>
