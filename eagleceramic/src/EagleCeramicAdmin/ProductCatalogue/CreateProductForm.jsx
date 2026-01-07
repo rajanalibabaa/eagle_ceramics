@@ -70,7 +70,7 @@ const CreateProductForm = ({
     productId: "",
     title: "",
     description: "",
-    buttonText: "View Details",
+    buttonText: "Explore Collection",
     imageFile: null,
     pdfFile: null,
   });
@@ -128,7 +128,7 @@ const CreateProductForm = ({
         productId: editingProduct.productId || editingProduct.uuid || "",
         title: editingProduct.title || "",
         description: editingProduct.description || "",
-        buttonText: editingProduct.buttonText || "View Details",
+        buttonText: editingProduct.buttonText || "Explore Collection",
         imageFile: null,
         pdfFile: null,
       };
@@ -420,7 +420,7 @@ const CreateProductForm = ({
       productId: "",
       title: "",
       description: "",
-      buttonText: "View Details",
+      buttonText: "Explore Collection",
       imageFile: null,
       pdfFile: null,
     });
@@ -462,7 +462,7 @@ const CreateProductForm = ({
         formData.append("productSize", productData.productSize || "");
         formData.append("title", productData.title || "");
         formData.append("description", productData.description || "");
-        formData.append("buttonText", productData.buttonText || "View Details");
+        formData.append("buttonText", productData.buttonText || "Explore Collection");
         
         // Get the catalog ID - your controller expects uuid
         const catalogId = editingProduct.uuid;
@@ -552,7 +552,7 @@ const CreateProductForm = ({
           formData.append("productSize", product.productSize || "");
           formData.append("title", product.title || "");
           formData.append("description", product.description || "");
-          formData.append("buttonText", product.buttonText || "View Details");
+          formData.append("buttonText", product.buttonText || "Explore Collection");
 
           if (product.imageFile) {
             formData.append("image", product.imageFile);
