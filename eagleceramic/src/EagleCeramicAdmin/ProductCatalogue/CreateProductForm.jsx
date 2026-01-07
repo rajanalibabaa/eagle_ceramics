@@ -49,7 +49,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
+const API_BASE_URL = "http://localhost:5050/api/v1";
 
 const CreateProductForm = ({
   openModal,
@@ -100,66 +100,70 @@ const CreateProductForm = ({
   // Fetch dropdown data when modal opens
   useEffect(() => {
     if (openModal) {
-      console.log("=== MODAL OPENED ===");
-      console.log("Mode:", mode);
-      console.log("Editing Product:", editingProduct);
-      dropdownsInitialized.current = false;
       fetchDropdownData();
     }
   }, [openModal]);
 
-  // Handle initial form setup for CREATE mode only
+  // Handle form setup based on mode
   useEffect(() => {
     if (!openModal) return;
 
     if (mode === "create") {
       resetForm();
-    }
-  }, [mode, openModal]);
-
-  // Handle form setup for UPDATE mode
-  useEffect(() => {
-    if (!openModal || mode !== "update" || !editingProduct) return;
-
-    console.log("=== SETTING UP UPDATE MODE ===");
-    console.log("Editing Product:", editingProduct);
-
-    setProductData({
-      productName: editingProduct.productName || "",
-      productSize: editingProduct.productSize || "",
-      productId: editingProduct.productId || "",
-      title: editingProduct.title || "",
-      description: editingProduct.description || "",
-      buttonText: editingProduct.buttonText || "View Details",
-      imageFile: null,
-      pdfFile: null,
-    });
-
-    if (editingProduct.imageUrl) {
-      setImagePreview(editingProduct.imageUrl);
-      setImageLoadError(false);
-    } else {
-      setImagePreview("");
+      return;
     }
 
-    if (editingProduct.pdfUrl) {
-      const pdfFilename =
-        editingProduct.pdfUrl.split("/").pop() || "Existing PDF";
-      setPdfName(pdfFilename);
-    } else {
-      setPdfName("");
+    if (mode === "update" && editingProduct) {
+      console.log("=== SETTING UP UPDATE MODE ===");
+      console.log("Editing Product:", editingProduct);
+      console.log("Mode:", mode);
+
+      // Reset dropdown initialization flag
+      dropdownsInitialized.current = false;
+
+      // First, set the basic form data from editingProduct
+      const formData = {
+        productName: editingProduct.productName || "",
+        productSize: editingProduct.productSize || "",
+        productId: editingProduct.productId || editingProduct.uuid || "",
+        title: editingProduct.title || "",
+        description: editingProduct.description || "",
+        buttonText: editingProduct.buttonText || "View Details",
+        imageFile: null,
+        pdfFile: null,
+      };
+
+      console.log("Form Data to set:", formData);
+      setProductData(formData);
+
+      // Set image preview if exists
+      if (editingProduct.imageUrl) {
+        setImagePreview(editingProduct.imageUrl);
+        setImageLoadError(false);
+      } else {
+        setImagePreview("");
+      }
+
+      // Set PDF name if exists
+      if (editingProduct.pdfUrl) {
+        const pdfFilename = editingProduct.pdfUrl.split("/").pop() || "Existing PDF";
+        setPdfName(pdfFilename);
+      } else {
+        setPdfName("");
+      }
     }
   }, [editingProduct, mode, openModal]);
 
-  // Handle dropdown initialization for UPDATE mode AFTER dropdowns are loaded
+  // Handle dropdown initialization AFTER data is loaded for UPDATE mode
   useEffect(() => {
     if (mode !== "update" || !editingProduct || !openModal) return;
     if (productNameOptions.length === 0 || dropdownsInitialized.current) return;
 
     console.log("=== INITIALIZING DROPDOWNS FOR UPDATE ===");
-    console.log("Looking for product:", editingProduct.productName);
+    console.log("Editing product name:", editingProduct.productName);
     console.log("Available options:", productNameOptions);
 
+    // Try to find matching product in dropdown options
     const matchingProduct = productNameOptions.find(
       (option) => option.name === editingProduct.productName
     );
@@ -169,11 +173,29 @@ const CreateProductForm = ({
       setSelectedProductId(matchingProduct.id);
       setAvailableSizes(matchingProduct.sizes || []);
       dropdownsInitialized.current = true;
+      
+      // Update productData with the matched product info
+      setProductData(prev => ({
+        ...prev,
+        productId: matchingProduct.id,
+        productName: matchingProduct.name,
+        // Keep the existing size from editingProduct if not already set
+        productSize: prev.productSize || editingProduct.productSize || ""
+      }));
     } else {
       console.warn("❌ No matching product found for:", editingProduct.productName);
       console.log("Available names:", productNameOptions.map((o) => o.name));
-      setSelectedProductId("");
+      
+      // If no match found, still set what we have
+      setSelectedProductId(editingProduct.productId || editingProduct.uuid || "");
       setAvailableSizes([]);
+      
+      // For custom product names not in dropdown
+      setProductData(prev => ({
+        ...prev,
+        productName: editingProduct.productName || "",
+        productSize: editingProduct.productSize || ""
+      }));
     }
   }, [editingProduct, mode, openModal, productNameOptions]);
 
@@ -182,7 +204,7 @@ const CreateProductForm = ({
       setLoadingDropdowns(true);
       console.log("=== FETCHING DROPDOWN DATA ===");
 
-      const response = await axios.get(`${API_BASE_URL}/product-sizes/dropdown`);
+      const response = await axios.get(`${API_BASE_URL}/eagle-ceramic/product-sizes/dropdown`);
 
       console.log("API Response:", response.data);
 
@@ -414,173 +436,171 @@ const CreateProductForm = ({
   };
 
   const handleSubmit = async (e) => {
-  if (e) e.preventDefault();
+    if (e) e.preventDefault();
 
-  if (mode === "create" && products.length === 0) {
-    setErrorMessage("Please add at least one product before submitting");
-    setErrorSnackbar(true);
-    return;
-  }
+    // Validation
+    if (mode === "create" && products.length === 0) {
+      setErrorMessage("Please add at least one product before submitting");
+      setErrorSnackbar(true);
+      return;
+    }
 
-  if (mode === "update" && !productData.productName) {
-    setErrorMessage("Product Name is required");
-    setErrorSnackbar(true);
-    return;
-  }
+    if (mode === "update" && (!productData.productName || !editingProduct?.uuid)) {
+      setErrorMessage("Product Name and Catalog ID are required");
+      setErrorSnackbar(true);
+      return;
+    }
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    if (mode === "update" && editingProduct) {
-      const formData = new FormData();
-      
-      // Add all form data
-      formData.append("productName", productData.productName);
-      formData.append("productSize", productData.productSize || "");
-      formData.append("title", productData.title || "");
-      formData.append("description", productData.description || "");
-      formData.append("buttonText", productData.buttonText || "View Details");
+      if (mode === "update" && editingProduct) {
+        const formData = new FormData();
+        
+        // Add all form data - IMPORTANT: These field names must match your backend
+        formData.append("productName", productData.productName);
+        formData.append("productSize", productData.productSize || "");
+        formData.append("title", productData.title || "");
+        formData.append("description", productData.description || "");
+        formData.append("buttonText", productData.buttonText || "View Details");
+        
+        // Get the catalog ID - your controller expects uuid
+        const catalogId = editingProduct.uuid;
 
-      // Handle image
-      if (productData.imageFile instanceof File) {
-        formData.append("image", productData.imageFile);
-      } else if (editingProduct.imageUrl || editingProduct.mageln21) {
-        formData.append("existingImageUrl", editingProduct.imageUrl || editingProduct.mageln21);
-      }
-
-      // Handle PDF
-      if (productData.pdfFile instanceof File) {
-        formData.append("pdf", productData.pdfFile);
-      } else if (editingProduct.pdfUrl || editingProduct.pdfurl) {
-        formData.append("existingPdfUrl", editingProduct.pdfUrl || editingProduct.pdfurl);
-      }
-
-      // Get the catalog ID - check all possible ID fields
-      const catalogId = editingProduct.uuid || editingProduct._id || editingProduct.uid || editingProduct.id;
-      
-      if (!catalogId) {
-        throw new Error("Catalog ID not found for update");
-      }
-
-      console.log("=== UPDATE REQUEST (PATCH) ===");
-      console.log("Catalog ID:", catalogId);
-      
-      // ✅ USE PATCH INSTEAD OF PUT
-      const updateUrl = `${API_BASE_URL}/catalog/update/${catalogId}`;
-      console.log("Update URL:", updateUrl);
-      console.log("HTTP Method: PATCH");
-      
-      // Log FormData contents for debugging
-      console.log("FormData contents:");
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
-      }
-
-      // ✅ FIXED: Use PATCH instead of PUT
-      const response = await axios.patch(
-        updateUrl,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+        console.log("=== UPDATE REQUEST ===");
+        console.log("Catalog ID (uuid):", catalogId);
+        console.log("Editing Product:", editingProduct);
+        console.log("Product Data:", productData);
+        
+        // Handle image - only send if it's a new file
+        if (productData.imageFile instanceof File) {
+          console.log("Adding new image file:", productData.imageFile.name);
+          formData.append("image", productData.imageFile);
+        } else {
+          console.log("Keeping existing image:", editingProduct.imageUrl);
         }
-      );
 
-      console.log("Update Response:", response.data);
+        // Handle PDF - only send if it's a new file
+        if (productData.pdfFile instanceof File) {
+          console.log("Adding new PDF file:", productData.pdfFile.name);
+          formData.append("pdf", productData.pdfFile);
+        } else {
+          console.log("Keeping existing PDF:", editingProduct.pdfUrl);
+        }
 
-      if (response.data.success) {
+        // Log FormData contents
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+          console.log(`${key}:`, value instanceof File ? `File: ${value.name}` : value);
+        }
+
+        // IMPORTANT: Based on your router, you might need to use different endpoint
+        // Let's try both possibilities
+        
+        const endpoints = [
+          `${API_BASE_URL}/eagle-ceramic/catalog/update/${catalogId}`,
+          `${API_BASE_URL}/eagle-ceramic/catalog/delete/${catalogId}`, // This seems wrong but let's check
+          `${API_BASE_URL}/eagle-ceramic/catalog/${catalogId}`
+        ];
+
+        let response;
+        let lastError;
+        
+        // Try different endpoints
+        for (const endpoint of endpoints) {
+          try {
+            console.log(`Trying endpoint: ${endpoint}`);
+            response = await axios.patch(
+              endpoint,
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
+              }
+            );
+            console.log(`Success with endpoint: ${endpoint}`);
+            break; // Exit loop if successful
+          } catch (error) {
+            lastError = error;
+            console.log(`Failed with endpoint ${endpoint}:`, error.response?.status);
+          }
+        }
+
+        if (!response) {
+          throw lastError || new Error("All endpoints failed");
+        }
+
+        console.log("Update Response:", response.data);
+
+        if (response.data.success) {
+          setSuccessSnackbar(true);
+          if (onSuccess) onSuccess();
+          setTimeout(() => {
+            handleCloseModal();
+          }, 1500);
+        } else {
+          throw new Error(response.data.message || "Update failed");
+        }
+      } else {
+        // CREATE mode - existing code
+        for (let i = 0; i < products.length; i++) {
+          const product = products[i];
+          const formData = new FormData();
+          
+          formData.append("productName", product.productName);
+          formData.append("productSize", product.productSize || "");
+          formData.append("title", product.title || "");
+          formData.append("description", product.description || "");
+          formData.append("buttonText", product.buttonText || "View Details");
+
+          if (product.imageFile) {
+            formData.append("image", product.imageFile);
+          }
+
+          if (product.pdfFile) {
+            formData.append("pdf", product.pdfFile);
+          }
+
+          const createResponse = await axios.post(
+            `${API_BASE_URL}/eagle-ceramic/catalog/create`, 
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
+          console.log("Create Response:", createResponse.data);
+        }
+
         setSuccessSnackbar(true);
+        setProducts([]);
         if (onSuccess) onSuccess();
         setTimeout(() => {
           handleCloseModal();
         }, 1500);
-      } else {
-        throw new Error(response.data.message || "Update failed");
       }
-    } else {
-      // CREATE mode - existing code remains the same
-      for (let i = 0; i < products.length; i++) {
-        const product = products[i];
-        const formData = new FormData();
-        
-        if (product.productId || selectedProductId) {
-          formData.append("productId", product.productId || selectedProductId);
-        }
-        
-        formData.append("productName", product.productName);
-        formData.append("productSize", product.productSize || "");
-        formData.append("title", product.title || "");
-        formData.append("description", product.description || "");
-        formData.append("buttonText", product.buttonText || "View Details");
-
-        if (product.imageFile) {
-          formData.append("image", product.imageFile);
-        }
-
-        if (product.pdfFile) {
-          formData.append("pdf", product.pdfFile);
-        }
-
-        const createResponse = await axios.post(
-          `${API_BASE_URL}/catalog/create`, 
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        console.log("Create Response:", createResponse.data);
+    } catch (error) {
+      console.error("=== SUBMIT ERROR ===");
+      console.error("Error:", error);
+      console.error("Error Response:", error.response?.data);
+      console.error("Error Status:", error.response?.status);
+      console.error("Error URL:", error.config?.url);
+      
+      let errorMsg = "Operation failed. Please check the endpoint.";
+      if (error.response?.data?.message) {
+        errorMsg = error.response.data.message;
+      } else if (error.message) {
+        errorMsg = error.message;
       }
-
-      setSuccessSnackbar(true);
-      setProducts([]);
-      if (onSuccess) onSuccess();
-      setTimeout(() => {
-        handleCloseModal();
-      }, 1500);
+      
+      setErrorMessage(`Error: ${errorMsg}`);
+      setErrorSnackbar(true);
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("=== SUBMIT ERROR ===");
-    console.error("Error:", error);
-    console.error("Error Status:", error.response?.status);
-    console.error("Error URL:", error.config?.url);
-    console.error("Error Method:", error.config?.method);
-    
-    // Better error message
-    let errorMsg = "Operation failed";
-    if (error.response?.status === 404) {
-      errorMsg = `API endpoint not found: ${error.config?.method} ${error.config?.url}`;
-      console.error("404 Error - Check if endpoint exists on server");
-      
-      // Try other HTTP methods for debugging
-      console.log("Testing other HTTP methods...");
-      const testId = editingProduct?.uuid || "test-id";
-      const testUrl = `${API_BASE_URL}/catalog/update/${testId}`;
-      
-      console.log("Test URL:", testUrl);
-      console.log("Trying GET...");
-      console.log("Trying PUT...");
-      console.log("Trying PATCH...");
-      console.log("Trying POST...");
-      
-    } else if (error.response?.status === 405) {
-      errorMsg = `Method not allowed: ${error.config?.method}. Try using POST or PUT instead.`;
-    } else if (error.response?.status === 500) {
-      errorMsg = "Server error. Please check server logs.";
-    } else if (error.response?.data?.message) {
-      errorMsg = error.response.data.message;
-    } else if (error.message) {
-      errorMsg = error.message;
-    }
-    
-    setErrorMessage(errorMsg);
-    setErrorSnackbar(true);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleCloseSnackbar = () => {
     setSuccessSnackbar(false);
@@ -709,6 +729,18 @@ const CreateProductForm = ({
                         Editing: <strong>{editingProduct.productName}</strong>
                         {editingProduct.productSize &&
                           ` (Size: ${editingProduct.productSize})`}
+                        <br />
+                        Catalog ID: <code>{editingProduct.uuid}</code>
+                      </Alert>
+                    )}
+
+                    {/* Display current values when dropdowns are loading */}
+                    {isUpdateMode && loadingDropdowns && (
+                      <Alert severity="info" sx={{ mb: 2 }}>
+                        Loading dropdowns... Current values:
+                        <Box component="span" sx={{ ml: 1, fontWeight: 'bold' }}>
+                          {productData.productName} {productData.productSize && `(${productData.productSize})`}
+                        </Box>
                       </Alert>
                     )}
 
@@ -751,6 +783,13 @@ const CreateProductForm = ({
                               : `${productNameOptions.length} products available`}
                           </FormHelperText>
                         </FormControl>
+                        
+                        {/* Display current product name in UPDATE mode */}
+                        {isUpdateMode && productData.productName && (
+                          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                            Current: {productData.productName}
+                          </Typography>
+                        )}
                       </Grid>
 
                       {/* Product Size Dropdown */}
@@ -790,6 +829,13 @@ const CreateProductForm = ({
                               : `${availableSizes.length} sizes available`}
                           </FormHelperText>
                         </FormControl>
+                        
+                        {/* Display current product size in UPDATE mode */}
+                        {isUpdateMode && productData.productSize && (
+                          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
+                            Current: {productData.productSize}
+                          </Typography>
+                        )}
                       </Grid>
 
                       {/* Title */}

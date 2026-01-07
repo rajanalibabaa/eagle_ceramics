@@ -661,60 +661,71 @@ const handleSubmit = async (e) => {
                                         />
                                     </Grid>
 
-                                    <Grid item xs={12} md={3}>
-                                        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                onChange={handleImageChange}
-                                                ref={fileInputRef}
-                                                style={{ display: 'none' }}
-                                                id="image-upload"
-                                            />
-                                            <Button
-                                                variant="outlined"
-                                                component="label"
-                                                htmlFor="image-upload"
-                                                startIcon={<CloudUploadIcon />}
-                                                disabled={loading}
-                                                sx={{
-                                                    height: '56px',
-                                                    borderRadius: 2,
-                                                    fontSize: "0.9rem",
-                                                    gap:1
-                                                }}
-                                            >
-                                                Upload Image
-                                                <Typography variant="overline" display="block" color="text.secondary" >
-                                                    Max 1MB
-                                                </Typography>
-                                            </Button>
-                                            
-                                            {currentSize.imagePreview && (
-                                                <Box sx={{ mt: 1, textAlign: 'center' }}>
-                                                    <Avatar
-                                                        src={currentSize.imagePreview}
-                                                        alt="Preview"
-                                                        sx={{ 
-                                                            width: 70, 
-                                                            height: 70, 
-                                                            mx: 'auto',
-                                                            border: '2px solid',
-                                                            borderRadius: 0
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        size="small"
-                                                        color="error"
-                                                        onClick={removeImage}
-                                                        sx={{ mt: 1 }}
-                                                    >
-                                                        Remove
-                                                    </Button>
-                                                </Box>
-                                            )}
-                                        </Box>
-                                    </Grid>
+<Grid item xs={12} md={6}>
+  <Typography
+    variant="subtitle2"
+    fontWeight="500"
+    gutterBottom
+  >
+    Product Image {mode === "create" && "*"}
+  </Typography>
+  <Button
+    variant="outlined"
+    component="label"
+    startIcon={<CloudUploadIcon />}
+    disabled={uploadingImage || loading}
+    size="small"
+    fullWidth
+  >
+    {productData.imageFile
+      ? "Change Image"
+      : imagePreview
+      ? "Replace Image"
+      : mode === "create"
+      ? "Upload Image *"
+      : "Upload New Image (Optional)"}
+    <input
+      type="file"
+      hidden
+      accept="image/*"
+      onChange={handleImageFileSelect}
+    />
+  </Button>
+  {productData.imageFile && (
+    <Typography
+      variant="caption"
+      color="success.main"
+      display="block"
+      sx={{ mt: 1 }}
+    >
+      ✓ New: {productData.imageFile.name}
+    </Typography>
+  )}
+  {imagePreview && !productData.imageFile && mode === "update" && (
+    <Typography
+      variant="caption"
+      color="info.main"
+      display="block"
+      sx={{ mt: 1 }}
+    >
+      📷 Current image will be kept
+    </Typography>
+  )}
+  {imagePreview && (
+    <Box sx={{ mt: 1 }}>
+      <img
+        src={imagePreview}
+        alt="Preview"
+        style={{
+          maxWidth: "100%",
+          maxHeight: 100,
+          borderRadius: 4,
+          border: "1px solid #e0e0e0",
+        }}
+      />
+    </Box>
+  )}
+</Grid>
                                     
                                     <Grid item xs={12} >
                                         <TextField
