@@ -128,7 +128,7 @@ const CreateProductForm = ({
         productId: editingProduct.productId || editingProduct.uuid || "",
         title: editingProduct.title || "",
         description: editingProduct.description || "",
-        buttonText: editingProduct.buttonText || "Explore Collection",
+        buttonText: editingProduct.buttonText || "Exlore Collection",
         imageFile: null,
         pdfFile: null,
       };

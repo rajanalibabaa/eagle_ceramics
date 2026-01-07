@@ -660,7 +660,6 @@ const handleSubmit = async (e) => {
                                             }}
                                         />
                                     </Grid>
-
 <Grid item xs={12} md={6}>
   <Typography
     variant="subtitle2"
@@ -673,13 +672,13 @@ const handleSubmit = async (e) => {
     variant="outlined"
     component="label"
     startIcon={<CloudUploadIcon />}
-    disabled={uploadingImage || loading}
+    disabled={loading}
     size="small"
     fullWidth
   >
-    {productData.imageFile
+    {currentSize.imageFile
       ? "Change Image"
-      : imagePreview
+      : (currentSize.imagePreview || currentSize.image)
       ? "Replace Image"
       : mode === "create"
       ? "Upload Image *"
@@ -688,20 +687,23 @@ const handleSubmit = async (e) => {
       type="file"
       hidden
       accept="image/*"
-      onChange={handleImageFileSelect}
+      ref={fileInputRef}
+      onChange={handleImageChange}
     />
   </Button>
-  {productData.imageFile && (
+  
+  {currentSize.imageFile && (
     <Typography
       variant="caption"
       color="success.main"
       display="block"
       sx={{ mt: 1 }}
     >
-      ✓ New: {productData.imageFile.name}
+      ✓ New: {currentSize.imageFile.name}
     </Typography>
   )}
-  {imagePreview && !productData.imageFile && mode === "update" && (
+  
+  {((currentSize.imagePreview || currentSize.image) && !currentSize.imageFile && mode === "update") && (
     <Typography
       variant="caption"
       color="info.main"
@@ -711,18 +713,27 @@ const handleSubmit = async (e) => {
       📷 Current image will be kept
     </Typography>
   )}
-  {imagePreview && (
+  
+  {currentSize.imagePreview && (
     <Box sx={{ mt: 1 }}>
       <img
-        src={imagePreview}
+        src={currentSize.imagePreview}
         alt="Preview"
         style={{
           maxWidth: "100%",
           maxHeight: 100,
           borderRadius: 4,
-          border: "1px solid #e0e0e0",
+          border: "1px solid #e0e0e0"
         }}
       />
+      <Button
+        size="small"
+        color="error"
+        onClick={removeImage}
+        sx={{ mt: 1 }}
+      >
+        Remove Image
+      </Button>
     </Box>
   )}
 </Grid>
