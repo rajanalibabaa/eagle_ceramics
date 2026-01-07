@@ -27,6 +27,9 @@ import {
   InputLabel,
   FormHelperText,
   Divider,
+  List,
+  ListItem,
+  ListItemText,
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
@@ -73,6 +76,7 @@ const CreateProductPage = () => {
 
   const [filterData, setFilterData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [catalogData, setCatalogData] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -96,6 +100,9 @@ const CreateProductPage = () => {
   const [availableSizes, setAvailableSizes] = useState([]);
   const [isFilterApplied, setIsFilterApplied] = useState(false);
 
+  // Product dialog
+  const [productDialogOpen, setProductDialogOpen] = useState(false);
+
   // Snackbar helpers
   const showSnackbar = (message, severity = "success") => {
     setSnackbar({ open: true, message, severity });
@@ -116,6 +123,7 @@ const CreateProductPage = () => {
       const response = await axios.get(
         `${API_BASE_URL}/catalog/get-by-product`
       );
+console.log('res',response);
 
       let arr = [];
       if (
@@ -125,8 +133,17 @@ const CreateProductPage = () => {
         arr = response.data.data.filterdata;
       }
 
+      let catArr = [];
+      if (
+        response?.data?.data?.catalogData &&
+        Array.isArray(response.data.data.catalogData)
+      ) {
+        catArr = response.data.data.catalogData;
+      }
+
       setFilterData(arr);
       setFilteredData(arr);
+      setCatalogData(catArr);
       setIsFilterApplied(false);
 
       if (arr.length === 0) {
@@ -319,6 +336,7 @@ const CreateProductPage = () => {
 
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
+console.log('target',deleteTarget);
 
     try {
       setLoading(true);
@@ -326,7 +344,7 @@ const CreateProductPage = () => {
       let deleteUrl = "";
 
       if (deleteTarget.type === "product") {
-        deleteUrl = `${API_BASE_URL}/catalog/delete/${deleteTarget.product.uuid}`;
+        deleteUrl = `${API_BASE_URL}/catalog/delete/${deleteTarget.product.id}`;
       } else if (deleteTarget.type === "size") {
         // YOU MUST implement this endpoint on backend if you want it
         deleteUrl = `${API_BASE_URL}/catalog/${
@@ -809,20 +827,15 @@ const CreateProductPage = () => {
                   </Box>
                 </AccordionSummary>
 
-                {/* NEW: Size groups -> items */}
+                {/* Size groups -> items */}
                 <AccordionDetails sx={{ p: 0 }}>
                   {groups.map((sizeGroup, sizeIndex) => {
                     const sizeLabel = sizeGroup.size;
-                    const items = Array.isArray(sizeGroup.items)
-                      ? sizeGroup.items
-                      : [
-                          {
-                            _id: sizeGroup._id || sizeGroup.sizeId,
-                            title: sizeGroup.title,
-                            description: sizeGroup.description,
-                            image: sizeGroup.image,
-                          },
-                        ].filter((x) => x.title || x.description || x.image); // avoid showing empty item
+                    const items = catalogData.filter(
+                      (item) =>
+                        item.productName === product.productName &&
+                        item.productSize === sizeLabel
+                    );
                     return (
                       <Box key={`${product.uuid}-${sizeLabel}-${sizeIndex}`}>
                         {/* Size Header */}
@@ -911,12 +924,7 @@ const CreateProductPage = () => {
                           ) : (
                             <Grid container spacing={2}>
                               {items.map((item, idx) => {
-                                const itemId =
-                                  item._id ||
-                                  item.itemId ||
-                                  sizeGroup._id ||
-                                  sizeGroup.sizeId ||
-                                  `${idx}`;
+                                const itemId = item.uuid;
                                 return (
                                   <Grid item xs={12} key={itemId}>
                                     <Paper
@@ -967,6 +975,15 @@ const CreateProductPage = () => {
                                             {product.productName} &nbsp;|&nbsp;
                                             <strong>Size:</strong> {sizeLabel}
                                           </Typography>
+
+                                          <Button
+                                            size="small"
+                                            variant="outlined"
+                                            onClick={() => setProductDialogOpen(true)}
+                                            sx={{ mt: 1 }}
+                                          >
+                                            View All Products
+                                          </Button>
 
                                           <Box sx={{ mt: 2 }}>
                                             <Typography
@@ -1030,7 +1047,7 @@ const CreateProductPage = () => {
                                                 e.stopPropagation();
                                                 handleOpenUpdateModal(product, {
                                                   size: sizeLabel,
-                                                  itemId,
+                                                  itemId: item.uuid,
                                                   title: item.title,
                                                   description: item.description,
                                                   image: item.image,
@@ -1059,7 +1076,7 @@ const CreateProductPage = () => {
                                                     type: "item",
                                                     product,
                                                     size: sizeLabel,
-                                                    itemId,
+                                                    itemId: item.uuid,
                                                   },
                                                   e
                                                 )
@@ -1104,6 +1121,34 @@ const CreateProductPage = () => {
           })
         )}
       </Box>
+
+      {/* Product Names Dialog */}
+      <Dialog
+        open={productDialogOpen}
+        onClose={() => setProductDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
+        <DialogTitle>Select a Product</DialogTitle>
+        <DialogContent>
+          <List>
+            {productNames.map((name) => (
+              <ListItem button key={name} onClick={() => {
+                const product = filterData.find(p => p.productName === name);
+                if (product) {
+                  setExpanded(product.uuid || `product-${filterData.indexOf(product)}`);
+                }
+                setProductDialogOpen(false);
+              }}>
+                <ListItemText primary={name} />
+              </ListItem>
+            ))}
+          </List>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setProductDialogOpen(false)}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Create/Update Modal */}
       <Dialog
