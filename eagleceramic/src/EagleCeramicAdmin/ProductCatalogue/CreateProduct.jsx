@@ -754,12 +754,7 @@ const CreateProductPage = () => {
           >
             Product Catalogue
           </Typography>
-          {!loading && (
-            <Typography variant="body2" color="text.secondary">
-              Showing {productCount} product{productCount !== 1 ? "s" : ""} with{" "}
-              {totalItems} loaded item{totalItems !== 1 ? "s" : ""}
-            </Typography>
-          )}
+          
         </Box>
 
         <Button
@@ -885,12 +880,7 @@ const CreateProductPage = () => {
                           mt: 0.5,
                         }}
                       >
-                        <Chip 
-                          label={`${productSizes.length} size${productSizes.length !== 1 ? 's' : ''}`}
-                          size="small"
-                          color="primary"
-                          variant="outlined"
-                        />
+                      
                       </Box>
                     </Box>
                   </Box>
@@ -959,12 +949,7 @@ const CreateProductPage = () => {
                                     {isLoading && (
                                       <CircularProgress size={20} />
                                     )}
-                                    <Chip
-                                      label={`${items.length} item${items.length !== 1 ? 's' : ''}`}
-                                      size="small"
-                                      color="secondary"
-                                      variant="outlined"
-                                    />
+                                  
                                   </Box>
                                 </Box>
                               </AccordionSummary>
@@ -1075,18 +1060,7 @@ const CreateProductPage = () => {
                                       ))}
                                     </Grid>
                                     
-                                    <Box sx={{ mt: 2, textAlign: 'center' }}>
-                                      <Button
-                                        variant="outlined"
-                                        startIcon={<AddIcon />}
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleOpenUpdateModal(product, { size: sizeLabel });
-                                        }}
-                                      >
-                                        Add Another Item
-                                      </Button>
-                                    </Box>
+                                  
                                   </Box>
                                 )}
                               </AccordionDetails>

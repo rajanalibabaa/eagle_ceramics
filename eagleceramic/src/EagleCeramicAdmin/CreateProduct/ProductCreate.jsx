@@ -42,6 +42,17 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import axios from "axios";
 import {getAdminToken} from "../../EagleCeramicAdmin/utils/auth";
 
+
+const MAX_IMAGE_SIZE = 3 * 1024 * 1024; // 3MB
+
+const formatFileSize = (bytes) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+};
+
 const ProductCreate = ({ 
     openModal, 
     setOpenModal, 
@@ -67,6 +78,7 @@ const ProductCreate = ({
         imageFile: null,
         imagePreview: null
     });
+    const [currentImageError, setCurrentImageError] = useState(""); // For inline image validation errors
     const [editingIndex, setEditingIndex] = useState(null);
     const [loading, setLoading] = useState(false);
     const [successSnackbar, setSuccessSnackbar] = useState(false);
@@ -74,15 +86,33 @@ const ProductCreate = ({
     const [errorMessage, setErrorMessage] = useState("");
     const [sizesToDelete, setSizesToDelete] = useState([]);
     const fileInputRef = useRef(null);
-
-
+const modalRef = useRef(null);
 
     console.log("currentSize",currentSize);
+const scrollToTop = () => {
+    if (modalRef.current) { 
+        modalRef.current.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+};
 
-    // Initialize form when modal opens or editingProduct changes
    useEffect(() => {
     console.log('Checkpoint: Initializing ProductCreate with mode:', mode, 'editingProduct:', editingProduct);
     if (mode === 'update' && editingProduct) {
+        // Clear current form first
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
+        setCurrentImageError("");
+        
         // Pre-fill form with existing product data
         setProductData({
             productName: editingProduct.productName || "",
@@ -102,9 +132,9 @@ const ProductCreate = ({
                 size: size.size || "",
                 title: size.title || "",
                 description: size.description || "",
-                image: size.image || "", // Store the image URL from database
-                imageFile: null, // No file initially
-                imagePreview: size.image || null // Use URL for preview
+                image: size.image || "",
+                imageFile: null,
+                imagePreview: size.image || null
             };
         }) || [];
         
@@ -133,6 +163,7 @@ const ProductCreate = ({
             imageFile: null,
             imagePreview: null
         });
+        setCurrentImageError("");
         setEditingIndex(null);
         setSizesToDelete([]);
         if (fileInputRef.current) {
@@ -162,19 +193,21 @@ const ProductCreate = ({
         const file = e.target.files[0];
         if (!file) return;
 
-        // Check file size (1MB = 1048576 bytes)
-        if (file.size > 1048576) {
-            alert("Image size must be less than 1MB");
+        // Validate file size (3MB)
+        if (file.size > MAX_IMAGE_SIZE) {
+            setCurrentImageError(`Image size must be less than ${formatFileSize(MAX_IMAGE_SIZE)}. Current size: ${formatFileSize(file.size)}`);
             e.target.value = "";
             return;
         }
 
-        // Check file type
-        if (!file.type.match('image.*')) {
-            alert("Please select an image file");
+        // Validate file type
+        if (!file.type.match(/^image\/(jpeg|jpg|png|gif|webp)$/i)) {
+            setCurrentImageError("Please select a valid image file (JPEG, PNG, GIF, WebP)");
             e.target.value = "";
             return;
         }
+
+        setCurrentImageError(""); // Clear error on success
 
         const reader = new FileReader();
         reader.onloadend = () => {
@@ -194,109 +227,103 @@ const ProductCreate = ({
             imagePreview: null,
             image: null
         }));
+        setCurrentImageError(""); // Clear error when removing
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
     };
 
-const handleSaveSize = () => {
-    
-    if (!currentSize.size || !currentSize.title || !currentSize.description) {
-        alert("Please fill all size fields before saving");
-        return;
-    }
-
-    if (editingIndex !== null) {
-        const updatedSizes = [...savedSizes];
-        
-        const updatedSize = {
-            _id: currentSize._id,
-            size: currentSize.size.trim(),
-            title: currentSize.title.trim(),
-            description: currentSize.description.trim(),
-            // Preserve existing image URL if no new file is uploaded
-            image: currentSize.image || updatedSizes[editingIndex].image,
-            // Track new image file if uploaded
-            imageFile: currentSize.imageFile || null,
-            // Use new preview or existing image for display
-            imagePreview: currentSize.imagePreview || currentSize.image || updatedSizes[editingIndex].imagePreview || updatedSizes[editingIndex].image
-        };
-        
-        // Special handling for update mode
-        if (mode === 'update') {
-            // If we're not uploading a new file, make sure we keep the existing image
-            if (!currentSize.imageFile) {
-                // Ensure the image field has the URL from the original size
-                updatedSize.image = currentSize.image || updatedSizes[editingIndex].image;
-            }
+    const handleSaveSize = () => {
+        if (!currentSize.size || !currentSize.title || !currentSize.description) {
+            alert("Please fill all size fields before saving");
+            return;
         }
-        
-        updatedSizes[editingIndex] = updatedSize;
-        setSavedSizes(updatedSizes);
-        console.log('Updated existing size at index', editingIndex, 'New size data:', updatedSize);
-        setEditingIndex(null);
-    } else {
-        // ADD NEW SIZE
-        const newSize = {
-            ...currentSize,
-            _id: currentSize._id || (mode === 'update' ? `temp-${Date.now()}-${Math.random()}` : null)
-        };
-        
-        setSavedSizes(prev => [...prev, newSize]);
-        console.log('Added new size:', newSize);
-    }
 
-    // Reset current size
-    setCurrentSize({ 
-        _id: null, 
-        size: "", 
-        title: "", 
-        description: "",
-        image: null,
-        imageFile: null,
-        imagePreview: null
-    });
-    if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-    }
-};
-   const handleEditSize = (index) => {
-    console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
-    const sizeToEdit = savedSizes[index];
-    
-    setCurrentSize({
-        _id: sizeToEdit._id,
-        size: sizeToEdit.size || "",
-        title: sizeToEdit.title || "",
-        description: sizeToEdit.description || "",
-        image: sizeToEdit.image || null, // Preserve existing image URL
-        imageFile: sizeToEdit.imageFile || null, // Keep any existing file
-        imagePreview: sizeToEdit.imagePreview || sizeToEdit.image || null
-    });
-    
-    setEditingIndex(index);
-    
-    // Debug log
-    console.log('Current size after edit:', {
-        _id: sizeToEdit._id,
-        size: sizeToEdit.size,
-        image: sizeToEdit.image,
-        hasImageFile: !!sizeToEdit.imageFile,
-        hasImagePreview: !!sizeToEdit.imagePreview
-    });
-};
+        if (mode === 'create' && !currentSize.imageFile) {
+            alert("Image is required for size in create mode");
+            return;
+        }
+
+        if (editingIndex !== null) {
+            const updatedSizes = [...savedSizes];
+            
+            const updatedSize = {
+                _id: currentSize._id,
+                size: currentSize.size.trim(),
+                title: currentSize.title.trim(),
+                description: currentSize.description.trim(),
+                image: currentSize.image || updatedSizes[editingIndex].image,
+                imageFile: currentSize.imageFile || null,
+                imagePreview: currentSize.imagePreview || currentSize.image || updatedSizes[editingIndex].imagePreview || updatedSizes[editingIndex].image
+            };
+            
+            if (mode === 'update') {
+                if (!currentSize.imageFile) {
+                    updatedSize.image = currentSize.image || updatedSizes[editingIndex].image;
+                }
+            }
+            
+            updatedSizes[editingIndex] = updatedSize;
+            setSavedSizes(updatedSizes);
+            console.log('Updated existing size at index', editingIndex, 'New size data:', updatedSize);
+            setEditingIndex(null);
+        } else {
+            // ADD NEW SIZE
+            const newSize = {
+                ...currentSize,
+                _id: currentSize._id || (mode === 'update' ? `temp-${Date.now()}-${Math.random()}` : null)
+            };
+            
+            setSavedSizes(prev => [...prev, newSize]);
+            console.log('Added new size:', newSize);
+        }
+
+        // Reset current size and error
+        setCurrentSize({ 
+            _id: null, 
+            size: "", 
+            title: "", 
+            description: "",
+            image: null,
+            imageFile: null,
+            imagePreview: null
+        });
+        setCurrentImageError("");
+        if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+        }
+    };
+
+    const handleEditSize = (index) => {
+        console.log('Checkpoint: Editing size at index:', index, 'Size data:', savedSizes[index]);
+        const sizeToEdit = savedSizes[index];
+        
+        setCurrentSize({
+            _id: sizeToEdit._id,
+            size: sizeToEdit.size || "",
+            title: sizeToEdit.title || "",
+            description: sizeToEdit.description || "",
+            image: sizeToEdit.image || null,
+            imageFile: sizeToEdit.imageFile || null,
+            imagePreview: sizeToEdit.imagePreview || sizeToEdit.image || null
+        });
+        
+        setCurrentImageError(""); // Clear any previous validation errors
+        setEditingIndex(index);
+         scrollToTop();
+        
+       
+    };
 
     const handleDeleteSize = (index) => {
         console.log('Checkpoint: Deleting size at index:', index);
         const sizeToDelete = savedSizes[index];
         
-        // If it's an existing size (has MongoDB _id), add to deletion list
         if (sizeToDelete._id && sizeToDelete._id.toString().length === 24) {
             setSizesToDelete(prev => [...prev, sizeToDelete._id]);
             console.log('Checkpoint: Added size to delete list:', sizeToDelete._id, 'New sizesToDelete:', [...sizesToDelete, sizeToDelete._id]);
         }
         
-        // Remove from saved sizes
         setSavedSizes(prev => prev.filter((_, i) => i !== index));
         console.log('Checkpoint: Removed size from savedSizes. New savedSizes:', savedSizes.filter((_, i) => i !== index));
         
@@ -310,6 +337,7 @@ const handleSaveSize = () => {
                 imageFile: null,
                 imagePreview: null
             });
+            setCurrentImageError("");
             setEditingIndex(null);
             if (fileInputRef.current) {
                 fileInputRef.current.value = "";
@@ -329,151 +357,146 @@ const handleSaveSize = () => {
             imageFile: null,
             imagePreview: null
         });
+        setCurrentImageError(""); // Clear validation error
         if (fileInputRef.current) {
             fileInputRef.current.value = "";
         }
         setEditingIndex(null);
     };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    try {
-        setLoading(true);
-        
-        // Get the token directly
-        const token = getAdminToken();
-        console.log('Checkpoint: Retrieved admin token for submission:', token);
-        if (!token) {
-            setErrorMessage('Authentication token not found. Please login again.');
-            setErrorSnackbar(true);
-            setLoading(false);
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('productName', productData.productName.trim());
-
-        if (mode === 'create') {
-            // FOR CREATE MODE
-            savedSizes.forEach((size, index) => {
-                formData.append(`productSizes[${index}][size]`, size.size.trim());
-                formData.append(`productSizes[${index}][title]`, size.title.trim());
-                formData.append(`productSizes[${index}][description]`, size.description.trim());
-                
-                if (size.imageFile) {
-                    formData.append('image', size.imageFile);
-                }
-            });
-        } 
-        else if (mode === 'update' && editingProduct) {
-            // FOR UPDATE MODE
-            const productSizesData = savedSizes.map((size, index) => {
-                const sizeData = {
-                    size: size.size.trim(),
-                    title: size.title.trim(),
-                    description: size.description.trim(),
-                    hasNewImage: !!size.imageFile,
-                };
-                
-                if (size._id && typeof size._id === 'string' && size._id.length === 24) {
-                    sizeData._id = size._id;
-                } else if (size._id && typeof size._id === 'object') {
-                    sizeData._id = size._id.toString();
-                }
-                
-                if (!size.imageFile && size.image) {
-                    sizeData.existingImage = size.image;
-                }
-                
-                return sizeData;
-            });
+        try {
+            setLoading(true);
             
-            formData.append('productSizes', JSON.stringify(productSizesData));
-            
-            savedSizes.forEach((size) => {
-                if (size.imageFile) {
-                    formData.append('image', size.imageFile);
-                }
-            });
-            
-            if (sizesToDelete.length > 0) {
-                formData.append('sizesToDelete', JSON.stringify(sizesToDelete));
+            const token = getAdminToken();
+            console.log('Checkpoint: Retrieved admin token for submission:', token);
+            if (!token) {
+                setErrorMessage('Authentication token not found. Please login again.');
+                setErrorSnackbar(true);
+                setLoading(false);
+                return;
             }
-        }
 
-        // Debug logging
-        console.log("=== FormData Contents ===");
-        for (let pair of formData.entries()) {
-            const key = pair[0];
-            const value = pair[1];
-            if (key === 'productSizes' || key === 'sizesToDelete') {
-                try {
-                    console.log(key + ': ', JSON.parse(value));
-                } catch {
+            const formData = new FormData();
+            formData.append('productName', productData.productName.trim());
+
+            if (mode === 'create') {
+                savedSizes.forEach((size, index) => {
+                    formData.append(`productSizes[${index}][size]`, size.size.trim());
+                    formData.append(`productSizes[${index}][title]`, size.title.trim());
+                    formData.append(`productSizes[${index}][description]`, size.description.trim());
+                    
+                    if (size.imageFile) {
+                        formData.append('image', size.imageFile);
+                    }
+                });
+            } 
+            else if (mode === 'update' && editingProduct) {
+                const productSizesData = savedSizes.map((size, index) => {
+                    const sizeData = {
+                        size: size.size.trim(),
+                        title: size.title.trim(),
+                        description: size.description.trim(),
+                        hasNewImage: !!size.imageFile,
+                    };
+                    
+                    if (size._id && typeof size._id === 'string' && size._id.length === 24) {
+                        sizeData._id = size._id;
+                    } else if (size._id && typeof size._id === 'object') {
+                        sizeData._id = size._id.toString();
+                    }
+                    
+                    if (!size.imageFile && size.image) {
+                        sizeData.existingImage = size.image;
+                    }
+                    
+                    return sizeData;
+                });
+                
+                formData.append('productSizes', JSON.stringify(productSizesData));
+                
+                savedSizes.forEach((size) => {
+                    if (size.imageFile) {
+                        formData.append('image', size.imageFile);
+                    }
+                });
+                
+                if (sizesToDelete.length > 0) {
+                    formData.append('sizesToDelete', JSON.stringify(sizesToDelete));
+                }
+            }
+
+            console.log("=== FormData Contents ===");
+            for (let pair of formData.entries()) {
+                const key = pair[0];
+                const value = pair[1];
+                if (key === 'productSizes' || key === 'sizesToDelete') {
+                    try {
+                        console.log(key + ': ', JSON.parse(value));
+                    } catch {
+                        console.log(key + ': ', value);
+                    }
+                } else if (value instanceof File) {
+                    console.log(key + ': ', value.name, `(${formatFileSize(value.size)})`);
+                } else {
                     console.log(key + ': ', value);
                 }
-            } else if (value instanceof File) {
-                console.log(key + ': ', value.name);
+            }
+            console.log("=========================");
+
+            let response;
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+
+            if (mode === 'update' && editingProduct) {
+                response = await axios.put(
+                    `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
+                    formData,
+                    config
+                );
             } else {
-                console.log(key + ': ', value);
+                response = await axios.post(
+                    "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
+                    formData,
+                    config
+                );
             }
-        }
-        console.log("=========================");
 
-        let response;
-        const config = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${token}`  // Add authorization header
+            console.log(`Response:`, response.data);
+            setSuccessSnackbar(true);
+            
+            if (onSuccess) {
+                onSuccess();
             }
-        };
 
-        if (mode === 'update' && editingProduct) {
-            response = await axios.put(
-                `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
-                formData,
-                config  // Use config with headers
-            );
-        } else {
-            response = await axios.post(
-                "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
-                formData,
-                config  // Use config with headers
-            );
+            setTimeout(() => {
+                handleCloseModal();
+            }, 1500);
+
+        } catch (error) {
+            console.error(`Error:`, error);
+            console.error('Error details:', error.response?.data);
+            
+            if (error.response?.status === 401) {
+                setErrorMessage('Session expired. Please login again.');
+            } else {
+                setErrorMessage(
+                    error?.response?.data?.message || 
+                    `Failed to ${mode === 'update' ? 'update' : 'create'} product`
+                );
+            }
+            setErrorSnackbar(true);
+        } finally {
+            setLoading(false);
         }
+    };
 
-        console.log(`Response:`, response.data);
-        setSuccessSnackbar(true);
-        
-        if (onSuccess) {
-            onSuccess();
-        }
-
-        setTimeout(() => {
-            handleCloseModal();
-        }, 1500);
-
-    } catch (error) {
-        console.error(`Error:`, error);
-        console.error('Error details:', error.response?.data);
-        
-        // Handle authentication errors
-        if (error.response?.status === 401) {
-            setErrorMessage('Session expired. Please login again.');
-            // Optionally redirect to login
-            // window.location.href = '/login';
-        } else {
-            setErrorMessage(
-                error?.response?.data?.message || 
-                `Failed to ${mode === 'update' ? 'update' : 'create'} product`
-            );
-        }
-        setErrorSnackbar(true);
-    } finally {
-        setLoading(false);
-    }
-};
     const handleCloseSnackbar = () => {
         setSuccessSnackbar(false);
         setErrorSnackbar(false);
@@ -482,11 +505,14 @@ const handleSubmit = async (e) => {
     return (
         <Fade in={openModal} timeout={500}>
             <Paper
+            ref={modalRef}
                 sx={{
                     p: { xs: 3, md: 4 },
                     borderRadius: 0,
                     background: "linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%)",
                     minHeight: '400px',
+                     maxHeight: '90vh',
+        overflowY: 'auto',
                 }}
             >
                 {loading && (
@@ -531,21 +557,6 @@ const handleSubmit = async (e) => {
                         {errorMessage}
                     </Alert>
                 </Snackbar>
-
-                {/* Form Header */}
-                <Box sx={{ mb: 2, textAlign: "center" }}>
-                    <Typography variant="h5" fontWeight="600" gutterBottom>
-                        {mode === 'update' ? 'Update Product' : 'Create New Product'}
-                    </Typography>
-                    <Divider
-                        sx={{
-                            mx: "auto",
-                            width: "100px",
-                            borderWidth: 1.5,
-                            borderColor: mode === 'update' ? "secondary.main" : "primary.main",
-                        }}
-                    />
-                </Box>
 
                 <form onSubmit={handleSubmit}>
                     <Grid container spacing={3}>
@@ -670,85 +681,113 @@ const handleSubmit = async (e) => {
                                             }}
                                         />
                                     </Grid>
-<Grid item xs={12} md={6}>
-  <Typography
-    variant="subtitle2"
-    fontWeight="500"
-    gutterBottom
-  >
-    Product Image {mode === "create" && "*"}
-  </Typography>
-  <Button
-    variant="outlined"
-    component="label"
-    startIcon={<CloudUploadIcon />}
-    disabled={loading}
-    size="small"
-    fullWidth
-  >
-    {currentSize.imageFile
-      ? "Change Image"
-      : (currentSize.imagePreview || currentSize.image)
-      ? "Replace Image"
-      : mode === "create"
-      ? "Upload Image *"
-      : "Upload New Image (Optional)"}
-    <input
-      type="file"
-      hidden
-      accept="image/*"
-      ref={fileInputRef}
-      onChange={handleImageChange}
-    />
-  </Button>
-  
-  {currentSize.imageFile && (
-    <Typography
-      variant="caption"
-      color="success.main"
-      display="block"
-      sx={{ mt: 1 }}
-    >
-      ✓ New: {currentSize.imageFile.name}
-    </Typography>
-  )}
-  
-  {((currentSize.imagePreview || currentSize.image) && !currentSize.imageFile && mode === "update") && (
-    <Typography
-      variant="caption"
-      color="info.main"
-      display="block"
-      sx={{ mt: 1 }}
-    >
-      📷 Current image will be kept
-    </Typography>
-  )}
-  
-  {currentSize.imagePreview && (
-    <Box sx={{ mt: 1 }}>
-      <img
-        src={currentSize.imagePreview}
-        alt="Preview"
-        style={{
-          maxWidth: "100%",
-          maxHeight: 100,
-          borderRadius: 4,
-          border: "1px solid #e0e0e0"
-        }}
-      />
-      <Button
-        size="small"
-        color="error"
-        onClick={removeImage}
-        sx={{ mt: 1 }}
-      >
-        Remove Image
-      </Button>
-    </Box>
-  )}
-</Grid>
-                                    
-                                    <Grid item xs={12} >
+
+                                    {/* Image Upload - Neat UI with 3MB validation */}
+                                    <Grid item xs={12} md={6}>
+                                        <Box>
+                                            <Typography
+                                                variant="subtitle2"
+                                                fontWeight="500"
+                                                gutterBottom
+                                            >
+                                                Product Image {mode === "create" && "*"}
+                                                <Typography 
+                                                    component="span" 
+                                                    variant="caption" 
+                                                    color="text.secondary" 
+                                                    sx={{ ml: 1 }}
+                                                >
+                                                    (Max {formatFileSize(MAX_IMAGE_SIZE)})
+                                                </Typography>
+                                            </Typography>
+                                            <Button
+                                                variant="outlined"
+                                                component="label"
+                                                startIcon={<CloudUploadIcon />}
+                                                disabled={loading}
+                                                size="small"
+                                                fullWidth
+                                            >
+                                                {currentSize.imageFile
+                                                    ? "Change Image"
+                                                    : (currentSize.imagePreview || currentSize.image)
+                                                    ? "Replace Image"
+                                                    : mode === "create"
+                                                    ? "Upload Image *"
+                                                    : "Upload New Image (Optional)"}
+                                                <input
+                                                    type="file"
+                                                    hidden
+                                                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+                                                    ref={fileInputRef}
+                                                    onChange={handleImageChange}
+                                                />
+                                            </Button>
+                                            
+                                            {/* Validation Error */}
+                                            {currentImageError && (
+                                                <Typography
+                                                    variant="caption"
+                                                    color="error"
+                                                    display="block"
+                                                    sx={{ mt: 0.5 }}
+                                                >
+                                                    {currentImageError}
+                                                </Typography>
+                                            )}
+                                            
+                                            {/* File Info */}
+                                            {currentSize.imageFile && (
+                                                <Typography
+                                                    variant="caption"
+                                                    color="success.main"
+                                                    display="block"
+                                                    sx={{ mt: 0.5 }}
+                                                >
+                                                    ✓ Selected: {currentSize.imageFile.name} ({formatFileSize(currentSize.imageFile.size)})
+                                                </Typography>
+                                            )}
+                                            
+                                            {/* Existing Image Info */}
+                                            {((currentSize.imagePreview || currentSize.image) && !currentSize.imageFile && mode === "update") && (
+                                                <Typography
+                                                    variant="caption"
+                                                    color="info.main"
+                                                    display="block"
+                                                    sx={{ mt: 0.5 }}
+                                                >
+                                                    📷 Current image will be kept
+                                                </Typography>
+                                            )}
+                                            
+                                            {/* Preview */}
+                                            {currentSize.imagePreview && (
+                                                <Box sx={{ mt: 1 }}>
+                                                    <img
+                                                        src={currentSize.imagePreview}
+                                                        alt="Preview"
+                                                        style={{
+                                                            maxWidth: "100%",
+                                                            maxHeight: 100,
+                                                            borderRadius: 4,
+                                                            border: "1px solid #e0e0e0"
+                                                        }}
+                                                    />
+                                                    <Button
+                                                        size="small"
+                                                        color="error"
+                                                        onClick={removeImage}
+                                                        sx={{ mt: 1 }}
+                                                    >
+                                                        Remove Image
+                                                    </Button>
+                                                </Box>
+                                            )}
+                                        </Box>
+                                    </Grid>
+
+                                    {/* Description - Fixed alignment (removed width:300px constraint) */}
+                                    <Grid item xs={12}>
                                         <TextField
                                             label="Description"
                                             placeholder="e.g., Perfect for kitchen backsplash"
@@ -770,8 +809,7 @@ const handleSubmit = async (e) => {
                                                 "& .MuiOutlinedInput-root": {
                                                     borderRadius: 2,
                                                     fontSize: "0.9rem",
-                                                    width:'300px'
-                                                   
+                                                    // REMOVED: width:'300px' - was breaking alignment
                                                 },
                                             }}
                                         />
