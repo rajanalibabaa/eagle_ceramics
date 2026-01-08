@@ -204,7 +204,7 @@ const AboutPageContent = () => {
       </Box>
 
 {/* <ModernAboutMe/> */}
-<Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 },maxWidth:'80%',position:'absolute',justifyContent:'center',mx:'auto',bottom:{xs:'-60px',sm:'-50px',md:'-80px'},left:'0',right:'0',textAlign:'center',borderRadius:2 ,zIndex:3,}}>
+<Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 },maxWidth:'80%',position:'absolute',justifyContent:'center',mx:'auto',bottom:{xs:'-60px',sm:'-60px',md:'-80px'},left:'0',right:'0',textAlign:'center',borderRadius:2 ,zIndex:3,}}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 5 }} justifyContent='space-between' alignItems='center' textAlign="center">
             {[

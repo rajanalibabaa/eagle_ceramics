@@ -73,7 +73,7 @@ const content = [
     gradient: "white",
     specifications: {
       sizes: ["300x450mm", "300x600mm"],
-      finishes: ["Matt", "Varnished", "Sugared", ],
+      finishes: ["Sugared", "Varnished", "Matt", ],
       // thickness: "10-12mm",
       // waterAbsorption: "< 3%",
       applications: ["House Front Elevation", "Boundary Walls & Compound Walls", "Pillars", "Gate Walls","Balcony & Terrace Walls"],
@@ -172,7 +172,7 @@ const content = [
     color: "#000000ff",
     gradient: "white",
     specifications: {
-      sizes: ["600x600mm", "300x300mm", "400x400mm"],
+      sizes: ["600x600mm", "300x300mm"],
       finishes: ["Plain Matt", "Plain SG", "Hexa Matt", "Hexa SG", "Cool Colors"],
       thickness: "9 mm - 10 mm" ,
       solarReflectance: "> 80%",
@@ -204,7 +204,7 @@ const content = [
     color: "#000000ff",
     gradient: "white",
     specifications: {
-      sizes: ["16' x 18' x 9'", 'Custom'],
+      sizes: ["16' x 18' x 9'", 'All Sizes'],
       finishes: ["Satin", "Brushed", "Mirror Polish", "PVD Coated", "Nano Coating"],
       material: "304 Stainless Steel",
       thickness: "10mm",
@@ -508,13 +508,13 @@ const ProductContent = memo(({ item, isActive, isMobile, onClick }) => {
               <strong>Thickness:</strong> {item.specifications.thickness || "Standard"}
             </Typography>
           </Box>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <Shield sx={{ fontSize: 16, color: "red" }} />
             <Typography variant="caption" color="black">
               <strong>Water Absorption:</strong>{" "}
               {item.specifications.waterAbsorption || "Standard"}
             </Typography>
-          </Box>
+          </Box> */}
         </Box>
 
         {/* Applications */}

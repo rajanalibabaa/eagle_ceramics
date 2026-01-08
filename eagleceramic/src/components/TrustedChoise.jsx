@@ -22,7 +22,7 @@ import deliveryBg from "../assets/FloorTiles/Random.png";
 
 const uspData = [
   {
-    title: "35+ Years of Industry Expertise",
+    title: "20+ Years of Industry Expertise",
     desc: "Trusted by leading builders for quality and reliability.",
     image: expertiseBg,
     overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))"
