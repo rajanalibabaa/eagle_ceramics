@@ -73,7 +73,7 @@ const ProductAndSize = () => {
     try {
       const token = getAdminToken();
       const response = await fetch(
-        "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/get-all",
+        "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/product-sizes/get-all",
         {
           method: "GET",
           headers: {
@@ -129,7 +129,7 @@ const ProductAndSize = () => {
         return;
       }
       const response = await axios.delete(
-        `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/deletebyID/${productToDelete.uuid}`,
+        `https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/product-sizes/deletebyID/${productToDelete.uuid}`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -363,7 +363,6 @@ const ProductAndSize = () => {
                             sx={{
                               height: "100%",
                               display: "flex",
-                              // width:"50%",
                               flexDirection: "column",
                               transition: "transform 0.2s",
                               "&:hover": {

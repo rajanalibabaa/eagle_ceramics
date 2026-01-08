@@ -456,13 +456,13 @@ const scrollToTop = () => {
 
             if (mode === 'update' && editingProduct) {
                 response = await axios.put(
-                    `http://localhost:5050/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
+                    `https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/product-sizes/update/${editingProduct.uuid}`,
                     formData,
                     config
                 );
             } else {
                 response = await axios.post(
-                    "http://localhost:5050/api/v1/eagle-ceramic/product-sizes/create",
+                    "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic/product-sizes/create",
                     formData,
                     config
                 );

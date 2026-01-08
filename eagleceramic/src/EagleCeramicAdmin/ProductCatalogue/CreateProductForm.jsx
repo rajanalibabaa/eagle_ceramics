@@ -50,7 +50,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 
-const API_BASE_URL = "http://localhost:5050/api/v1";
+const API_BASE_URL = "https://clientbackend.cholabiz.com/";
 
 // ==========================
 // FILE VALIDATION CONSTANTS

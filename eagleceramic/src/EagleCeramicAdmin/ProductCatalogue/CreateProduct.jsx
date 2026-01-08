@@ -31,25 +31,17 @@ import {
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import CloseIcon from "@mui/icons-material/Close";
-import CategoryIcon from "@mui/icons-material/Category";
-import InfoIcon from "@mui/icons-material/Info";
 import InventoryIcon from "@mui/icons-material/Inventory";
-import ImageIcon from "@mui/icons-material/Image";
-import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
 import ClearIcon from "@mui/icons-material/Clear";
 import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 
 import CreateProductForm from "./CreateProductForm";
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
+const API_BASE_URL = "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic";
 
 const CreateProductPage = () => {
   const [openModal, setOpenModal] = useState(false);

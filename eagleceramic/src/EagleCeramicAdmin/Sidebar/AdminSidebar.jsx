@@ -71,7 +71,7 @@ const AdminSidebar = () => {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      await fetch('http://localhost:5050/api/v1/chola/client/logout', {
+      await fetch('https://clientbackend.cholabiz.com/api/v1/chola/client/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
