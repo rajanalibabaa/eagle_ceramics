@@ -121,9 +121,7 @@ export default function ServiceSideBar() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const [searchParams] = useSearchParams();
 
-  const [, , collectionKey, maybeVersion] = pathname.split("/");
   const [openCollections, setOpenCollections] = useState(true);
   const [openSub, setOpenSub] = useState({});
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -214,27 +212,6 @@ export default function ServiceSideBar() {
       if (result.success && result.data?.catalogData) {
         setCatalogData(result.data.catalogData);
 
-        // Update header data based on selected size
-        // const selectedProductData = filterData.find(item =>
-        //   item.productName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') ===
-        //   productName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-        // );
-
-        // if (selectedProductData && selectedProductData.productSizes) {
-        //   const selectedSizeData = selectedProductData.productSizes.find(size =>
-        //     size.size.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') ===
-        //     productSize.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
-        //   );
-        //   console.log("selectedSizeData", selectedSizeData);
-
-        //   if (selectedSizeData) {
-        //     setHeaderData({
-        //       title: selectedSizeData.title || selectedProductData.productName,
-        //       subtitle: selectedSizeData.description || '',
-        //       BackgroundImage: selectedSizeData?.image
-        //     });
-        //   }
-        // }
       } else {
         throw new Error("Invalid catalog data structure from API");
       }
@@ -243,61 +220,10 @@ export default function ServiceSideBar() {
       setCatalogData([]);
     } finally {
       setCatalogLoading(false);
-      // setHeaderData({
-      //   title: sizeData.title || productName,
-      //   BackgroundImage: sizeData?.image,
-      //   subtitle: sizeData.description || ''
-      // })
+     
     }
   };
 
-  // Handle initial load based on URL
-  // useEffect(() => {
-  //   const productKey = searchParams.get('product') || collectionKey;
-  //   const sizeKey = searchParams.get('size') || maybeVersion;
-
-  //   if (productKey && sizeKey) {
-  //     // Find the actual product name and size from filterData
-  //     const product = filterData.find(item => {
-  //       const key = item.productName
-  //         .toLowerCase()
-  //         .replace(/\s+/g, '-')
-  //         .replace(/[^a-z0-9-]/g, '');
-  //       return key === productKey;
-  //     });
-
-  //     if (product) {
-  //       setSelectedProduct(product.productName);
-  //       const size = product.productSizes?.find(sizeItem => {
-  //         const key = sizeItem.size
-  //           .toLowerCase()
-  //           .replace(/\s+/g, '-')
-  //           .replace(/[^a-z0-9-]/g, '');
-  //         return key === sizeKey;
-  //       });
-
-  //       if (size) {
-  //         setSelectedSize(size.size);
-  //         fetchCatalogData(product.productName, size.size);
-
-  //         // Update header data
-  //         setHeaderData({
-  //           title: size.title || product.productName,
-  //           subtitle: size.description || ''
-  //         });
-  //       }
-  //     }
-  //   } else if (filterData.length > 0) {
-  //     // Load first product and size by default
-  //     const firstProduct = filterData[0];
-  //     const firstSize = firstProduct.productSizes?.[0];
-  //     if (firstSize) {
-  //       setSelectedProduct(firstProduct.productName);
-  //       setSelectedSize(firstSize.size);
-  //       fetchCatalogData(firstProduct.productName, firstSize.size);
-  //     }
-  //   }
-  // }, [filterData, collectionKey, maybeVersion, searchParams]);
 
   const handleSizeClick = async (productName, size, sizeData) => {
     const productKey = productName
@@ -351,11 +277,9 @@ export default function ServiceSideBar() {
   }, [selectedProduct]);
 
   const handleCollectionClick = (key) => {
-    setOpenSub((prev) => {
-      const newState = { ...prev };
-      newState[key] = !prev[key];
-      return newState;
-    });
+    setOpenSub((prev) => ({
+      [key]: !prev[key],
+    }));
   };
 
   const sidebarRef = useRef(null);

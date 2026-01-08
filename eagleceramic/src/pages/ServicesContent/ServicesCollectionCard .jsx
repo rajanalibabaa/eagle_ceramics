@@ -1,37 +1,36 @@
 // ServicesCollectionCard.jsx remains exactly the same as your original
 import React from "react";
-import { Box, Typography } from "@mui/material";
-import { useTheme } from '@mui/material/styles';
-import useMediaQuery from '@mui/material/useMediaQuery';
+import { Box, Typography, CircularProgress } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import useMediaQuery from "@mui/material/useMediaQuery";
 import ContactFormModal from "./ContactFormModal";
 
 const ServicesCollectionCard = ({
- 
- 
-  
   imageUrl,
-                  title,
-                  description,
-                  buttonText,
-                  pdfFile,
-                  onExploreClick,
+  title,
+  description,
+  buttonText,
+  pdfFile,
+  onExploreClick,
 }) => {
   const theme = useTheme();
-  
+
   // console.log("Rendering ServicesCollectionCard with imageUrl:", imageUrl);
   // Responsive breakpoints
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
-  const isDesktop = useMediaQuery(theme.breakpoints.between('md', 'lg'));
-  const isLargeDesktop = useMediaQuery(theme.breakpoints.up('lg'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const isDesktop = useMediaQuery(theme.breakpoints.between("md", "lg"));
+  const isLargeDesktop = useMediaQuery(theme.breakpoints.up("lg"));
   const [openForm, setOpenForm] = React.useState(false);
   const [pendingPdf, setPendingPdf] = React.useState(null);
+  const [imageLoaded, setImageLoaded] = React.useState(false);
+  const [imageError, setImageError] = React.useState(false);
 
   // Responsive values
   const getResponsiveValues = () => {
     if (isMobile) {
       return {
-        containerWidth: "100%", 
+        containerWidth: "100%",
         containerPadding: 0,
         height: "280px",
         titleFontSize: "18px",
@@ -46,7 +45,7 @@ const ServicesCollectionCard = ({
         boxShadow: "0 3px 10px rgba(0,0,0,0.15)",
       };
     }
-    
+
     if (isTablet) {
       return {
         containerWidth: "85%",
@@ -64,7 +63,7 @@ const ServicesCollectionCard = ({
         boxShadow: "0 4px 15px rgba(0,0,0,0.18)",
       };
     }
-    
+
     if (isDesktop) {
       return {
         containerWidth: "80%",
@@ -82,7 +81,7 @@ const ServicesCollectionCard = ({
         boxShadow: "0 5px 20px rgba(0,0,0,0.2)",
       };
     }
-    
+
     // Large Desktop
     return {
       containerWidth: "70%",
@@ -105,7 +104,8 @@ const ServicesCollectionCard = ({
 
   const handleButtonClick = (e) => {
     e.stopPropagation();
-    const alreadySubmitted = localStorage.getItem("collection_form_submitted") === "true";
+    const alreadySubmitted =
+      localStorage.getItem("collection_form_submitted") === "true";
     if (alreadySubmitted) {
       window.open(pdfFile, "_blank");
       return;
@@ -141,14 +141,16 @@ const ServicesCollectionCard = ({
             transition: "all 0.3s ease",
             "&:hover": {
               transform: isMobile ? "none" : "translateY(-5px)",
-              boxShadow: isMobile ? responsive.boxShadow : "0 15px 35px rgba(0,0,0,0.3)",
+              boxShadow: isMobile
+                ? responsive.boxShadow
+                : "0 15px 35px rgba(0,0,0,0.3)",
             },
             ...(isMobile && {
               "&:active": {
                 transform: "scale(0.98)",
                 transition: "transform 0.1s ease",
-              }
-            })
+              },
+            }),
           }}
         >
           <Box
@@ -188,7 +190,33 @@ const ServicesCollectionCard = ({
                 },
               }}
               loading="lazy"
+              decoding="async"
+              onLoad={() => setImageLoaded(true)}
+              onError={() => {
+                setImageLoaded(true);
+                setImageError(true);
+              }}
             />
+
+            {/* Loading Overlay */}
+            {!imageLoaded && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  backgroundColor: "rgba(255,255,255,0.8)",
+                  zIndex: 1,
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            )}
 
             {/* EXPLORE BUTTON – ALWAYS VISIBLE */}
             {isMobile && (
@@ -201,7 +229,8 @@ const ServicesCollectionCard = ({
                   bottom: responsive.buttonBottom,
                   transform: "translateX(-50%)",
                   padding: responsive.buttonPadding,
-                  background: "linear-gradient(135deg, #ff0062 0%, #d60055 100%)",
+                  background:
+                    "linear-gradient(135deg, #ff0062 0%, #d60055 100%)",
                   color: "#fff",
                   border: "none",
                   borderRadius: "30px",
@@ -231,7 +260,7 @@ const ServicesCollectionCard = ({
                 left: 0,
                 width: "100%",
                 height: "100%",
-                background: isMobile 
+                background: isMobile
                   ? "linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.6) 100%)"
                   : "linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.5) 100%)",
                 backdropFilter: isMobile ? "blur(1px)" : "blur(2px)",
@@ -323,7 +352,8 @@ const ServicesCollectionCard = ({
                   bottom: responsive.buttonBottom,
                   transform: "translateX(-50%)",
                   padding: responsive.buttonPadding,
-                  background: "linear-gradient(135deg, #ff0062 0%, #d60055 100%)",
+                  background:
+                    "linear-gradient(135deg, #ff0062 0%, #d60055 100%)",
                   color: "#fff",
                   border: "none",
                   borderRadius: { xs: "25px", sm: "28px", md: "30px" },
@@ -337,8 +367,11 @@ const ServicesCollectionCard = ({
                   minWidth: { xs: "140px", sm: "160px", md: "180px" },
                   minHeight: { xs: "40px", sm: "44px", md: "48px" },
                   "&:hover": {
-                    background: "linear-gradient(135deg, #d60055 0%, #b30048 100%)",
-                    transform: isMobile ? "translateX(-50%)" : "translate(-50%, -2px)",
+                    background:
+                      "linear-gradient(135deg, #d60055 0%, #b30048 100%)",
+                    transform: isMobile
+                      ? "translateX(-50%)"
+                      : "translate(-50%, -2px)",
                     boxShadow: "0 6px 20px rgba(255, 0, 98, 0.5)",
                   },
                   "&:active": {
