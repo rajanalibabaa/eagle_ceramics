@@ -78,7 +78,7 @@ const ProductCreate = ({
         imageFile: null,
         imagePreview: null
     });
-    const [currentImageError, setCurrentImageError] = useState(""); // For inline image validation errors
+    const [currentImageError, setCurrentImageError] = useState(""); 
     const [editingIndex, setEditingIndex] = useState(null);
     const [loading, setLoading] = useState(false);
     const [successSnackbar, setSuccessSnackbar] = useState(false);
@@ -559,23 +559,23 @@ const scrollToTop = () => {
                 </Snackbar>
 
                 <form onSubmit={handleSubmit}>
-                    <Grid container spacing={3}>
+                    <Grid container spacing={3} sx={{display:"flex", justifyContent:"center"}}>
                         {/* Product Name */}
-                        <Grid item xs={12} sx={{ml:'auto', mr:'auto', width: '100%', maxWidth: 600}}>
-                            <Card
-                                sx={{
-                                    width: "100%",
-                                    maxWidth: 600,
-                                    mt: 1,
-                                    mx: 'auto',
-                                    border: "1px solid",
-                                    borderColor: mode === 'update' ? "secondary.light" : "primary.light",
-                                    backgroundColor: mode === 'update' 
-                                        ? "rgba(156, 39, 176, 0.03)" 
-                                        : "rgba(25, 118, 210, 0.03)",
-                                    borderRadius: 3,
-                                }}
-                            >
+                        <Grid item xs={12} sx={{ml:'auto', mr:'auto', width: '100%', maxWidth: 800}}>
+                           <Card
+  sx={{
+    width: "100%",
+    maxWidth: 600,
+    mx: "auto",   // 🔑 centers horizontally
+    border: "1px solid",
+    borderColor: mode === 'update' ? "secondary.light" : "primary.light",
+    backgroundColor: mode === 'update'
+      ? "rgba(156, 39, 176, 0.03)"
+      : "rgba(25, 118, 210, 0.03)",
+    borderRadius: 3,
+  }}
+>
+
                                 <CardContent>
                                     <Typography variant="body1" fontWeight="600" gutterBottom 
                                         color={mode === 'update' ? "secondary" : "primary"}>
@@ -611,248 +611,265 @@ const scrollToTop = () => {
                         </Grid>
 
                         {/* Add/Edit Size Section */}
-                        <Grid item xs={12} >
-                            <Card
-                                elevation={2}
-                                sx={{
-                                    p: 3,
-                                    borderRadius: 3,
-                                    mb: 2,
-                                    border: "2px solid",
-                                    borderColor: mode === 'update' ? "secondary.light" : "primary.light",
-                                }}
-                            >
+                        <Grid item xs={12} sx={{ width: "90%"}} >
+                           <Card
+  elevation={2}
+  sx={{
+    p: 2,
+   
+    borderRadius: 3,
+    border: "2px solid",
+    borderColor: mode === 'update' ? "secondary.light" : "primary.light",
+  }}
+>
+
                                 <Typography variant="h6" fontWeight="600" gutterBottom 
                                     color={mode === 'update' ? "secondary" : "primary"}>
                                     {editingIndex !== null ? 'Edit Size' : 'Add New Size'}
                                 </Typography>
                                 
-                                <Grid container spacing={3}>
-                                    <Grid item xs={12} md={3}>
-                                        <TextField
-                                            label="Size"
-                                            placeholder="e.g., 12x24"
-                                            value={currentSize.size}
-                                            onChange={(e) => handleCurrentSizeChange("size", e.target.value)}
-                                            fullWidth
-                                            disabled={loading}
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">
-                                                        <AspectRatioIcon 
-                                                            color={mode === 'update' ? "secondary" : "primary"} 
-                                                            sx={{ fontSize: 20 }} 
-                                                        />
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                            sx={{
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                    fontSize: "0.9rem",
-                                                },
-                                            }}
-                                        />
-                                    </Grid>
+                              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3,  }}>
+  {/* First Row */}
+  <Box sx={{ 
+    display: 'flex', 
+    flexDirection: { xs: 'column', md: 'row' }, 
+    gap: 3 
+  }}>
+    {/* Size Field */}
+    <Box sx={{ width: { xs: '100%', md: '50%' } }}>
+      <TextField
+        label="Size"
+        placeholder="e.g., 12x24"
+        value={currentSize.size}
+        onChange={(e) => handleCurrentSizeChange("size", e.target.value)}
+        fullWidth
+        disabled={loading}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <AspectRatioIcon 
+                color={mode === 'update' ? "secondary" : "primary"} 
+                sx={{ fontSize: 20 }} 
+              />
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            fontSize: "0.9rem",
+          },
+        }}
+      />
+    </Box>
 
-                                    <Grid item xs={12} md={3}>
-                                        <TextField
-                                            label="Title"
-                                            placeholder="e.g., Medium Tile"
-                                            value={currentSize.title}
-                                            onChange={(e) => handleCurrentSizeChange("title", e.target.value)}
-                                            fullWidth
-                                            disabled={loading}
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">
-                                                        <TitleIcon 
-                                                            color={mode === 'update' ? "secondary" : "primary"} 
-                                                            sx={{ fontSize: 20 }} 
-                                                        />
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                            sx={{
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                    fontSize: "0.9rem",
-                                                },
-                                            }}
-                                        />
-                                    </Grid>
+    {/* Title Field */}
+    <Box sx={{ width: { xs: '100%', md: '50%' } }}>
+      <TextField
+        label="Title"
+        placeholder="e.g., Medium Tile"
+        value={currentSize.title}
+        onChange={(e) => handleCurrentSizeChange("title", e.target.value)}
+        fullWidth
+        disabled={loading}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <TitleIcon 
+                color={mode === 'update' ? "secondary" : "primary"} 
+                sx={{ fontSize: 20 }} 
+              />
+            </InputAdornment>
+          ),
+        }}
+        sx={{
+          "& .MuiOutlinedInput-root": {
+            borderRadius: 2,
+            fontSize: "0.9rem",
+          },
+        }}
+      />
+    </Box>
 
-                                    {/* Image Upload - Neat UI with 3MB validation */}
-                                    <Grid item xs={12} md={6}>
-                                        <Box>
-                                            <Typography
-                                                variant="subtitle2"
-                                                fontWeight="500"
-                                                gutterBottom
-                                            >
-                                                Product Image {mode === "create" && "*"}
-                                                <Typography 
-                                                    component="span" 
-                                                    variant="caption" 
-                                                    color="text.secondary" 
-                                                    sx={{ ml: 1 }}
-                                                >
-                                                    (Max {formatFileSize(MAX_IMAGE_SIZE)})
-                                                </Typography>
-                                            </Typography>
-                                            <Button
-                                                variant="outlined"
-                                                component="label"
-                                                startIcon={<CloudUploadIcon />}
-                                                disabled={loading}
-                                                size="small"
-                                                fullWidth
-                                            >
-                                                {currentSize.imageFile
-                                                    ? "Change Image"
-                                                    : (currentSize.imagePreview || currentSize.image)
-                                                    ? "Replace Image"
-                                                    : mode === "create"
-                                                    ? "Upload Image *"
-                                                    : "Upload New Image (Optional)"}
-                                                <input
-                                                    type="file"
-                                                    hidden
-                                                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
-                                                    ref={fileInputRef}
-                                                    onChange={handleImageChange}
-                                                />
-                                            </Button>
-                                            
-                                            {/* Validation Error */}
-                                            {currentImageError && (
-                                                <Typography
-                                                    variant="caption"
-                                                    color="error"
-                                                    display="block"
-                                                    sx={{ mt: 0.5 }}
-                                                >
-                                                    {currentImageError}
-                                                </Typography>
-                                            )}
-                                            
-                                            {/* File Info */}
-                                            {currentSize.imageFile && (
-                                                <Typography
-                                                    variant="caption"
-                                                    color="success.main"
-                                                    display="block"
-                                                    sx={{ mt: 0.5 }}
-                                                >
-                                                    ✓ Selected: {currentSize.imageFile.name} ({formatFileSize(currentSize.imageFile.size)})
-                                                </Typography>
-                                            )}
-                                            
-                                            {/* Existing Image Info */}
-                                            {((currentSize.imagePreview || currentSize.image) && !currentSize.imageFile && mode === "update") && (
-                                                <Typography
-                                                    variant="caption"
-                                                    color="info.main"
-                                                    display="block"
-                                                    sx={{ mt: 0.5 }}
-                                                >
-                                                    📷 Current image will be kept
-                                                </Typography>
-                                            )}
-                                            
-                                            {/* Preview */}
-                                            {currentSize.imagePreview && (
-                                                <Box sx={{ mt: 1 }}>
-                                                    <img
-                                                        src={currentSize.imagePreview}
-                                                        alt="Preview"
-                                                        style={{
-                                                            maxWidth: "100%",
-                                                            maxHeight: 100,
-                                                            borderRadius: 4,
-                                                            border: "1px solid #e0e0e0"
-                                                        }}
-                                                    />
-                                                    <Button
-                                                        size="small"
-                                                        color="error"
-                                                        onClick={removeImage}
-                                                        sx={{ mt: 1 }}
-                                                    >
-                                                        Remove Image
-                                                    </Button>
-                                                </Box>
-                                            )}
-                                        </Box>
-                                    </Grid>
+   
+  </Box>
 
-                                    {/* Description - Fixed alignment (removed width:300px constraint) */}
-                                    <Grid item xs={12}>
-                                        <TextField
-                                            label="Description"
-                                            placeholder="e.g., Perfect for kitchen backsplash"
-                                            value={currentSize.description}
-                                            onChange={(e) => handleCurrentSizeChange("description", e.target.value)}
-                                            fullWidth
-                                            disabled={loading}
-                                            InputProps={{
-                                                startAdornment: (
-                                                    <InputAdornment position="start">
-                                                        <DescriptionIcon 
-                                                            color={mode === 'update' ? "secondary" : "primary"} 
-                                                            sx={{ fontSize: 20 }} 
-                                                        />
-                                                    </InputAdornment>
-                                                ),
-                                            }}
-                                            sx={{
-                                                "& .MuiOutlinedInput-root": {
-                                                    borderRadius: 2,
-                                                    fontSize: "0.9rem",
-                                                    // REMOVED: width:'300px' - was breaking alignment
-                                                },
-                                            }}
-                                        />
-                                    </Grid>
+  {/* Description Field - Full Width */}
+  <Box sx={{ width: '100%' }}>
+    <TextField
+      label="Description"
+      placeholder="e.g., Perfect for kitchen backsplash"
+      value={currentSize.description}
+      onChange={(e) => handleCurrentSizeChange("description", e.target.value)}
+      fullWidth
+      disabled={loading}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <DescriptionIcon 
+              color={mode === 'update' ? "secondary" : "primary"} 
+              sx={{ fontSize: 20 }} 
+            />
+          </InputAdornment>
+        ),
+      }}
+      sx={{
+        "& .MuiOutlinedInput-root": {
+          borderRadius: 2,
+          fontSize: "0.9rem",
+        },
+      }}
+    />
+  </Box>
+   {/* Image Upload */}
+    <Box sx={{ width: { xs: '100%', md: '50%' } }}>
+      <Box>
+        <Typography
+          variant="subtitle2"
+          fontWeight="500"
+          gutterBottom
+        >
+          Product Image {mode === "create" && "*"}
+          <Typography 
+            component="span" 
+            variant="caption" 
+            color="text.secondary" 
+            sx={{ ml: 1 }}
+          >
+            (Max {formatFileSize(MAX_IMAGE_SIZE)})
+          </Typography>
+        </Typography>
+        <Button
+          variant="outlined"
+          component="label"
+          startIcon={<CloudUploadIcon />}
+          disabled={loading}
+          size="small"
+          fullWidth
+        >
+          {currentSize.imageFile
+            ? "Change Image"
+            : (currentSize.imagePreview || currentSize.image)
+            ? "Replace Image"
+            : mode === "create"
+            ? "Upload Image *"
+            : "Upload New Image (Optional)"}
+          <input
+            type="file"
+            hidden
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
+            ref={fileInputRef}
+            onChange={handleImageChange}
+          />
+        </Button>
+        
+        {/* Validation Error */}
+        {currentImageError && (
+          <Typography
+            variant="caption"
+            color="error"
+            display="block"
+            sx={{ mt: 0.5 }}
+          >
+            {currentImageError}
+          </Typography>
+        )}
+        
+        {/* File Info */}
+        {currentSize.imageFile && (
+          <Typography
+            variant="caption"
+            color="success.main"
+            display="block"
+            sx={{ mt: 0.5 }}
+          >
+            ✓ Selected: {currentSize.imageFile.name} ({formatFileSize(currentSize.imageFile.size)})
+          </Typography>
+        )}
+        
+        {/* Existing Image Info */}
+        {((currentSize.imagePreview || currentSize.image) && !currentSize.imageFile && mode === "update") && (
+          <Typography
+            variant="caption"
+            color="info.main"
+            display="block"
+            sx={{ mt: 0.5 }}
+          >
+            📷 Current image will be kept
+          </Typography>
+        )}
+        
+        {/* Preview */}
+        {currentSize.imagePreview && (
+          <Box sx={{ mt: 1 }}>
+            <img
+              src={currentSize.imagePreview}
+              alt="Preview"
+              style={{
+                maxWidth: "100%",
+                maxHeight: 100,
+                borderRadius: 4,
+                border: "1px solid #e0e0e0"
+              }}
+            />
+            <Button
+              size="small"
+              color="error"
+              onClick={removeImage}
+              sx={{ mt: 1 }}
+            >
+              Remove Image
+            </Button>
+          </Box>
+        )}
+      </Box>
+    </Box>
 
-                                    <Grid item xs={12}>
-                                        <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 1, ml: 8 }}>
-                                            <Button
-                                                variant="contained"
-                                                startIcon={<SaveIcon />}
-                                                onClick={handleSaveSize}
-                                                disabled={loading}
-                                                sx={{
-                                                    px: 4,
-                                                    py: 1.5,
-                                                    borderRadius: 2,
-                                                    fontSize: "0.785rem",
-                                                    minWidth: 120,
-                                                    background: mode === 'update' 
-                                                        ? "linear-gradient(45deg, #9c27b0 30%, #ba68c8 90%)"
-                                                        : "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
-                                                }}
-                                            >
-                                                {editingIndex !== null ? "Update Size" : "Save Size"}
-                                            </Button>
-                                            {editingIndex !== null && (
-                                                <Button
-                                                    variant="outlined"
-                                                    onClick={handleAddNewSize}
-                                                    disabled={loading}
-                                                    sx={{
-                                                        px: 4,
-                                                        py: 1.5,
-                                                        borderRadius: 2,
-                                                        fontSize: "0.785rem",
-                                                    }}
-                                                >
-                                                    Cancel Edit
-                                                </Button>
-                                            )}
-                                        </Box>
-                                    </Grid>
-                                </Grid>
+  {/* Buttons */}
+  <Box sx={{ width: '100%' }}>
+    <Box sx={{ 
+      display: 'flex', 
+      justifyContent: 'center', 
+      gap: 2, 
+      mt: 1, 
+      ml: { xs: 0, md: 8 }  // Responsive left margin
+    }}>
+      <Button
+        variant="contained"
+        startIcon={<SaveIcon />}
+        onClick={handleSaveSize}
+        disabled={loading}
+        sx={{
+          px: 4,
+          py: 1.5,
+          borderRadius: 2,
+          fontSize: "0.785rem",
+          minWidth: 120,
+          background: mode === 'update' 
+            ? "linear-gradient(45deg, #9c27b0 30%, #ba68c8 90%)"
+            : "linear-gradient(45deg, #1976d2 30%, #2196f3 90%)",
+        }}
+      >
+        {editingIndex !== null ? "Update Size" : "Save Size"}
+      </Button>
+      {editingIndex !== null && (
+        <Button
+          variant="outlined"
+          onClick={handleAddNewSize}
+          disabled={loading}
+          sx={{
+            px: 4,
+            py: 1.5,
+            borderRadius: 2,
+            fontSize: "0.785rem",
+          }}
+        >
+          Cancel Edit
+        </Button>
+      )}
+    </Box>
+  </Box>
+</Box>
                             </Card>
                         </Grid>
 
@@ -987,7 +1004,6 @@ const scrollToTop = () => {
                         )}
                     </Grid>
 
-                    {/* Action Buttons */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
                         <Button
                             onClick={resetForm}

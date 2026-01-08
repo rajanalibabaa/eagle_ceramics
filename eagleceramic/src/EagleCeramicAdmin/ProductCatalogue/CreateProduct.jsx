@@ -31,6 +31,8 @@ import {
 } from "@mui/material";
 
 import AddIcon from "@mui/icons-material/Add";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -53,6 +55,7 @@ const CreateProductPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [modalMode, setModalMode] = useState("create");
   const [editingProduct, setEditingProduct] = useState(null);
+const [expandedDescriptions, setExpandedDescriptions] = useState({});
 
   const [filterData, setFilterData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -88,7 +91,29 @@ const CreateProductPage = () => {
   const handleCloseSnackbar = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
+const toggleDescription = (itemId) => {
+  setExpandedDescriptions(prev => ({
+    ...prev,
+    [itemId]: !prev[itemId]
+  }));
+};
 
+// Add this function to check if description needs truncation
+const isDescriptionLong = (description) => {
+  if (!description) return false;
+  // Check if description is longer than 150 characters (adjust as needed)
+  return description.length > 150;
+};
+
+// Add this function to truncate description
+const truncateDescription = (description, isExpanded) => {
+  if (!description) return '';
+  if (isExpanded || !isDescriptionLong(description)) {
+    return description;
+  }
+  // Show first 150 characters + ellipsis
+  return description.substring(0, 150) + '...';
+};
   const fetchFilterData = async () => {
     setLoading(true);
     try {
@@ -131,13 +156,11 @@ const CreateProductPage = () => {
     fetchFilterData();
   }, []);
 
-  // Modified to accept both productName and productSize
   const fetchCatalogForProduct = async (productName, productSize = null) => {
     console.log("=== FETCH CATALOG ===");
     console.log("Product:", productName);
     console.log("Size:", productSize);
     
-    // Create cache key based on both product name and size
     const cacheKey = productSize 
       ? `${productName}::${productSize}` 
       : `${productName}::all`;
@@ -148,7 +171,6 @@ const CreateProductPage = () => {
       return catalogCache[cacheKey];
     }
     
-    // Build the URL with both parameters
     let url = `${API_BASE_URL}/catalog/get-by-product`;
     const params = new URLSearchParams();
     
@@ -195,24 +217,19 @@ const CreateProductPage = () => {
     }
   };
 
-  // Handle product accordion expand/collapse
   const handleAccordionChange = (panel, product) => async (event, isExpanded) => {
     setExpanded(isExpanded ? panel : null);
 
     if (isExpanded && product?.productName) {
-      // When product accordion expands, we don't fetch specific size data
-      // Just clear any expanded sizes
       setExpandedSizes({});
     }
   };
 
-  // NEW: Handle size accordion expand/collapse
   const handleSizeAccordionChange = (productName, sizeLabel) => async (event, isExpanded) => {
-    event.stopPropagation(); // Prevent event bubbling
+    event.stopPropagation(); 
     
     console.log(`Size accordion: ${productName} - ${sizeLabel}`, isExpanded);
     
-    // Update expanded state for sizes
     setExpandedSizes(prev => ({
       ...prev,
       [`${productName}-${sizeLabel}`]: isExpanded
@@ -645,22 +662,15 @@ const CreateProductPage = () => {
   // 2️⃣ Re‑fetch filter data (product list)
   await fetchFilterData();
 
-  // 3️⃣ Re‑fetch catalogue data for this product
-  //    • If editing a SINGLE item → fetch THAT size
-  //    • If bulk edit/create → fetch ALL sizes of the product
   try {
     if (editingProduct.editingSingleItem && targetSize) {
-      // Fetch ONLY the affected size
       await fetchCatalogForProduct(productName, targetSize);
     } else {
-      // Fetch ALL sizes for the product (no size filter)
       await fetchCatalogForProduct(productName);
     }
 
-    // 4️⃣ If the product's accordion is OPEN, ensure sizes are expanded correctly
     const productPanelId = filteredData.find(p => p.productName === productName)?.uuid || "";
     
-    // ✅ Refresh expanded sizes for this product
     if (expanded === productPanelId) {
       // Get all sizes currently expanded for this product
       const expandedSizeKeys = Object.keys(expandedSizes).filter(
@@ -771,6 +781,7 @@ const CreateProductPage = () => {
         <Box>
           <Typography
             variant="h4"
+            mt={{xs:3,sm:3}}
             fontWeight="bold"
             color="primary"
             gutterBottom
@@ -995,7 +1006,7 @@ const CreateProductPage = () => {
                                   <Box>
 <Box sx={{ 
     display: 'grid', 
-    gridTemplateColumns: 'repeat(2, 1fr)',
+    gridTemplateColumns: { xs: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)', md: 'repeat(2, 1fr)' },
     gap: 2
 }}>                                      {items.map((item, itemIndex) => (
                                         <Grid item xs={12} sm={6} md={4} key={item.uuid}>
@@ -1033,9 +1044,43 @@ const CreateProductPage = () => {
                                             <Typography variant="subtitle2" fontWeight="bold" gutterBottom>
                                               {item.title}
                                             </Typography>
-                                            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                                              {item.description}
-                                            </Typography>
+                                         <Box sx={{ mb: 2 }}>
+  <Typography 
+    variant="body2" 
+    color="text.secondary"
+    sx={{
+      display: '-webkit-box',
+      WebkitLineClamp: expandedDescriptions[item.uuid] ? 'unset' : 3,
+      WebkitBoxOrient: 'vertical',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      lineHeight: 1.5,
+    }}
+  >
+    {item.description}
+  </Typography>
+  {isDescriptionLong(item.description) && (
+    <Button
+      size="small"
+      onClick={() => toggleDescription(item.uuid)}
+      sx={{
+        mt: 0.5,
+        minWidth: 'auto',
+        padding: 0,
+        fontSize: '0.75rem',
+        textTransform: 'none',
+        color: 'primary.main',
+        fontWeight: 500,
+        '&:hover': {
+          backgroundColor: 'transparent',
+          textDecoration: 'underline',
+        }
+      }}
+    >
+      {expandedDescriptions[item.uuid] ? 'Show Less' : 'Read More'}
+    </Button>
+  )}
+</Box>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                               <Button
                                                 size="small"

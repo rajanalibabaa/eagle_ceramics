@@ -852,7 +852,7 @@ const CreateProductForm = ({
     <Dialog
       open={openModal}
       onClose={handleCloseModal}
-      maxWidth="lg"
+      maxWidth="md"
       fullWidth
       scroll="paper"
       BackdropComponent={Backdrop}
@@ -938,9 +938,15 @@ const CreateProductForm = ({
                 handleSaveProduct();
               }}
             >
-              <Grid container spacing={3}>
+              <Grid container spacing={3} >
                 {/* Single Column - Form (full width for both create & update) */}
-                <Grid item xs={12} md={12}   >
+               <Grid item xs={12} sx={{
+      width: "100%",
+    }} >
+  <Box
+    
+  >
+    
          
 
                     {isUpdateMode && loadingDropdowns && (
@@ -961,94 +967,100 @@ const CreateProductForm = ({
   sx={{
     width: "100%",
     display: "grid",
-    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, // 2 columns for md and up, 1 column for xs% 100% " },
+    gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, // 1 column for mobile, 2 for desktop
     gap: 2,
     alignItems: "center",
-  
   }}
 >
 
-  {/* Row 1: Product Name */}
-  <FormControl
-    fullWidth
-    size="small"
-    required
-    disabled={loading || loadingDropdowns}
-    // sx={{maxWidth:'100px'}}
-  >
-    <InputLabel>Product Name *</InputLabel>
-    <Select
-      value={selectedProductId}
-      label="Product Name *"
-      onChange={handleProductNameChange}
-      MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+  {/* Row 1: Product Name - Full width on mobile */}
+  <Box sx={{ gridColumn: { xs: "1 / -1", md: "span 1" } }}>
+    <FormControl
+      fullWidth
+      size="small"
+      required
+      disabled={loading || loadingDropdowns}
     >
-      {productNameOptions.map((option) => (
-        <MenuItem key={option.id} value={option.id}>
-          {option.name}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
+      <InputLabel>Product Name *</InputLabel>
+      <Select
+        value={selectedProductId}
+        label="Product Name *"
+        onChange={handleProductNameChange}
+        MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+      >
+        {productNameOptions.map((option) => (
+          <MenuItem key={option.id} value={option.id}>
+            {option.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </Box>
 
-  {/* Row 1: Product Size */}
-  <FormControl
-    fullWidth
-    size="small"
-    disabled={loading || !selectedProductId}
-  >
-    <InputLabel>Product Size</InputLabel>
-    <Select
-      value={productData.productSize}
-      label="Product Size"
-      onChange={handleProductSizeChange}
+  {/* Row 2: Product Size - Full width on mobile */}
+  <Box sx={{ gridColumn: { xs: "1 / -1", md: "span 1" } }}>
+    <FormControl
+      fullWidth
+      size="small"
+      disabled={loading || !selectedProductId}
     >
-      {availableSizes.map((size, index) => (
-        <MenuItem key={index} value={size}>
-          {size}
-        </MenuItem>
-      ))}
-    </Select>
-  </FormControl>
+      <InputLabel>Product Size</InputLabel>
+      <Select
+        value={productData.productSize}
+        label="Product Size"
+        onChange={handleProductSizeChange}
+      >
+        {availableSizes.map((size, index) => (
+          <MenuItem key={index} value={size}>
+            {size}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  </Box>
 
-  {/* Row 2: Title */}
-  <TextField
-    label="Display Title"
-    name="title"
-    value={productData.title}
-    onChange={handleOtherChange}
-    fullWidth
-    size="small"
-    disabled={loading}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <TitleIcon fontSize="small" />
-        </InputAdornment>
-      ),
-    }}
-  />
+  {/* Row 3: Title - Full width on mobile */}
+  <Box sx={{ gridColumn: { xs: "1 / -1", md: "span 1" } }}>
+    <TextField
+      label="Display Title"
+      name="title"
+      value={productData.title}
+      onChange={handleOtherChange}
+      fullWidth
+      size="small"
+      disabled={loading}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <TitleIcon fontSize="small" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Box>
 
-  {/* Row 2: Button Text */}
-  <TextField
-    label="Button Text"
-    name="buttonText"
-    value={productData.buttonText}
-    onChange={handleOtherChange}
-    fullWidth
-    size="small"
-    disabled={loading}
-    InputProps={{
-      startAdornment: (
-        <InputAdornment position="start">
-          <LinkIcon fontSize="small" />
-        </InputAdornment>
-      ),
-    }}
-  />
+  {/* Row 4: Button Text - Full width on mobile */}
+  <Box sx={{ gridColumn: { xs: "1 / -1", md: "span 1" } }}>
+    <TextField
+      label="Button Text"
+      name="buttonText"
+      value={productData.buttonText}
+      onChange={handleOtherChange}
+      fullWidth
+      size="small"
+      disabled={loading}
+      InputProps={{
+        startAdornment: (
+          <InputAdornment position="start">
+            <LinkIcon fontSize="small" />
+          </InputAdornment>
+        ),
+      }}
+    />
+  </Box>
 
-  {/* Row 3: Description (Full Width) */}
-  <Box sx={{ gridColumn: "1 / span 2" }}>
+  {/* Row 5: Description - Always full width */}
+  <Box sx={{ gridColumn: "1 / -1" }}>
     <TextField
       label="Description"
       name="description"
@@ -1062,227 +1074,226 @@ const CreateProductForm = ({
     />
   </Box>
 
-                      {/* Image Upload */}
-                      <Box>
-                        <Box>
-                          <Typography
-                            variant="subtitle2"
-                            fontWeight="500"
-                            gutterBottom
-                          >
-                            Product Image {!isUpdateMode && "*"}
-                            <Typography
-                              component="span"
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ ml: 1 }}
-                            >
-                              (Max {formatFileSize(MAX_IMAGE_SIZE)})
-                            </Typography>
-                          </Typography>
+  {/* Row 6: Image Upload - Full width on mobile */}
+  <Box sx={{ gridColumn: { xs: "1 / -1", md: "span 1" } }}>
+    <Box>
+      <Typography
+        variant="subtitle2"
+        fontWeight="500"
+        gutterBottom
+      >
+        Product Image {!isUpdateMode && "*"}
+        <Typography
+          component="span"
+          variant="caption"
+          color="text.secondary"
+          sx={{ ml: 1 }}
+        >
+          (Max {formatFileSize(MAX_IMAGE_SIZE)})
+        </Typography>
+      </Typography>
 
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: 1,
-                              alignItems: "center",
-                            }}
-                          >
-                            <Button
-                              variant="outlined"
-                              component="label"
-                              startIcon={<CloudUploadIcon />}
-                              disabled={uploadingImage || loading}
-                              size="small"
-                              sx={{ flex: 1 }}
-                            >
-                              {productData.imageFile
-                                ? "Change Image"
-                                : hasExistingImage
-                                ? "Replace Image"
-                                : "Upload Image *"}
-                              <input
-                                type="file"
-                                hidden
-                                accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml"
-                                onChange={handleImageFileSelect}
-                              />
-                            </Button>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+        }}
+      >
+        <Button
+          variant="outlined"
+          component="label"
+          startIcon={<CloudUploadIcon />}
+          disabled={uploadingImage || loading}
+          size="small"
+          sx={{ flex: 1 }}
+        >
+          {productData.imageFile
+            ? "Change Image"
+            : hasExistingImage
+            ? "Replace Image"
+            : "Upload Image *"}
+          <input
+            type="file"
+            hidden
+            accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/svg+xml"
+            onChange={handleImageFileSelect}
+          />
+        </Button>
 
-                            {productData.imageFile && (
-                              <Tooltip title="Remove image">
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={removeImage}
-                                  disabled={loading}
-                                >
-                                  <DeleteOutlineIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            )}
-                          </Box>
+        {productData.imageFile && (
+          <Tooltip title="Remove image">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={removeImage}
+              disabled={loading}
+            >
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
 
-                          {/* File validation error */}
-                          {fileValidationErrors.image && (
-                            <Typography
-                              variant="caption"
-                              color="error"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              {fileValidationErrors.image}
-                            </Typography>
-                          )}
+      {/* File validation error */}
+      {fileValidationErrors.image && (
+        <Typography
+          variant="caption"
+          color="error"
+          display="block"
+          sx={{ mt: 0.5 }}
+        >
+          {fileValidationErrors.image}
+        </Typography>
+      )}
 
-                          {/* File info */}
-                          {productData.imageFile && (
-                            <Typography
-                              variant="caption"
-                              color="success.main"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              ✓ Selected: {productData.imageFile.name} (
-                              {formatFileSize(productData.imageFile.size)})
-                            </Typography>
-                          )}
+      {/* File info */}
+      {productData.imageFile && (
+        <Typography
+          variant="caption"
+          color="success.main"
+          display="block"
+          sx={{ mt: 0.5 }}
+        >
+          ✓ Selected: {productData.imageFile.name} (
+          {formatFileSize(productData.imageFile.size)})
+        </Typography>
+      )}
 
-                          {hasExistingImage && (
-                            <Typography
-                              variant="caption"
-                              color="info.main"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              📷 Current image will be kept
-                            </Typography>
-                          )}
+      {hasExistingImage && (
+        <Typography
+          variant="caption"
+          color="info.main"
+          display="block"
+          sx={{ mt: 0.5 }}
+        >
+          📷 Current image will be kept
+        </Typography>
+      )}
 
-                          {/* Image preview */}
-                          {imagePreview && (
-                            <Box sx={{ mt: 1 }}>
-                              <img
-                                src={imagePreview}
-                                alt="Preview"
-                                style={{
-                                  maxWidth: "100%",
-                                  maxHeight: 100,
-                               
-                                  borderRadius: 4,
-                                  border: "1px solid #e0e0e0",
-                                }}
-                              />
-                            </Box>
-                          )}
-                        </Box>
-                      </Box>
+      {/* Image preview */}
+      {imagePreview && (
+        <Box sx={{ mt: 1 }}>
+          <img
+            src={imagePreview}
+            alt="Preview"
+            style={{
+              maxWidth: "100%",
+              maxHeight: 100,
+              borderRadius: 4,
+              border: "1px solid #e0e0e0",
+            }}
+          />
+        </Box>
+      )}
+    </Box>
+  </Box>
 
-                      {/* PDF Upload */}
-                      < Box>
-                        <Box>
-                          <Typography
-                            variant="subtitle2"
-                            fontWeight="500"
-                            gutterBottom
-                          >
-                            Product PDF {!isUpdateMode && "*"}
-                            <Typography
-                              component="span"
-                              variant="caption"
-                              color="text.secondary"
-                              sx={{ ml: 1 }}
-                            >
-                              (Max {formatFileSize(MAX_PDF_SIZE)})
-                            </Typography>
-                          </Typography>
+  {/* Row 7: PDF Upload - Full width on mobile */}
+  <Box sx={{ gridColumn: { xs: "1 / -1", md: "span 1" } }}>
+    <Box>
+      <Typography
+        variant="subtitle2"
+        fontWeight="500"
+        gutterBottom
+      >
+        Product PDF {!isUpdateMode && "*"}
+        <Typography
+          component="span"
+          variant="caption"
+          color="text.secondary"
+          sx={{ ml: 1 }}
+        >
+          (Max {formatFileSize(MAX_PDF_SIZE)})
+        </Typography>
+      </Typography>
 
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: 1,
-                              alignItems: "center",
-                            }}
-                          >
-                            <Button
-                              variant="outlined"
-                              component="label"
-                              startIcon={<AttachFileIcon />}
-                              disabled={uploadingPdf || loading}
-                              size="small"
-                              sx={{
-                                flex: 1,
-                                borderColor: "error.main",
-                                color: "error.main",
-                              }}
-                            >
-                              {productData.pdfFile
-                                ? "Change PDF"
-                                : hasExistingPdf
-                                ? "Replace PDF"
-                                : "Upload PDF *"}
-                              <input
-                                type="file"
-                                hidden
-                                accept=".pdf,application/pdf"
-                                onChange={handlePdfFileSelect}
-                              />
-                            </Button>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+        }}
+      >
+        <Button
+          variant="outlined"
+          component="label"
+          startIcon={<AttachFileIcon />}
+          disabled={uploadingPdf || loading}
+          size="small"
+          sx={{
+            flex: 1,
+            borderColor: "error.main",
+            color: "error.main",
+          }}
+        >
+          {productData.pdfFile
+            ? "Change PDF"
+            : hasExistingPdf
+            ? "Replace PDF"
+            : "Upload PDF *"}
+          <input
+            type="file"
+            hidden
+            accept=".pdf,application/pdf"
+            onChange={handlePdfFileSelect}
+          />
+        </Button>
 
-                            {productData.pdfFile && (
-                              <Tooltip title="Remove PDF">
-                                <IconButton
-                                  size="small"
-                                  color="error"
-                                  onClick={removePdf}
-                                  disabled={loading}
-                                >
-                                  <DeleteOutlineIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            )}
-                          </Box>
+        {productData.pdfFile && (
+          <Tooltip title="Remove PDF">
+            <IconButton
+              size="small"
+              color="error"
+              onClick={removePdf}
+              disabled={loading}
+            >
+              <DeleteOutlineIcon fontSize="small" />
+            </IconButton>
+          </Tooltip>
+        )}
+      </Box>
 
-                          {/* File validation error */}
-                          {fileValidationErrors.pdf && (
-                            <Typography
-                              variant="caption"
-                              color="error"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              {fileValidationErrors.pdf}
-                            </Typography>
-                          )}
+      {/* File validation error */}
+      {fileValidationErrors.pdf && (
+        <Typography
+          variant="caption"
+          color="error"
+          display="block"
+          sx={{ mt: 0.5 }}
+        >
+          {fileValidationErrors.pdf}
+        </Typography>
+      )}
 
-                          {/* File info */}
-                          {productData.pdfFile && (
-                            <Typography
-                              variant="caption"
-                              color="success.main"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              ✓ Selected: {productData.pdfFile.name} (
-                              {formatFileSize(productData.pdfFile.size)})
-                            </Typography>
-                          )}
+      {/* File info */}
+      {productData.pdfFile && (
+        <Typography
+          variant="caption"
+          color="success.main"
+          display="block"
+          sx={{ mt: 0.5 }}
+        >
+          ✓ Selected: {productData.pdfFile.name} (
+          {formatFileSize(productData.pdfFile.size)})
+        </Typography>
+      )}
 
-                          {hasExistingPdf && (
-                            <Typography
-                              variant="caption"
-                              color="info.main"
-                              display="block"
-                              sx={{ mt: 0.5 }}
-                            >
-                              📄 Current PDF: {pdfName}
-                            </Typography>
-                          )}
-                        </Box>
-                      </Box>
+      {hasExistingPdf && (
+        <Typography
+          variant="caption"
+          color="info.main"
+          display="block"
+          sx={{ mt: 0.5 }}
+        >
+          📄 Current PDF: {pdfName}
+        </Typography>
+      )}
+    </Box>
+  </Box>
 
-                      {/* Save/Update Button */}
-                      <Box sx={{ gridColumn: "1 / -1" }}>
+  {/* Save/Update Button - Always full width */}
+  <Box sx={{ gridColumn: "1 / -1" }}>
     <Button
       variant="contained"
       fullWidth
@@ -1303,10 +1314,10 @@ const CreateProductForm = ({
         : "Create Product"}
     </Button>
   </Box>
-                    </Box>
+</Box>
                 
-                </Grid>
-              </Grid>
+          </Box>      </Grid>
+            </Grid>
             </form>
           </Box>
         </Fade>

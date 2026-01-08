@@ -10,8 +10,6 @@ import {
   Typography,
   Divider,
   IconButton,
-  useTheme,
-  useMediaQuery,
   Tooltip,
   Avatar,
   Dialog,
@@ -19,329 +17,275 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
-  Button
+  Button,
+  AppBar,
+  Toolbar,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import {
-  Dashboard,
-  Logout,
+  Menu as MenuIcon,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Logout,
+  Dashboard,
+  ProductionQuantityLimitsSharp
 } from '@mui/icons-material';
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { getAdminMenuItems } from "../AdminMenuItems.js"; 
+import { useNavigate, useLocation } from 'react-router-dom';
+import { getAdminMenuItems } from "../AdminMenuItems.js";
 import { getAdminToken, getAdminUserId, clearAdminData } from '../utils/auth';
 
 const drawerWidth = 300;
-const collapsedWidth = 64;
+const collapsedWidth = 70;
 
-const AdminSidebar = ({ token }) => {
+const AdminSidebar = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const [isOpen, setIsOpen] = useState(true);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
-  const { token: tokenFromParams } = useParams();
-  const adminToken = token || tokenFromParams || getAdminToken();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md')); // < 900px = mobile
+  const [mobileOpen, setMobileOpen] = useState(false);     // for mobile drawer
+  const [isCollapsed, setIsCollapsed] = useState(false);   // for desktop collapse
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const adminToken = getAdminToken();
   const userId = getAdminUserId();
-  const AdminMenuItems = getAdminMenuItems(adminToken);
+  const menuItems = getAdminMenuItems(adminToken);
+
+  const isOpen = isMobile ? mobileOpen : !isCollapsed;
 
   const handleNavigation = (path) => {
-    navigate(path); 
+    navigate(path);
+    if (isMobile) setMobileOpen(false); // close on mobile after click
+  };
+
+  const handleDrawerToggle = () => {
     if (isMobile) {
-      setIsOpen(false);
+      setMobileOpen(!mobileOpen);
+    } else {
+      setIsCollapsed(!isCollapsed);
     }
   };
 
-  const handleLogoutClick = () => {
-    setLogoutDialogOpen(true);
-  };
-
-  const handleLogoutConfirm = async () => {
-    setLogoutDialogOpen(false);
+  const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
-      // Call the logout API
-      const response = await fetch('http://localhost:5050/api/v1/chola/client/logout', {
+      await fetch('http://localhost:5050/api/v1/chola/client/logout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${adminToken}`
+          Authorization: `Bearer ${adminToken}`,
         },
-        body: JSON.stringify({})
       });
-
-      if (response.ok) {
-        // Clear local admin data
-        clearAdminData();
-        navigate('/');
-      } else {
-        console.error('Logout API call failed');
-        // Still clear local data even if API fails
-        clearAdminData();
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Logout error:', error);
-      // Clear local data on error too
+    } catch (err) {
+      console.error(err);
+    } finally {
       clearAdminData();
       navigate('/');
-    } finally {
-      setIsLoggingOut(false);
     }
   };
 
-  const handleLogoutCancel = () => {
-    setLogoutDialogOpen(false);
-  };
+  const isActive = (path) => location.pathname === path;
 
-  const isActive = (path) => {
-    return location.pathname === path; 
-  };
-
-  // Check if token is valid (basic)
-  const isValid = Boolean(adminToken);
-
-  if (!isValid) {
+  // If not logged in → redirect
+  if (!adminToken) {
     clearAdminData();
     navigate('/');
     return null;
   }
 
+  const drawerContent = (
+    <>
+      {/* Header */}
+      <Box sx={{ 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'space-between', 
+        p: 2, 
+        minHeight: 64,
+        borderBottom: `1px solid ${theme.palette.divider}`
+      }}>
+        {isOpen ? (
+          <>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
+                {userId?.[0]?.toUpperCase() || 'A'}
+              </Avatar>
+              <Box>
+                <Typography variant="subtitle1" fontWeight={600} noWrap>
+                  Admin Panel
+                </Typography>
+                <Typography variant="caption" color="text.secondary" noWrap>
+                  {userId ? `${userId.slice(0, 8)}...` : 'N/A'}
+                </Typography>
+              </Box>
+            </Box>
+            <IconButton onClick={handleDrawerToggle}>
+              {isMobile ? <ChevronLeft /> : <ChevronLeft />}
+            </IconButton>
+          </>
+        ) : (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+            <IconButton onClick={handleDrawerToggle}>
+              <ChevronRight />
+            </IconButton>
+          </Box>
+        )}
+      </Box>
+
+      {/* Menu Items */}
+      <List sx={{ px: 1, flexGrow: 1 }}>
+        {menuItems.map((item) => {
+          const active = isActive(item.path);
+          if (!isOpen) {
+            return (
+              <Tooltip key={item.id} title={item.name} placement="right" arrow>
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => handleNavigation(item.path)}
+                    sx={{ justifyContent: 'center', minHeight: 48 }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 0, color: active ? theme.palette.primary.main : 'inherit' }}>
+                      {item.icon}
+                    </ListItemIcon>
+                  </ListItemButton>
+                </ListItem>
+              </Tooltip>
+            );
+          }
+
+          return (
+            <ListItem key={item.id} disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => handleNavigation(item.path)}
+                selected={active}
+                sx={{
+                  borderRadius: 2,
+                  '&.Mui-selected': {
+                    bgcolor: theme.palette.primary.main + '22',
+                    '&:hover': { bgcolor: theme.palette.primary.main + '33' },
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 40, color: active ? theme.palette.primary.main : 'inherit' }}>
+                  {item.icon || <Dashboard />}
+                </ListItemIcon>
+                <ListItemText 
+                  primary={item.name}
+                  primaryTypographyProps={{ fontWeight: active ? 600 : 400 }}
+                />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </List>
+
+      <Divider />
+
+      {/* Logout */}
+      <Box sx={{ p: 2 }}>
+        {isOpen ? (
+          <ListItemButton
+            onClick={() => setLogoutDialogOpen(true)}
+            disabled={isLoggingOut}
+            sx={{ borderRadius: 2, color: theme.palette.error.main }}
+          >
+            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+              <Logout />
+            </ListItemIcon>
+            <ListItemText primary={isLoggingOut ? "Logging out..." : "Logout"} />
+          </ListItemButton>
+        ) : (
+          <Tooltip title="Logout" placement="right">
+            <IconButton
+              onClick={() => setLogoutDialogOpen(true)}
+              sx={{ color: theme.palette.error.main, mx: 'auto', display: 'block' }}
+            >
+              <Logout />
+            </IconButton>
+          </Tooltip>
+        )}
+        {isOpen && (
+          <>
+          <Typography variant="caption" color="text.secondary" align="center" sx={{ mt: 2 }}>
+           2026 © Eagle Ceramics Admin
+          </Typography><br />
+          <Typography variant="caption" color="text.secondary" align="center" sx={{ mt: 2 }}>
+            Powered by : <a href="https://www.cholabiz.com" target="_blank" rel="noopener noreferrer">Cholabiz.com</a>
+          </Typography>
+          </>
+        )}
+      </Box>
+    </>
+  );
+
   return (
     <>
+      {/* AppBar with Hamburger (Only visible on Mobile) */}
+      {isMobile && (
+        <AppBar
+          position="fixed"
+          sx={{
+            bgcolor: theme.palette.background.paper,
+            color: theme.palette.text.primary,
+            boxShadow: 1,
+            zIndex: theme.zIndex.drawer + 1,
+          }}
+        >
+          <Toolbar>
+            <IconButton
+              color="inherit"
+              edge="start"
+              onClick={() => setMobileOpen(true)}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6"  sx={{ ml: 7 }}>
+              Eagle Ceramics Admin
+            </Typography>
+          </Toolbar>
+        </AppBar>
+      )}
+
+      {/* Sidebar Drawer */}
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
-        open={isMobile ? isOpen : true}
-        onClose={() => setIsOpen(false)}
+        open={isMobile ? mobileOpen : true}
+        onClose={() => setMobileOpen(false)}
+        ModalProps={{ keepMounted: true }}
         sx={{
-          width: isOpen ? drawerWidth : collapsedWidth,
+          width: isMobile ? drawerWidth : (isOpen ? drawerWidth : collapsedWidth),
           flexShrink: 0,
           '& .MuiDrawer-paper': {
-            width: isOpen ? drawerWidth : collapsedWidth,
+            width: isMobile ? drawerWidth : (isOpen ? drawerWidth : collapsedWidth),
             boxSizing: 'border-box',
-            borderRight: `1px solid ${theme.palette.divider}`,
-            backgroundColor: theme.palette.background.paper,
-            overflowX: 'hidden',
-            transition: theme.transitions.create('width', {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
+            borderRight: isMobile ? 'none' : `1px solid ${theme.palette.divider}`,
+            transition: !isMobile ? theme.transitions.create('width') : undefined,
           },
         }}
       >
-        {/* Header */}
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            p: 2,
-            minHeight: 64,
-            borderBottom: `1px solid ${theme.palette.divider}`,
-          }}
-        >
-          {isOpen ? (
-            <>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Avatar 
-                  sx={{ 
-                    bgcolor: theme.palette.primary.main, 
-                    width: 40, 
-                    height: 40,
-                    fontSize: '0.875rem'
-                  }}
-                >
-                  {userId ? userId.charAt(0).toUpperCase() : 'A'}
-                </Avatar>
-                <Box>
-                  <Typography variant="subtitle1" noWrap sx={{ fontWeight: 600 }}>
-                    Admin Panel
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" noWrap>
-                    ID: {userId ? `${userId.substring(0, 8)}...` : 'N/A'}
-                  </Typography>
-                </Box>
-              </Box>
-              <IconButton onClick={() => setIsOpen(false)} size="small">
-                <ChevronLeft />
-              </IconButton>
-            </>
-          ) : (
-            <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-              <IconButton onClick={() => setIsOpen(true)} size="small">
-                <ChevronRight />
-              </IconButton>
-            </Box>
-          )}
-        </Box>
-  
-        {/* Menu Items */}
-        <List sx={{ p: 1 }}>
-          {AdminMenuItems.map((item) => {
-            const isItemActive = isActive(item.path);
-           
-            if (!isOpen) {
-              return (
-                <Tooltip key={item.id} title={item.name} placement="right" arrow>
-                  <ListItem disablePadding>
-                    <ListItemButton
-                      onClick={() => handleNavigation(item.path)}
-                      sx={{
-                        minHeight: 48,
-                        justifyContent: 'center',
-                        px: 2.5,
-                        backgroundColor: isItemActive ? theme.palette.action.selected : 'transparent',
-                      }}
-                    >
-                      <ListItemIcon
-                        sx={{
-                          minWidth: 0,
-                          justifyContent: 'center',
-                          color: isItemActive ? theme.palette.primary.main : 'inherit',
-                        }}
-                      >
-                        {item.icon || <Dashboard />}
-                      </ListItemIcon>
-                    </ListItemButton>
-                  </ListItem>
-                </Tooltip>
-              );
-            }
-            return (
-              <ListItem key={item.id} disablePadding>
-                <ListItemButton
-                  onClick={() => handleNavigation(item.path)}
-                  sx={{
-                    minHeight: 48,
-                    px: 2.5,
-                    my: 0.5,
-                    borderRadius: 1,
-                    backgroundColor: isItemActive ? theme.palette.action.selected : 'transparent',
-                    '&:hover': {
-                      backgroundColor: theme.palette.action.hover,
-                    },
-                  }}
-                >
-                  <ListItemIcon
-                    sx={{
-                      minWidth: 0,
-                      mr: 3,
-                      color: isItemActive ? theme.palette.primary.main : 'inherit',
-                    }}
-                  >
-                    {item.icon || <Dashboard />}
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.name}
-                    primaryTypographyProps={{
-                      fontWeight: isItemActive ? 600 : 400,
-                      color: isItemActive ? theme.palette.primary.main : 'inherit',
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
-            );
-          })}
-        </List>
-  
-        <Divider />
-
-        {/* Logout Section */}
-        <Box sx={{ mt: 'auto', p: 2 }}>
-          {isOpen ? (
-            <ListItemButton
-              onClick={handleLogoutClick}
-              disabled={isLoggingOut}
-              sx={{
-                minHeight: 48,
-                px: 2.5,
-                borderRadius: 1,
-                color: theme.palette.error.main,
-                '&:hover': {
-                  backgroundColor: theme.palette.error.lighter,
-                },
-              }}
-            >
-              <ListItemIcon sx={{ minWidth: 0, mr: 3, color: 'inherit' }}>
-                <Logout />
-              </ListItemIcon>
-              <ListItemText 
-                primary={isLoggingOut ? "Logging out..." : "Logout"} 
-              />
-            </ListItemButton>
-          ) : (
-            <Tooltip title={isLoggingOut ? "Logging out..." : "Logout"} placement="right" arrow>
-              <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                <IconButton
-                  onClick={handleLogoutClick}
-                  disabled={isLoggingOut}
-                  sx={{
-                    color: theme.palette.error.main,
-                    '&:hover': {
-                      backgroundColor: theme.palette.error.lighter,
-                    },
-                  }}
-                >
-                  <Logout />
-                </IconButton>
-              </Box>
-            </Tooltip>
-          )}
-          
-          <Divider sx={{ my: 2 }} />
-          
-          {isOpen && (
-            <Typography 
-              variant="body2" 
-              color="text.secondary" 
-              align="center"
-              sx={{ mt: 1 }}
-            >
-              Eagle Ceramics Admin
-            </Typography>
-          )}
-        </Box>
+        {/* Add Toolbar spacer only on mobile when AppBar is present */}
+        {isMobile && <Toolbar />}
+        
+        {drawerContent}
       </Drawer>
 
-      {/* Logout Confirmation Dialog */}
-      <Dialog
-        open={logoutDialogOpen}
-        onClose={handleLogoutCancel}
-        aria-labelledby="logout-dialog-title"
-        aria-describedby="logout-dialog-description"
-      >
-        <DialogTitle id="logout-dialog-title">
-          Confirm Logout
-        </DialogTitle>
+      {/* Logout Confirmation */}
+      <Dialog open={logoutDialogOpen} onClose={() => setLogoutDialogOpen(false)}>
+        <DialogTitle>Confirm Logout</DialogTitle>
         <DialogContent>
-          <DialogContentText id="logout-dialog-description">
-            Are you sure you want to logout from the admin panel?
-          </DialogContentText>
+          <DialogContentText>Are you sure you want to logout?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button 
-            onClick={handleLogoutCancel} 
-            color="primary"
-            disabled={isLoggingOut}
-          >
-            Cancel
-          </Button>
-          <Button 
-            onClick={handleLogoutConfirm} 
-            color="error"
-            variant="contained"
-            disabled={isLoggingOut}
-            autoFocus
-          >
-            {isLoggingOut ? "Logging out..." : "Logout"}
+          <Button onClick={() => setLogoutDialogOpen(false)}>Cancel</Button>
+          <Button onClick={handleLogout} color="error" variant="contained">
+            Logout
           </Button>
         </DialogActions>
       </Dialog>
     </>
   );
 };
- 
+
 export default AdminSidebar;
