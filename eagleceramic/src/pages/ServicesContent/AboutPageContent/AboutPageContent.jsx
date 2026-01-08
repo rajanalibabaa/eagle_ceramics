@@ -17,6 +17,7 @@ const MotionBox = motion(Box);
 import heroBg from '../../../assets/Bannerimage4.jpeg';
 import Img1 from '../../../assets/BannerImage5.jpeg';
 import Img2 from '../../../assets/Bannerimage3.png';
+import Img3 from '../../../assets/profile.png';
 import Mission from '../../../assets/AboutImages/Mission.webp'
 import Mission1 from '../../../assets/AboutImages/Mission1.webp'
 import vision from '../../../assets/AboutImages/vision.webp'
@@ -31,6 +32,7 @@ import CustomerFirstApproach from '../../../assets/AboutImages/CustomerFirstAppr
 import QualityCommitment from '../../../assets/AboutImages/QualityCommitment.jpeg'
 import TimelyFulfilment from '../../../assets/AboutImages/TimelyFulfilment.jpg'
 import FAQSection from '../../../components/Faqsections';
+import ModernAboutMe from '../../../components/ModernAboutMe';
 
 const AboutPageContent = () => {
   const cardRefs = useRef([]);
@@ -104,7 +106,7 @@ const AboutPageContent = () => {
                 fontSize: { xs: "2rem", sm: "2.5rem", md: "3.5rem" },
                 lineHeight: 1.2,
               }}>
-                  Eagle & Gaurada Ceramic
+                  Eagle & Garuda Ceramic
                 </Typography>
 
                 <Typography variant="h6" sx={{
@@ -117,7 +119,7 @@ const AboutPageContent = () => {
                   textShadow: '0 1px 5px rgba(0, 0, 0, 0.2)',
                   px: { xs: 1, sm: 0 }
                 }}>
-                  ESTABLISHED 1989 • B2B CERAMIC EXCELLENCE
+                  ESTABLISHED 2006 • B2B CERAMIC EXCELLENCE
                 </Typography>
 
                 <Typography variant="h5" sx={{
@@ -132,10 +134,10 @@ const AboutPageContent = () => {
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.25rem' },
                   px: { xs: 2, sm: 3, md: 0 }
                 }}>
-                  For over 35 years, we've been the silent backbone behind India's finest construction projects — supplying premium tiles with unwavering quality, speed, and trust.
+                  For over 20 years, we've been the silent backbone behind India's finest construction projects — supplying premium tiles with unwavering quality, speed, and trust.
                 </Typography>
 
-                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ justifyContent: 'center', px: { xs: 2, sm: 0 }, mb: 0 }}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={3} sx={{ justifyContent: 'center', px: { xs: 2, sm: 0 }, mb: 5 }}>
                   <Button
                     component={Link}
                     to="/contact"
@@ -201,7 +203,8 @@ const AboutPageContent = () => {
         }} />
       </Box>
 
-<Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 },maxWidth:'80%',position:'absolute',justifyContent:'center',mx:'auto',bottom:{xs:'-40px',md:'-80px'},left:'0',right:'0',textAlign:'center',borderRadius:2 ,zIndex:3,}}>
+{/* <ModernAboutMe/> */}
+<Box sx={{ bgcolor: '#ffffffff', py: { xs: 2, md: 5, sm: 4 }, px: { sm: 6, md: 12 },maxWidth:'80%',position:'absolute',justifyContent:'center',mx:'auto',bottom:{xs:'-60px',sm:'-50px',md:'-80px'},left:'0',right:'0',textAlign:'center',borderRadius:2 ,zIndex:3,}}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 5 }} justifyContent='space-between' alignItems='center' textAlign="center">
             {[
@@ -283,6 +286,7 @@ const AboutPageContent = () => {
                   borderRadius: '2px',
                   mx: { xs: 'auto', md: '0' }
                 }} />
+ 
 
                 <Typography variant="h6" sx={{
                   color: '#475569',
@@ -290,7 +294,7 @@ const AboutPageContent = () => {
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.15rem' },
                   mb: 3
                 }}>
-                  Founded by <strong style={{ color: '#dc2626' }}>Mr. Suresh</strong>, a pioneer with <strong>35 years</strong> of experience in the tiles and construction industry, <strong>Eagle Ceramic</strong> has grown into a trusted B2B supplier known for quality, consistency, and professionalism.
+                  Founded by <strong style={{ color: '#dc2626' }}>Mr. Suresh M.N</strong>, a pioneer with <strong>20 years</strong> of experience in the tiles and construction industry, <strong>Eagle Ceramic</strong> has grown into a trusted B2B supplier known for quality, consistency, and professionalism.
                 </Typography>
 
                 <Typography variant="h6" sx={{
@@ -299,7 +303,7 @@ const AboutPageContent = () => {
                   fontSize: { xs: '1rem', sm: '1.125rem', md: '1.15rem' },
                   mb: 3
                 }}>
-                  What began as a small wholesale operation has expanded into two strong brands — <strong style={{ color: '#dc2626' }}>Eagle Ceramic</strong> and <strong style={{ color: '#dc2626' }}>Gaurada Ceramic</strong> — each addressing the growing demands of modern construction and commercial architecture.
+                  What began as a small wholesale operation has expanded into two strong brands — <strong style={{ color: '#dc2626' }}>Eagle Ceramic</strong> and <strong style={{ color: '#dc2626' }}>Garuda Ceramic</strong> — each addressing the growing demands of modern construction and commercial architecture.
                 </Typography>
 
                 <Typography variant="h6" sx={{
@@ -318,9 +322,45 @@ const AboutPageContent = () => {
               width: { xs: '100%', md: '45%' },
               marginLeft: { xs: 0, md: '67px' }
             }}>
-              <Box sx={{
+              <MotionBox
+                  initial={{ opacity: 0, x: { xs: 0, md: 80 } }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  // whileHover={{
+                  //   scale: { md: 1.04 },
+                  //   boxShadow: '0 40px 100px rgba(220, 38, 38, 0.2)'
+                  // }}
+                  transition={{
+                    duration: 0.9,
+                    type: "spring",
+                    stiffness: 100
+                  }}
+                  sx={{
+                    position: 'relative',
+                    borderRadius: { xs: 2, md: 4 },
+                    overflow: 'hidden',
+                    width: '100%',
+                    height: { xs: '250px', sm: '300px', md: '700px' },
+                    
+                  }}
+                >
+                  <img
+                    src={Img3}
+                    alt="Mr. Suresh - Founder & Industry Pioneer"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'contain',
+                      display: 'block',
+                      transition: 'transform 0.5s ease'
+                    }}
+                  />
+                </MotionBox>
+              
+            </Grid>
+          </Grid>
+          <Box sx={{
                 display: 'flex',
-                flexDirection: 'column',
+                flexDirection: { xs: 'column', md: 'row' },
                 gap: { xs: 3, md: 4 },
                 width: '100%'
               }}>
@@ -368,7 +408,7 @@ const AboutPageContent = () => {
                     }}
                   />
                 </MotionBox>
-
+               
                 {/* Second Image - Factory/Showroom */}
                 <MotionBox
                   initial={{ opacity: 0, x: { xs: 0, md: 80 } }}
@@ -415,8 +455,6 @@ const AboutPageContent = () => {
                   />
                 </MotionBox>
               </Box>
-            </Grid>
-          </Grid>
         </Container>
       </Box>
 

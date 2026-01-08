@@ -11,13 +11,13 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 const faqData = [
   {
-    question: "What products does Eagle Ceramics offer?",
+    question: "What products does Eagle Ceramic offer?",
     answer:
       "We provide ceramic tiles, vitrified tiles, wall tiles, floor tiles, porcelain tiles, outdoor tiles, and designer decorative tiles.",
   },
   {
     question:
-      "Are Eagle Ceramics tiles suitable for both indoor and outdoor use?",
+      "Are Eagle Ceramic tiles suitable for both indoor and outdoor use?",
     answer:
       "Yes, we manufacture tiles suitable for indoor spaces such as bathrooms and kitchens, as well as outdoor areas like balconies, parking, and terraces.",
   },
@@ -32,7 +32,7 @@ const faqData = [
       "Yes, most of our ceramic and vitrified tiles have low water absorption and are ideal for bathrooms and other wet areas.",
   },
   {
-    question: "Can Eagle Ceramics tiles handle heavy foot traffic?",
+    question: "Can Eagle Ceramic tiles handle heavy foot traffic?",
     answer:
       "Absolutely. Our vitrified and porcelain tiles are durable and perfect for malls, offices, hotels, and other high-traffic environments.",
   },
@@ -42,7 +42,7 @@ const faqData = [
       "Yes, we offer anti-skid tiles specially designed for bathrooms, outdoor spaces, and wet areas.",
   },
   {
-    question: "Where can I purchase Eagle Ceramics tiles?",
+    question: "Where can I purchase Eagle Ceramic tiles?",
     answer:
       "You can buy from our authorized dealers, showrooms, or contact us directly via our website for location details.",
   },

@@ -13,7 +13,7 @@ import "swiper/css/pagination";
 const testimonials = [
   {
     role: "Builder / Developer",
-    text: "Eagle Ceramics has been our go-to supplier for all our residential projects. Their tile quality and timely delivery make our project planning smooth.",
+    text: "Eagle Ceramic has been our go-to supplier for all our residential projects. Their tile quality and timely delivery make our project planning smooth.",
     author: "ABC Builders",
     img: "https://randomuser.me/api/portraits/men/45.jpg",
   },

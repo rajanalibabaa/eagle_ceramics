@@ -10,7 +10,7 @@ import img1 from "../assets/WhyProductimg.jpg";
 import { useNavigate } from "react-router-dom";
 
 const ITEMS = [
-  { icon: <VerifiedIcon />,  title: "Premium Manufacturing Quality", sub: "High-grade raw materials & advanced production." },
+  { icon: <VerifiedIcon />,  title: "Premium Quality", sub: "High-grade raw materials & advanced production." },
   { icon: <InventoryIcon />, title: "Bulk Availability",            sub: "Always-ready stock for commercial scale projects." },
   { icon: <HandshakeIcon />, title: "Strong Vendor Partnerships",   sub: "Reliable sourcing from industry-trusted suppliers." },
   { icon: <LocalShippingIcon />, title: "Delivery Reliability",     sub: "On-time project fulfillment across regions." },

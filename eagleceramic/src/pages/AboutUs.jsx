@@ -146,7 +146,7 @@ const AboutUs = () => {
                 lineHeight: 1,
               }}
             >
-              35
+              20
             </Typography>
             <Typography
               sx={{
@@ -180,7 +180,7 @@ const AboutUs = () => {
               fontWeight: 900,
             }}
           >
-            About Eagle Ceramics
+            About Eagle Ceramic
           </Box>
           : The Leading Tiles Company in India
         </Typography>

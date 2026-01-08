@@ -29,7 +29,7 @@ const uspData = [
   },
   {
     title: "Two Industry-Leading Brands",
-    desc: "Eagle Ceramics & Gaurada Ceramics serving diverse style and budget needs.",
+    desc: "Eagle Ceramic & Gaurada Ceramics serving diverse style and budget needs.",
     image: brandsBg,
     overlay: "linear-gradient(rgba(81, 81, 91, 0.85), rgba(47, 47, 60, 0.95))"
   },
