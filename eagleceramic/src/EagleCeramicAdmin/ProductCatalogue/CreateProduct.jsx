@@ -41,7 +41,7 @@ import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 import CreateProductForm from "./CreateProductForm";
 import axios from "axios";
 
-const API_BASE_URL = "https://clientbackend.cholabiz.com/api/v1/eagle-ceramic";
+const API_BASE_URL = "http://localhost:5050/api/v1/eagle-ceramic";
 
 const CreateProductPage = () => {
   const [openModal, setOpenModal] = useState(false);

@@ -205,9 +205,9 @@ const AboutPageContent = () => {
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: 2, md: 5 }} justifyContent='space-between' alignItems='center' textAlign="center">
             {[
-              { number: "35+", label: "Years of Trust" },
-              { number: "15M+", label: "Sq. Ft. Delivered" },
-              { number: "1000+", label: "Happy Builders" },
+              { number: "20+", label: "Years of Experience" },
+              { number: "5000+", label: "Box Delivered" },
+              { number: "Encountered", label: "Happy Dealers" },
               { number: "Zero", label: "Supply Delays" },
             ].map((stat, i) => (
               <Grid item xs={6} sm={3} key={i}>
@@ -218,8 +218,8 @@ const AboutPageContent = () => {
                 >
                   <Typography variant="h3" sx={{
                     color: 'black',
-                    fontWeight: 800,
-                    fontSize: { xs: '1rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+                    fontWeight: 700,
+                    fontSize: { xs: '1rem', sm: '2rem', md: '2rem', lg: '2rem' },
                     // mt:5,
                     pb: { xs: 0, md: 3 }
                   }}>
