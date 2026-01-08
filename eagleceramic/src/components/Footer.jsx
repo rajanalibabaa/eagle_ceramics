@@ -209,23 +209,23 @@ function Footer() {
               >
                 Contact
               </Link>
-               <Link
-  href="http://localhost:3000/login/chola-clients/"
-  target="_blank"
-  rel="noopener noreferrer"
-  variant="body2"
-  sx={{
-    color: "white",
-    textDecoration: "none",
-    cursor: "pointer",
-    "&:hover": {
-      color: "#c41f25",
-    },
-    fontSize: { xs: "0.875rem", md: "1rem" },
-  }}
->
-   Login
-</Link>
+              <Link
+                href="https://cholabiz.com/login/chola-clients/"
+                target="_blank"
+                rel="noopener noreferrer"
+                variant="body2"
+                sx={{
+                  color: "white",
+                  textDecoration: "none",
+                  cursor: "pointer",
+                  "&:hover": {
+                    color: "#c41f25",
+                  },
+                  fontSize: { xs: "0.875rem", md: "1rem" },
+                }}
+              >
+                Login
+              </Link>
             </Box>
           </Grid>
 
@@ -539,8 +539,6 @@ function Footer() {
               CholaBiz.com
             </a>
           </Typography>
-
-         
         </Box>
       </Container>
     </Box>
