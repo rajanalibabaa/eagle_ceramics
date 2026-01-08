@@ -5,7 +5,6 @@ import {
   Button,
   Typography,
   Grid,
-  Paper,
   IconButton,
   Stack,
   InputAdornment,
@@ -34,19 +33,13 @@ import {
 } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import DescriptionIcon from "@mui/icons-material/Description";
 import TitleIcon from "@mui/icons-material/Title";
-import AspectRatioIcon from "@mui/icons-material/AspectRatio";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import SaveIcon from "@mui/icons-material/Save";
-import EditIcon from "@mui/icons-material/Edit";
 import CloseIcon from "@mui/icons-material/Close";
 import LinkIcon from "@mui/icons-material/Link";
-import ImageIcon from "@mui/icons-material/Image";
-import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import axios from "axios";
 import { getAdminToken } from "../../EagleCeramicAdmin/utils/auth";
 

@@ -237,21 +237,13 @@ export default function ServiceSideBar() {
 
     // Update URL with query parameters
     navigate(`/products?product=${productKey}&size=${sizeKey}`);
-
+window.scrollTo({ top: 0, behavior: "smooth" });
     setSelectedProduct(productName);
     setSelectedSize(size);
     setDrawerOpen(false);
 
     // console.log("headerData",headerData);
-    console.log("sizeData", sizeData);
-
-    // Update header data
-
-    console.log("Updated headerData", {
-      title: sizeData.title || productName,
-      BackgroundImage: sizeData?.image,
-      subtitle: sizeData.description || "",
-    });
+   
 
     // Fetch catalog data
     fetchCatalogData(productName, size, sizeData);

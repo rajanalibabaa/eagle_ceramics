@@ -363,7 +363,6 @@ const ProductAndSize = () => {
                             sx={{
                               height: "100%",
                               display: "flex",
-                              // width:"50%",
                               flexDirection: "column",
                               transition: "transform 0.2s",
                               "&:hover": {
